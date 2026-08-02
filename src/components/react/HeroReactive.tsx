@@ -25,15 +25,15 @@ export default function HeroReactive({ name, title }: HeroReactiveProps) {
         </svg>
       </div>
 
-      {/* Right 60%: serif title + hand-drawn underline */}
-      <div className="md:col-span-3">
+      {/* Right 60%: serif title + hand-drawn underline, aligned to the right */}
+      <div className="flex flex-col items-end md:col-span-3">
         <BlurText
           text={name}
-          className="font-serif text-5xl font-bold leading-tight text-ink"
+          className="font-serif text-right text-5xl font-bold leading-tight text-ink"
           delay={70}
           animateBy="characters"
         />
-        <p className="mt-4 text-lg text-ink-soft">{title}</p>
+        <p className="mt-4 text-right text-lg text-ink-soft">{title}</p>
 
         {/* Hand-drawn underline, warm accent */}
         <svg
