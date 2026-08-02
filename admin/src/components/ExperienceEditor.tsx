@@ -12,7 +12,7 @@ export default function ExperienceEditor() {
     if (data) setItems(data.experience);
   }, [data]);
 
-  if (loading) return <p className="text-sm text-[#6B6B6B]">Loading…</p>;
+  if (loading) return <Skeleton />;
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!items) return null;
 
@@ -42,39 +42,39 @@ export default function ExperienceEditor() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold">Experience</h1>
+      <h1 className="mb-6 font-serif text-2xl font-bold text-ink">Experience</h1>
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded border border-[#E6E2DD] bg-white p-4">
-          <ul className="divide-y divide-[#E6E2DD]">
+        <div className="rounded border border-border bg-white p-4">
+          <ul className="divide-y divide-border">
             {items.map((it, i) => (
               <li key={i}>
                 <button
                   onClick={() => setSelectedId(i)}
-                  className={`flex w-full items-baseline gap-3 px-2 py-3 text-left ${
-                    selectedId === i ? 'bg-[#5B7553]/10' : ''
+                  className={`flex w-full items-baseline gap-3 px-2 py-3 text-left transition-colors ${
+                    selectedId === i ? 'bg-accent/10' : 'hover:bg-border/30'
                   }`}
                 >
-                  <span className="font-serif font-semibold">{it.title}</span>
-                  <span className="text-xs text-[#6B6B6B]">{it.organization}</span>
+                  <span className="font-serif font-semibold text-ink">{it.title}</span>
+                  <span className="text-xs text-ink-soft">{it.organization}</span>
                 </button>
               </li>
             ))}
           </ul>
           <button
             onClick={add}
-            className="mt-3 w-full rounded border border-[#5B7553] px-3 py-2 text-sm text-[#5B7553] hover:bg-[#5B7553]/10"
+            className="mt-3 w-full rounded border border-accent px-3 py-2 text-sm text-accent transition-colors hover:bg-accent/10"
           >
             + New entry
           </button>
         </div>
 
         {selected ? (
-          <div className="space-y-4 rounded border border-[#E6E2DD] bg-white p-5">
+          <div className="space-y-4 rounded border border-border bg-white p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-serif text-lg font-semibold">{selected.title}</h2>
+              <h2 className="font-serif text-lg font-semibold text-ink">{selected.title}</h2>
               <button
                 onClick={() => remove(selectedId!)}
-                className="text-xs text-red-600 hover:text-red-800"
+                className="text-xs text-red-600 transition-colors hover:text-red-800"
               >
                 Delete
               </button>
@@ -124,14 +124,16 @@ export default function ExperienceEditor() {
             <Field label="Description (one per line)">
               <textarea
                 value={selected.description.join('\n')}
-                onChange={(e) => patch(selectedId!, { description: e.target.value.split('\n').filter(Boolean) })}
+                onChange={(e) =>
+                  patch(selectedId!, { description: e.target.value.split('\n').filter(Boolean) })
+                }
                 rows={4}
                 className={input}
               />
             </Field>
           </div>
         ) : (
-          <p className="text-sm text-[#6B6B6B]">Select an entry to edit.</p>
+          <p className="py-12 text-center text-sm text-ink-soft">Select an entry to edit.</p>
         )}
       </div>
 
@@ -146,13 +148,34 @@ export default function ExperienceEditor() {
 }
 
 const input =
-  'w-full rounded border border-[#E6E2DD] bg-white px-3 py-2 text-sm focus:border-[#5B7553] focus:outline-none';
+  'w-full rounded border border-border bg-white px-3 py-2 text-sm transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-[#6B6B6B]">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-ink-soft">{label}</span>
       {children}
     </label>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-6">
+      <div className="h-7 w-32 rounded bg-border" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-3 rounded border border-border bg-white p-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-12 w-full rounded bg-border" />
+          ))}
+        </div>
+        <div className="space-y-4 rounded border border-border bg-white p-5">
+          {Array.from({ length: 5 }).map((_, i) => {
+            const h = i === 4 ? 'h-24' : 'h-9';
+            return <div key={i} className={`${h} w-full rounded bg-border`} />;
+          })}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -12,16 +12,14 @@ export default function ProjectEditor() {
     if (data) setProjects(data.projects);
   }, [data]);
 
-  if (loading) return <p className="text-sm text-[#6B6B6B]">Loading…</p>;
+  if (loading) return <Skeleton />;
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!projects) return null;
 
   const selected = projects.find((p) => p.id === selectedId) ?? null;
 
   function patchProject(id: string, next: Partial<Project>) {
-    setProjects(
-      projects.map((p) => (p.id === id ? { ...p, ...next } : p)),
-    );
+    setProjects(projects.map((p) => (p.id === id ? { ...p, ...next } : p)));
   }
 
   function addProject() {
@@ -45,23 +43,23 @@ export default function ProjectEditor() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold">Projects</h1>
+      <h1 className="mb-6 font-serif text-2xl font-bold text-ink">Projects</h1>
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left: list */}
-        <div className="rounded border border-[#E6E2DD] bg-white p-4">
-          <ul className="divide-y divide-[#E6E2DD]">
+        <div className="rounded border border-border bg-white p-4">
+          <ul className="divide-y divide-border">
             {projects.map((p) => (
               <li key={p.id}>
                 <button
                   onClick={() => setSelectedId(p.id)}
-                  className={`flex w-full items-baseline gap-3 px-2 py-3 text-left ${
-                    selectedId === p.id ? 'bg-[#5B7553]/10' : ''
+                  className={`flex w-full items-baseline gap-3 px-2 py-3 text-left transition-colors ${
+                    selectedId === p.id ? 'bg-accent/10' : 'hover:bg-border/30'
                   }`}
                 >
-                  <span className="font-serif font-semibold">{p.title}</span>
-                  <span className="text-xs text-[#6B6B6B]">{p.year}</span>
+                  <span className="font-serif font-semibold text-ink">{p.title}</span>
+                  <span className="text-xs text-ink-soft">{p.year}</span>
                   {p.featured && (
-                    <span className="ml-auto text-xs text-[#5B7553]">★</span>
+                    <span className="ml-auto text-xs text-accent">★</span>
                   )}
                 </button>
               </li>
@@ -69,7 +67,7 @@ export default function ProjectEditor() {
           </ul>
           <button
             onClick={addProject}
-            className="mt-3 w-full rounded border border-[#5B7553] px-3 py-2 text-sm text-[#5B7553] hover:bg-[#5B7553]/10"
+            className="mt-3 w-full rounded border border-accent px-3 py-2 text-sm text-accent transition-colors hover:bg-accent/10"
           >
             + New project
           </button>
@@ -77,12 +75,12 @@ export default function ProjectEditor() {
 
         {/* Right: editor for selected */}
         {selected ? (
-          <div className="space-y-4 rounded border border-[#E6E2DD] bg-white p-5">
+          <div className="space-y-4 rounded border border-border bg-white p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-serif text-lg font-semibold">{selected.title}</h2>
+              <h2 className="font-serif text-lg font-semibold text-ink">{selected.title}</h2>
               <button
                 onClick={() => deleteProject(selected.id)}
-                className="text-xs text-red-600 hover:text-red-800"
+                className="text-xs text-red-600 transition-colors hover:text-red-800"
               >
                 Delete
               </button>
@@ -138,18 +136,18 @@ export default function ProjectEditor() {
                 />
               </Field>
             </div>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 text-sm text-ink-soft">
               <input
                 type="checkbox"
                 checked={selected.featured}
                 onChange={(e) => patchProject(selected.id, { featured: e.target.checked })}
-                className="accent-[#5B7553]"
+                className="accent-accent"
               />
               Featured on home
             </label>
           </div>
         ) : (
-          <p className="text-sm text-[#6B6B6B]">Select a project to edit.</p>
+          <p className="py-12 text-center text-sm text-ink-soft">Select a project to edit.</p>
         )}
       </div>
 
@@ -164,13 +162,34 @@ export default function ProjectEditor() {
 }
 
 const input =
-  'w-full rounded border border-[#E6E2DD] bg-white px-3 py-2 text-sm focus:border-[#5B7553] focus:outline-none';
+  'w-full rounded border border-border bg-white px-3 py-2 text-sm transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-[#6B6B6B]">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-ink-soft">{label}</span>
       {children}
     </label>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-6">
+      <div className="h-7 w-28 rounded bg-border" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-3 rounded border border-border bg-white p-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-12 w-full rounded bg-border" />
+          ))}
+        </div>
+        <div className="space-y-4 rounded border border-border bg-white p-5">
+          {Array.from({ length: 6 }).map((_, i) => {
+            const h = i === 3 || i === 4 ? 'h-16' : 'h-9';
+            return <div key={i} className={`${h} w-full rounded bg-border`} />;
+          })}
+        </div>
+      </div>
+    </div>
   );
 }

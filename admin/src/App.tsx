@@ -8,9 +8,9 @@ import BlogEditor from './components/BlogEditor';
 
 export default function App() {
   return (
-    <div className="flex min-h-screen bg-[#FAF8F5] text-[#1A1A1A]">
+    <div className="flex min-h-screen bg-paper text-ink">
       <Nav />
-      <main className="flex-1 overflow-auto p-8">
+      <main className="flex-1 overflow-auto p-6">
         <Routes>
           <Route path="/" element={<Navigate to="/profile" replace />} />
           <Route path="/profile" element={<ProfileEditor />} />

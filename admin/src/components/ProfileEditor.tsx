@@ -7,12 +7,11 @@ export default function ProfileEditor() {
   const { data, loading, error, reload } = useTopicData<Profile>('profile');
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  // Sync local state when API data loads
   useEffect(() => {
     if (data) setProfile(data);
   }, [data]);
 
-  if (loading) return <p className="text-sm text-[#6B6B6B]">Loading…</p>;
+  if (loading) return <Skeleton />;
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!profile) return null;
 
@@ -22,9 +21,9 @@ export default function ProfileEditor() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold">Profile</h1>
+      <h1 className="mb-6 font-serif text-2xl font-bold text-ink">Profile</h1>
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4 rounded border border-[#E6E2DD] bg-white p-5">
+        <div className="space-y-4 rounded border border-border bg-white p-5">
           <Field label="Name">
             <input
               value={profile.name}
@@ -64,18 +63,16 @@ export default function ProfileEditor() {
         </div>
 
         {/* Live preview */}
-        <div className="rounded border border-[#E6E2DD] bg-white p-5">
-          <h2 className="mb-3 font-mono text-xs uppercase tracking-wider text-[#6B6B6B]">
+        <div className="rounded border border-border bg-white p-5">
+          <h2 className="mb-3 font-mono text-xs uppercase tracking-wider text-ink-soft">
             Preview
           </h2>
-          <p className="font-serif text-3xl font-bold">{profile.name}</p>
-          <p className="mt-1 text-[#6B6B6B]">{profile.title}</p>
+          <p className="font-serif text-3xl font-bold text-ink">{profile.name}</p>
+          <p className="mt-1 text-ink-soft">{profile.title}</p>
           {profile.location && (
-            <p className="mt-3 font-mono text-sm text-[#6B6B6B]">
-              {profile.location}
-            </p>
+            <p className="mt-3 font-mono text-sm text-ink-soft">{profile.location}</p>
           )}
-          <div className="mt-4 space-y-2 text-sm text-[#6B6B6B]">
+          <div className="mt-4 space-y-2 text-sm text-ink-soft">
             {profile.bio.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
@@ -94,21 +91,36 @@ export default function ProfileEditor() {
 }
 
 const input =
-  'w-full rounded border border-[#E6E2DD] bg-white px-3 py-2 text-sm focus:border-[#5B7553] focus:outline-none';
+  'w-full rounded border border-border bg-white px-3 py-2 text-sm transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30';
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-[#6B6B6B]">
-        {label}
-      </span>
+      <span className="mb-1 block text-xs font-medium text-ink-soft">{label}</span>
       {children}
     </label>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-6">
+      <div className="h-7 w-24 rounded bg-border" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-4 rounded border border-border bg-white p-5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i}>
+              <div className="mb-2 h-3 w-12 rounded bg-border" />
+              <div className="h-9 w-full rounded bg-border" />
+            </div>
+          ))}
+        </div>
+        <div className="rounded border border-border bg-white p-5">
+          <div className="mb-4 h-3 w-16 rounded bg-border" />
+          <div className="mb-2 h-9 w-48 rounded bg-border" />
+          <div className="h-5 w-32 rounded bg-border" />
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTopicData } from '../lib/useTopicData';
 import PublishButton from './PublishButton';
-import type { SkillCategory, SkillItem } from '../data-types';
+import type { SkillCategory } from '../data-types';
 
 export default function SkillsEditor() {
   const { data, loading, error, reload } = useTopicData<SkillCategory[]>('skills');
@@ -11,7 +11,7 @@ export default function SkillsEditor() {
     if (data) setSkills(data);
   }, [data]);
 
-  if (loading) return <p className="text-sm text-[#6B6B6B]">Loading…</p>;
+  if (loading) return <Skeleton />;
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!skills) return null;
 
@@ -21,13 +21,10 @@ export default function SkillsEditor() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-bold">Skills</h1>
+      <h1 className="mb-6 font-serif text-2xl font-bold text-ink">Skills</h1>
       <div className="space-y-6">
         {skills.map((cat, ci) => (
-          <div
-            key={ci}
-            className="rounded border border-[#E6E2DD] bg-white p-5"
-          >
+          <div key={ci} className="rounded border border-border bg-white p-5">
             <div className="mb-4 flex items-center gap-2">
               <input
                 value={cat.category}
@@ -36,11 +33,11 @@ export default function SkillsEditor() {
                   next[ci] = { ...cat, category: e.target.value };
                   patch(next);
                 }}
-                className={input}
+                className={`${input} font-serif text-sm font-semibold`}
               />
               <button
                 onClick={() => patch(skills.filter((_, i) => i !== ci))}
-                className="shrink-0 rounded px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                className="shrink-0 rounded px-2 py-1 text-xs text-red-600 transition-colors hover:bg-red-50"
               >
                 Remove
               </button>
@@ -55,7 +52,7 @@ export default function SkillsEditor() {
                       next[ci].items[si] = { ...item, name: e.target.value };
                       patch(next);
                     }}
-                    className={`${input} w-40`}
+                    className={`${input} w-32`}
                   />
                   <input
                     type="range"
@@ -64,15 +61,12 @@ export default function SkillsEditor() {
                     value={item.level ?? 1}
                     onChange={(e) => {
                       const next = [...skills];
-                      next[ci].items[si] = {
-                        ...item,
-                        level: Number(e.target.value),
-                      };
+                      next[ci].items[si] = { ...item, level: Number(e.target.value) };
                       patch(next);
                     }}
-                    className="flex-1 accent-[#5B7553]"
+                    className="flex-1 accent-accent"
                   />
-                  <span className="w-8 text-right font-mono text-xs text-[#6B6B6B]">
+                  <span className="w-8 text-right font-mono text-xs text-ink-soft">
                     {item.level ?? 1}/5
                   </span>
                   <button
@@ -81,7 +75,7 @@ export default function SkillsEditor() {
                       next[ci].items = next[ci].items.filter((_, i) => i !== si);
                       patch(next);
                     }}
-                    className="shrink-0 text-xs text-red-600 hover:text-red-800"
+                    className="shrink-0 text-xs text-red-600 transition-colors hover:text-red-800"
                   >
                     ×
                   </button>
@@ -94,7 +88,7 @@ export default function SkillsEditor() {
                 next[ci].items.push({ name: '', level: 3 });
                 patch(next);
               }}
-              className="mt-3 text-xs text-[#5B7553] hover:underline"
+              className="mt-3 text-xs text-accent transition-colors hover:underline"
             >
               + Add skill
             </button>
@@ -103,7 +97,7 @@ export default function SkillsEditor() {
       </div>
       <button
         onClick={() => patch([...skills, { category: 'New Category', items: [] }])}
-        className="mt-4 rounded border border-[#5B7553] px-3 py-1.5 text-sm text-[#5B7553] hover:bg-[#5B7553]/10"
+        className="mt-4 rounded border border-accent px-3 py-1.5 text-sm text-accent transition-colors hover:bg-accent/10"
       >
         + Add category
       </button>
@@ -119,4 +113,23 @@ export default function SkillsEditor() {
 }
 
 const input =
-  'rounded border border-[#E6E2DD] bg-white px-3 py-2 text-sm focus:border-[#5B7553] focus:outline-none';
+  'rounded border border-border bg-white px-3 py-2 text-sm transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30';
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-6">
+      <div className="h-7 w-20 rounded bg-border" />
+      {Array.from({ length: 3 }).map((_, ci) => (
+        <div key={ci} className="space-y-3 rounded border border-border bg-white p-5">
+          <div className="h-8 w-40 rounded bg-border" />
+          {Array.from({ length: 3 }).map((_, si) => (
+            <div key={si} className="flex items-center gap-3">
+              <div className="h-9 w-32 rounded bg-border" />
+              <div className="h-4 flex-1 rounded bg-border" />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}

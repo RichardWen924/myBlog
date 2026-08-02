@@ -10,8 +10,8 @@ const links = [
 
 export default function Nav() {
   return (
-    <aside className="w-52 shrink-0 border-r border-[#E6E2DD] bg-white/60 px-4 py-6">
-      <h1 className="px-2 pb-6 font-serif text-lg font-bold text-[#5B7553]">
+    <aside className="w-52 shrink-0 border-r border-border bg-white/60 px-4 py-6">
+      <h1 className="px-2 pb-6 font-serif text-lg font-bold text-accent">
         Blog Admin
       </h1>
       <nav className="flex flex-col gap-1">
@@ -22,8 +22,8 @@ export default function Nav() {
             className={({ isActive }) =>
               `rounded px-3 py-2 text-sm no-underline transition-colors ${
                 isActive
-                  ? 'bg-[#5B7553] text-white'
-                  : 'text-[#6B6B6B] hover:bg-[#5B7553]/10 hover:text-[#5B7553]'
+                  ? 'bg-accent text-white'
+                  : 'text-ink-soft hover:bg-accent/10 hover:text-accent'
               }`
             }
           >
@@ -31,8 +31,8 @@ export default function Nav() {
           </NavLink>
         ))}
       </nav>
-      <div className="mt-8 border-t border-[#E6E2DD] pt-4">
-        <p className="px-2 text-xs text-[#6B6B6B]">
+      <div className="mt-8 border-t border-border pt-4">
+        <p className="px-2 text-xs text-ink-soft">
           Edits are written to <code>src/data/*.json</code> and{' '}
           <code>src/content/blog/*.md</code>, then committed and pushed.
         </p>

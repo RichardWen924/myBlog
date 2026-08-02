@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+/* Brand tokens — matches blog site palette */
+@theme {
+  --color-paper: #faf8f5;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #6b6b6b;
+  --color-accent: #5b7553;
+  --color-warm: #c97b5a;
+  --color-border: #e6e2dd;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', monospace;
+}
+
+/* Base */
+html {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Staff link */
+a {
+  color: var(--color-accent);
+}

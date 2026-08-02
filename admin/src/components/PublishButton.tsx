@@ -8,7 +8,6 @@ interface PublishButtonProps {
   disabled?: boolean;
 }
 
-/** One-click publish: POST to sync API, show result. */
 export default function PublishButton({
   topic,
   payload,
@@ -48,17 +47,17 @@ export default function PublishButton({
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Commit message…"
-        className="min-w-0 flex-1 rounded border border-[#E6E2DD] bg-white px-3 py-2 text-sm"
+        className="min-w-0 flex-1 rounded border border-border bg-white px-3 py-2 text-sm"
       />
       <button
         onClick={publish}
         disabled={busy || disabled || !message.trim()}
-        className="shrink-0 rounded bg-[#5B7553] px-4 py-2 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        className="shrink-0 rounded bg-accent px-4 py-2 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy ? 'Publishing…' : 'Publish'}
       </button>
       {result?.ok && (
-        <span className="text-xs text-[#5B7553]">✓ committed</span>
+        <span className="text-xs text-accent">✓ committed</span>
       )}
       {result?.error && (
         <span className="text-xs text-red-600">{result.error}</span>
