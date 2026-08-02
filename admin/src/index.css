@@ -13,13 +13,15 @@
 }
 
 /* Base */
-html {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: var(--color-paper);
-  color: var(--color-ink);
-}
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
 
-/* Staff link */
-a {
-  color: var(--color-accent);
+  /* Default link color, overridable by utility classes (text-white etc.) */
+  a {
+    color: var(--color-accent);
+  }
 }
