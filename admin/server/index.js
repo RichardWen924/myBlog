@@ -1,5 +1,5 @@
 import express from 'express';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -108,15 +108,17 @@ app.post('/api/sync/blog', (req, res) => {
   }
 });
 
-// POST /api/sync/delete  { path }  — delete a file (e.g. a blog post) then commit+push
+// POST /api/sync/delete  { file, message } — delete a file, then commit+push
 app.post('/api/sync/delete', (req, res) => {
   const { file: relPath, message } = req.body;
   if (!relPath || !message) return res.status(400).json({ error: 'file + message required' });
-  const full = resolve(BLOG_ROOT, relPath);
-  if (!full.startsWith(BLOG_ROOT)) return res.status(400).json({ error: 'Path outside repo' });
+  // Restrict deletes to known writable dirs (src/data + src/content/blog), never arbitrary paths.
+  const allowed = /^(src\/data\/[A-Za-z0-9_-]+\.json|src\/content\/blog\/[A-Za-z0-9_-]+\.(md|mdx))$/.test(relPath);
+  if (!allowed) return res.status(400).json({ error: 'Path not allowed' });
+  const full = join(BLOG_ROOT, relPath);
   if (!existsSync(full)) return res.status(404).json({ error: 'File not found' });
   try {
-    execSync(`git rm "${full}"`, { cwd: BLOG_ROOT });
+    execFileSync('git', ['rm', full], { cwd: BLOG_ROOT, encoding: 'utf-8' });
     const result = gitCommitPush(message);
     res.json({ ok: true, files: [relPath], ...result });
   } catch (e) {
@@ -127,9 +129,9 @@ app.post('/api/sync/delete', (req, res) => {
 // POST /api/git/status  →  summary of changed files + last commit (for UI diff display)
 app.post('/api/git/status', (req, res) => {
   try {
-    const changed = execSync('git status --porcelain', { cwd: BLOG_ROOT, encoding: 'utf-8' })
+    const changed = execFileSync('git', ['status', '--porcelain'], { cwd: BLOG_ROOT, encoding: 'utf-8' })
       .split('\n').filter(Boolean);
-    const last = execSync('git log -1 --oneline', { cwd: BLOG_ROOT, encoding: 'utf-8' }).trim();
+    const last = execFileSync('git', ['log', '-1', '--oneline'], { cwd: BLOG_ROOT, encoding: 'utf-8' }).trim();
     res.json({ changed, last });
   } catch (e) {
     res.status(500).json({ error: String(e) });
@@ -144,11 +146,17 @@ function toYmd(value) {
 }
 
 function gitCommitPush(message) {
-  const safeMessage = message.replace(/["`]/g, '');
-  const add = execSync('git add src/data src/content/blog', { cwd: BLOG_ROOT, encoding: 'utf-8' });
+  // execFileSync passes args as an array — no shell interpolation, no injection.
+  execFileSync('git', ['add', 'src/data', 'src/content/blog'], {
+    cwd: BLOG_ROOT,
+    encoding: 'utf-8',
+  });
   let commit;
   try {
-    commit = execSync(`git commit -m "${safeMessage}"`, { cwd: BLOG_ROOT, encoding: 'utf-8' });
+    commit = execFileSync('git', ['commit', '-m', message], {
+      cwd: BLOG_ROOT,
+      encoding: 'utf-8',
+    });
   } catch (e) {
     // Nothing staged to commit (no changes) — not an error
     if (String(e.stderr ?? '').includes('nothing to commit')) {
@@ -156,7 +164,10 @@ function gitCommitPush(message) {
     }
     throw e;
   }
-  const push = execSync('git push origin main', { cwd: BLOG_ROOT, encoding: 'utf-8' });
+  const push = execFileSync('git', ['push', 'origin', 'main'], {
+    cwd: BLOG_ROOT,
+    encoding: 'utf-8',
+  });
   return { committed: true, commit: commit.trim(), push: push.trim() };
 }
 
