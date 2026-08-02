@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/react/ProjectCard';
+import { getProjects } from '../../lib/content';
+
+const projects = getProjects();
+---
+
+<Base title="Projects">
+  <h1 class="mb-8 pt-8 font-serif text-3xl font-bold text-ink">Projects</h1>
+  {
+    projects.length > 0 ? (
+      <ul>
+        {projects.map((project, i) => (
+          <ProjectCard client:visible project={project} index={i} />
+        ))}
+      </ul>
+    ) : (
+      <p class="py-12 text-center font-serif text-lg text-ink-soft">
+        No projects yet.
+      </p>
+    )
+  }
+</Base>

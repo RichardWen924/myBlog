@@ -1,4 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import projectsData from '../data/projects';
+import type { Project } from '../data/projects';
 
 /**
  * All published posts, newest first. Drafts are excluded.
@@ -21,4 +23,25 @@ export async function getAllTags(): Promise<string[]> {
     }
   }
   return [...tagSet].sort();
+}
+
+export function getFeaturedPosts(
+  posts: CollectionEntry<'blog'>[],
+  count = 3,
+): CollectionEntry<'blog'>[] {
+  return posts.slice(0, count);
+}
+
+// --- Projects (data-driven, insulated from page components) ---
+
+export function getProjects(): Project[] {
+  return [...projectsData].sort((a, b) => b.year - a.year);
+}
+
+export function getFeaturedProjects(): Project[] {
+  return getProjects().filter((p) => p.featured);
+}
+
+export function getProjectById(id: string): Project | undefined {
+  return projectsData.find((p) => p.id === id);
 }

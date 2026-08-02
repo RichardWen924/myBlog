@@ -1,21 +1,63 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE_AUTHOR } from '../lib/constants';
+import FadeSection from '../components/react/FadeSection';
+import SkillsGrid from '../components/react/SkillsGrid';
+import Timeline from '../components/react/Timeline';
+import profile from '../data/profile';
+import { PROFILE } from '../lib/constants';
+
+const socialLinks = Object.entries(PROFILE.socials).filter(
+  ([, href]) => typeof href === 'string',
+);
 ---
 
 <Base title="About">
   <div class="mx-auto max-w-prose pt-8">
     <h1 class="font-serif text-3xl font-bold text-ink">About</h1>
 
+    <!-- Bio: static -->
     <div class="prose prose-gray mt-8 max-w-none">
-      <p>
-        A blog by {SITE_AUTHOR}. Writing about technology, design, and the
-        spaces in between.
-      </p>
-      <p>
-        The site is built with Astro and Tailwind, served as static HTML with
-        zero JavaScript. Content lives as Markdown and is versioned in git.
-      </p>
+      {profile.bio.map((p) => <p>{p}</p>)}
+      {profile.location && (
+        <p class="font-mono text-sm text-ink-soft">
+          {profile.location}
+        </p>
+      )}
     </div>
+
+    <!-- Skills: React island (animated hairline bars) -->
+    <FadeSection client:visible className="mt-16">
+      <h2 class="mb-6 font-serif text-2xl font-bold text-ink">Skills</h2>
+      <SkillsGrid client:visible />
+    </FadeSection>
+
+    <!-- Experience: React island (scroll-triggered timeline) -->
+    <FadeSection client:visible className="mt-16">
+      <h2 class="mb-6 font-serif text-2xl font-bold text-ink">Experience</h2>
+      <Timeline client:visible />
+    </FadeSection>
+
+    <!-- Social links: plain text, no icons -->
+    {
+      socialLinks.length > 0 && (
+        <div class="mt-16 border-t border-border pt-8">
+          <h2 class="mb-4 font-serif text-xl font-bold text-ink">Links</h2>
+          <ul class="space-y-2">
+            {socialLinks.map(([label, href]) => (
+              <li>
+                <a
+                  href={href}
+                  target={href.startsWith('http') ? '_blank' : undefined}
+                  rel={href.startsWith('http') ? 'noopener' : undefined}
+                  class="font-mono text-sm text-accent no-underline"
+                >
+                  {label} &rarr;
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
   </div>
 </Base>

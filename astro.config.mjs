@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { SITE_URL } from './src/lib/constants.ts';
 
@@ -9,7 +10,7 @@ import { SITE_URL } from './src/lib/constants.ts';
 export default defineConfig({
   site: SITE_URL,
   output: 'static',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap(), react()],
   vite: {
     plugins: [tailwindcss()],
   },
