@@ -1,19 +1,28 @@
+import { useState } from 'react';
 import BlurText from './bits/BlurText';
 
 interface HeroReactiveProps {
   name: string;
   title: string;
+  email?: string;
 }
 
-/** Asymmetric hero: left 40% whitespace + hand-drawn ring, right 60% serif title. */
-export default function HeroReactive({ name, title }: HeroReactiveProps) {
+/**
+ * Claude-style hero adapted to the paper-feel spec:
+ * visual (left) + content (right: serif heading → subtitle → prompt field).
+ * The prompt field is decorative for now — no backend.
+ */
+export default function HeroReactive({ name, title, email }: HeroReactiveProps) {
+  const [value, setValue] = useState('');
+
   return (
-    <section className="relative grid grid-cols-1 gap-8 pt-16 md:grid-cols-5">
-      {/* Left 40%: hand-drawn scribble circle (paper-feel, no geometry) */}
-      <div className="flex items-start justify-center pt-6 md:col-span-2">
+    <section className="relative flex min-h-screen items-center">
+      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-10 px-4 md:grid-cols-5 md:gap-8">
+        {/* Left visual: hand-drawn scribble circle (paper substitute for Lottie) */}
+        <div className="flex items-start justify-center pt-6 md:col-span-2">
         <svg
           viewBox="0 0 120 120"
-          className="h-40 w-40 text-accent opacity-40"
+          className="h-44 w-44 text-accent opacity-40"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
@@ -25,28 +34,61 @@ export default function HeroReactive({ name, title }: HeroReactiveProps) {
         </svg>
       </div>
 
-      {/* Right 60%: serif title + hand-drawn underline, aligned to the right */}
-      <div className="flex flex-col items-end md:col-span-3">
-        <BlurText
-          text={name}
-          className="font-serif text-right text-5xl font-bold leading-tight text-ink"
-          delay={70}
-          animateBy="characters"
-        />
-        <p className="mt-4 text-right text-lg text-ink-soft">{title}</p>
+      {/* Right content: heading → subtitle → prompt field */}
+        <div className="flex flex-col items-start md:col-span-3 md:items-end">
+          <BlurText
+            text={name}
+            className="font-serif text-5xl font-bold leading-tight text-ink md:text-right"
+            delay={70}
+            animateBy="characters"
+          />
+          <p className="mt-4 text-right text-lg text-ink-soft">{title}</p>
 
-        {/* Hand-drawn underline, warm accent */}
-        <svg
-          viewBox="0 0 120 10"
-          className="mt-3 h-3 w-40 text-warm"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <path d="M3,6 Q30,1 60,6 T117,5" />
-        </svg>
+          {/* Hand-drawn underline, warm accent */}
+          <svg
+            viewBox="0 0 120 10"
+            className="mt-3 h-3 w-40 text-warm"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <path d="M3,6 Q30,1 60,6 T117,5" />
+          </svg>
+
+          {/* Prompt field — Claude-style, paper-feel, decorative for now */}
+          <div className="mt-10 w-full md:max-w-md">
+            <label
+              htmlFor="hero-prompt"
+              className="mb-2 block font-mono text-xs tracking-wide text-ink-soft/70"
+            >
+              对这个世界，我好奇的是…
+            </label>
+            <div className="relative">
+              <input
+                id="hero-prompt"
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="输入你的想法，然后按下回车"
+                className="w-full border-b border-border bg-transparent py-3 pr-10 font-serif text-base text-ink placeholder:text-ink-soft/40 focus:border-accent focus:outline-none"
+              />
+              {/* Paper arrow at the right */}
+              <span className="absolute right-0 top-1/2 -translate-y-1/2 font-mono text-accent" aria-hidden="true">
+                &rarr;
+              </span>
+            </div>
+            {email && (
+              <p className="mt-3 text-xs text-ink-soft/60">
+                或者，直接给我写信：{' '}
+                <a href={`mailto:${email}`} className="text-accent no-underline hover:underline">
+                  {email}
+                </a>
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

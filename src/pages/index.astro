@@ -14,8 +14,10 @@ const featuredProjects = getFeaturedProjects();
 ---
 
 <Base title="Home" description={SITE_DESCRIPTION}>
-  <!-- Hero: React island, animates immediately (above fold) -->
-  <HeroReactive client:load name={profile.name} title={profile.title} />
+  <!-- Hero: React island, full-screen above fold, offsets main's top padding -->
+  <div class="-mt-12">
+    <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} />
+  </div>
 
   <!-- Bio: static Astro, zero JS -->
   <FadeSection client:visible className="mt-14">
