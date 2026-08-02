@@ -1,3 +1,5 @@
+import experienceJson from './experience.json';
+
 export interface ExperienceItem {
   type: 'work' | 'education';
   title: string;
@@ -9,15 +11,4 @@ export interface ExperienceItem {
   technologies?: string[];
 }
 
-const experience: ExperienceItem[] = [
-  {
-    type: 'work',
-    title: 'Software Engineer',
-    organization: 'Your Company',
-    startDate: '2023-06',
-    description: ['Built features with React and TypeScript.'],
-    technologies: ['React', 'TypeScript', 'Node.js'],
-  },
-];
-
-export default experience;
+export default experienceJson.experience as ExperienceItem[];

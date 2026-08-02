@@ -1,0 +1,12 @@
+{
+  "experience": [
+    {
+      "type": "work",
+      "title": "Software Engineer",
+      "organization": "Your Company",
+      "startDate": "2023-06",
+      "description": ["Built features with React and TypeScript."],
+      "technologies": ["React", "TypeScript", "Node.js"]
+    }
+  ]
+}
