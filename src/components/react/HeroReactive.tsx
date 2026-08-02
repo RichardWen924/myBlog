@@ -33,7 +33,7 @@ export default function HeroReactive({ name, title }: HeroReactiveProps) {
           delay={70}
           animateBy="characters"
         />
-        <p className="mt-4 font-serif text-lg text-ink-soft">{title}</p>
+        <p className="mt-4 text-lg text-ink-soft">{title}</p>
 
         {/* Hand-drawn underline, warm accent */}
         <svg
