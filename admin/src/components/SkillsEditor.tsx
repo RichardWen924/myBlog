@@ -4,11 +4,11 @@ import PublishButton from './PublishButton';
 import type { SkillCategory } from '../data-types';
 
 export default function SkillsEditor() {
-  const { data, loading, error, reload } = useTopicData<SkillCategory[]>('skills');
+  const { data, loading, error, reload } = useTopicData<{ skills: SkillCategory[] }>('skills');
   const [skills, setSkills] = useState<SkillCategory[] | null>(null);
 
   useEffect(() => {
-    if (data) setSkills(data);
+    if (data) setSkills(data.skills);
   }, [data]);
 
   if (loading) return <Skeleton />;
@@ -104,7 +104,7 @@ export default function SkillsEditor() {
 
       <PublishButton
         topic="data"
-        payload={{ topic: 'skills', data: skills }}
+        payload={{ topic: 'skills', data: { skills } }}
         defaultMessage="Update skills"
         onSuccess={reload}
       />
