@@ -1,0 +1,35 @@
+---
+import { formatDate } from '../lib/utils';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  year: number;
+  posts: CollectionEntry<'blog'>[];
+}
+const { year, posts } = Astro.props;
+---
+
+<section class="mb-12">
+  <h2 class="mb-6 font-serif text-2xl font-bold text-ink">{year}</h2>
+  <ul class="divide-y divide-border">
+    {posts.map((post) => (
+      <li class="py-3">
+        <a
+          href={`/blog/${post.id}`}
+          class="group flex items-baseline gap-4 no-underline"
+        >
+          <time
+            datetime={post.data.date.toISOString()}
+            class="shrink-0 font-mono text-xs text-ink-soft/60"
+          >
+            {formatDate(post.data.date)}
+          </time>
+          <span class="font-serif text-ink">{post.data.title}</span>
+          <span class="ml-auto shrink-0 font-mono text-xs text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            →
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

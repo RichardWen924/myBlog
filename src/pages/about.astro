@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_AUTHOR } from '../lib/constants';
+---
+
+<Base title="About">
+  <div class="mx-auto max-w-prose pt-8">
+    <h1 class="font-serif text-3xl font-bold text-ink">About</h1>
+
+    <div class="prose prose-gray mt-8 max-w-none">
+      <p>
+        A blog by {SITE_AUTHOR}. Writing about technology, design, and the
+        spaces in between.
+      </p>
+      <p>
+        The site is built with Astro and Tailwind, served as static HTML with
+        zero JavaScript. Content lives as Markdown and is versioned in git.
+      </p>
+    </div>
+  </div>
+</Base>
