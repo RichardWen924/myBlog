@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readSiteStyles } from './site-styles.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const header = readFileSync(resolve(root, 'src/components/global/Header.astro'), 'utf8');
-const styles = readFileSync(resolve(root, 'src/styles/global.css'), 'utf8');
+const styles = readSiteStyles(root);
 const readOptional = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
 const navigation = readOptional(resolve(root, 'src/data/navigation.ts'));
 const headerBrand = readOptional(resolve(root, 'src/components/global/HeaderBrand.astro'));

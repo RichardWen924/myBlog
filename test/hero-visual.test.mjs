@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readSiteStyles } from './site-styles.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const hero = readFileSync(resolve(root, 'src/components/react/HeroReactive.tsx'), 'utf8');
-const css = readFileSync(resolve(root, 'src/styles/global.css'), 'utf8');
+const css = readSiteStyles(root);
 const homepage = readFileSync(resolve(root, 'src/pages/index.astro'), 'utf8');
 const baseLayout = readFileSync(resolve(root, 'src/layouts/Base.astro'), 'utf8');
 

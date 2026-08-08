@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readSiteStyles } from './site-styles.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const work = readFileSync(resolve(root, 'src/pages/work.astro'), 'utf8');
@@ -20,7 +21,7 @@ test('Work renders the interactive skills orbit instead of progress bars', () =>
 
 test('Skills orbit includes motion and accessibility fallbacks', () => {
   const orbit = readFileSync(orbitPath, 'utf8');
-  const css = readFileSync(resolve(root, 'src/styles/global.css'), 'utf8');
+  const css = readSiteStyles(root);
 
   assert.match(orbit, /useReducedMotion/);
   assert.match(orbit, /aria-label/);

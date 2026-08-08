@@ -1,0 +1,216 @@
+/* ===== Claude-inspired layered illustration ===== */
+.dynamic-illustration {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--color-ink);
+  --illustration-x: 0;
+  --illustration-y: 0;
+}
+
+.dynamic-illustration__background,
+.dynamic-illustration__midground {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.dynamic-illustration__background {
+  inset: 10% 0 0;
+  opacity: 0.7;
+}
+
+.dynamic-illustration__midground {
+  transform: translate3d(
+    calc(var(--illustration-x, 0) * 8px),
+    calc(var(--illustration-y, 0) * 6px),
+    0
+  );
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.dynamic-illustration__foreground {
+  position: absolute;
+  left: 10%;
+  top: 18%;
+  width: clamp(170px, 26vw, 250px);
+  color: var(--color-ink);
+  transform: translate3d(
+    calc(var(--illustration-x, 0) * 14px),
+    calc(var(--illustration-y, 0) * 10px),
+    0
+  );
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.dynamic-illustration__foreground svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.dynamic-illustration__ink-line {
+  color: var(--color-accent);
+}
+
+.dynamic-illustration__warm-line {
+  color: var(--color-warm);
+}
+
+.dynamic-illustration[data-motion='idle'] .dynamic-illustration__midground {
+  animation: illustration-drift 16s ease-in-out infinite alternate;
+}
+
+.dynamic-illustration[data-motion='idle'] .dynamic-illustration__foreground {
+  animation: illustration-drift-reverse 13s ease-in-out infinite alternate;
+}
+
+@keyframes illustration-drift {
+  from {
+    transform: translate3d(
+        calc(var(--illustration-x, 0) * 8px - 4px),
+        calc(var(--illustration-y, 0) * 6px + 3px),
+        0
+      )
+      rotate(-0.35deg);
+  }
+
+  to {
+    transform: translate3d(
+        calc(var(--illustration-x, 0) * 8px + 5px),
+        calc(var(--illustration-y, 0) * 6px - 4px),
+        0
+      )
+      rotate(0.35deg);
+  }
+}
+
+@keyframes illustration-drift-reverse {
+  from {
+    transform: translate3d(
+        calc(var(--illustration-x, 0) * 14px - 3px),
+        calc(var(--illustration-y, 0) * 10px + 4px),
+        0
+      )
+      rotate(-2.8deg);
+  }
+
+  to {
+    transform: translate3d(
+        calc(var(--illustration-x, 0) * 14px + 4px),
+        calc(var(--illustration-y, 0) * 10px - 5px),
+        0
+      )
+      rotate(-1.2deg);
+  }
+}
+
+.prompt-nav {
+  display: grid;
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+}
+
+.prompt-nav__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.8rem 0.1rem;
+  color: var(--color-ink);
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.prompt-nav__item::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: right center;
+  background: currentColor;
+  content: '';
+  transition: transform 280ms ease;
+}
+
+.prompt-nav__item:hover::after,
+.prompt-nav__item:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.prompt-nav__item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline-offset: 4px;
+}
+
+.prompt-nav__label {
+  color: var(--color-ink-soft);
+  transition: color 200ms ease;
+}
+
+.prompt-nav__hint {
+  text-align: left;
+}
+
+.prompt-nav__arrow {
+  color: var(--color-accent);
+  transition: transform 220ms ease, color 200ms ease;
+}
+
+.prompt-nav__item:hover .prompt-nav__arrow,
+.prompt-nav__item:focus-visible .prompt-nav__arrow {
+  transform: translateX(4px);
+}
+
+.prompt-nav__item--warm:hover,
+.prompt-nav__item--warm:focus-visible {
+  color: var(--color-warm);
+}
+
+.prompt-nav__item--sage:hover,
+.prompt-nav__item--sage:focus-visible {
+  color: var(--color-accent);
+}
+
+@media (max-width: 767px) {
+  .prompt-nav__item {
+    grid-template-columns: 4rem minmax(0, 1fr) auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dynamic-illustration[data-motion='idle'] .dynamic-illustration__midground,
+  .dynamic-illustration[data-motion='idle'] .dynamic-illustration__foreground,
+  .dynamic-illustration__midground,
+  .dynamic-illustration__foreground {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .dynamic-illustration__background {
+    inset: 18% -22% 0;
+  }
+
+  .dynamic-illustration__midground {
+    opacity: 0.72;
+  }
+
+  .dynamic-illustration__foreground {
+    left: 3%;
+    top: 11%;
+    width: min(45vw, 190px);
+    opacity: 0.68;
+  }
+}
