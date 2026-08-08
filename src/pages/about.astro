@@ -1,8 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import FadeSection from '../components/react/FadeSection';
-import SkillsOrbit from '../components/react/SkillsOrbit';
-import Timeline from '../components/react/Timeline';
 import SectionEyebrow from '../components/home/SectionEyebrow.astro';
 import profile from '../data/profile';
 import { PROFILE } from '../lib/constants';
@@ -12,80 +10,72 @@ const socialLinks = Object.entries(PROFILE.socials).filter(
 );
 ---
 
-<Base title="About" fullBleed>
-  <section class="about-skill-hero">
-    <div class="about-skill-layout mx-auto max-w-6xl px-6">
-      <div class="about-skill-copy">
-        <SectionEyebrow index="01" label="Skill map" status="ABOUT / PRACTICE" />
-        <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
-          How I turn ideas into systems.
-        </h1>
-        <div class="prose prose-gray mt-6 max-w-md">
-          {profile.bio.filter((paragraph) => paragraph.trim().length > 0).map((paragraph) => <p>{paragraph}</p>)}
-          {profile.location && <p class="font-mono text-sm text-ink-soft">{profile.location}</p>}
-        </div>
-
-        <div class="about-skill-signals mt-12">
-          <div class="about-skill-signal">
-            <span class="about-skill-signal__index font-mono text-xs text-accent">01</span>
-            <div>
-              <h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2>
-              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Reliable backend systems with interfaces that stay understandable.</p>
-            </div>
-          </div>
-          <div class="about-skill-signal">
-            <span class="about-skill-signal__index font-mono text-xs text-accent">02</span>
-            <div>
-              <h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2>
-              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Tools, patterns and people connected by thoughtful decisions.</p>
-            </div>
-          </div>
-          <div class="about-skill-signal">
-            <span class="about-skill-signal__index font-mono text-xs text-accent">03</span>
-            <div>
-              <h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2>
-              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Hover a category to see the technologies orbiting around it.</p>
-            </div>
+<Base title="About">
+  <div class="personal-page mx-auto max-w-4xl">
+    <section class="personal-hero pt-8 pb-20">
+      <SectionEyebrow index="01" label="A little more" status="ABOUT / LIFE" />
+      <div class="mt-12 grid gap-12 md:grid-cols-[1.15fr_0.85fr] md:items-end">
+        <div>
+          <h1 class="font-serif text-5xl font-semibold leading-[0.98] text-ink md:text-7xl">
+            Beyond the systems.
+          </h1>
+          <div class="prose prose-gray mt-8 max-w-xl">
+            {profile.bio.filter((paragraph) => paragraph.trim().length > 0).map((paragraph) => <p>{paragraph}</p>)}
           </div>
         </div>
-      </div>
-
-      <div class="about-skill-visual">
-        <SkillsOrbit client:load />
-      </div>
-    </div>
-  </section>
-
-  <div class="about-content mx-auto max-w-4xl px-4">
-    <!-- Experience: React island (scroll-triggered timeline) -->
-    <FadeSection client:visible className="mt-24">
-      <SectionEyebrow index="02" label="Experience" status="TIMELINE" />
-      <div class="mt-8">
-        <Timeline client:visible />
-      </div>
-    </FadeSection>
-
-    <!-- Social links: plain text, no icons -->
-    {
-      socialLinks.length > 0 && (
-        <div class="mt-24 border-t border-border pt-8">
-          <SectionEyebrow index="03" label="Links" status="ELSEWHERE" />
-          <ul class="mt-6 space-y-2">
-            {socialLinks.map(([label, href]) => (
-              <li>
-                <a
-                  href={href}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel={href.startsWith('http') ? 'noopener' : undefined}
-                  class="font-mono text-sm text-accent no-underline"
-                >
-                  {label} &rarr;
-                </a>
-              </li>
-            ))}
-          </ul>
+        <div class="personal-hero__note border-t border-border pt-4">
+          <p class="font-mono text-xs uppercase tracking-[0.16em] text-accent">Currently</p>
+          <p class="mt-4 font-serif text-2xl leading-snug text-ink">
+            Making space for useful work, quiet observations, and the next question worth following.
+          </p>
+          {profile.location && <p class="mt-5 font-mono text-sm text-ink-soft">{profile.location}</p>}
         </div>
-      )
-    }
+      </div>
+    </section>
+
+    <section class="personal-section border-t border-border py-20">
+      <SectionEyebrow index="02" label="What stays with me" status="PERSPECTIVE" />
+      <FadeSection client:visible className="mt-10 grid gap-10 md:grid-cols-3">
+        <article>
+          <p class="font-mono text-xs text-accent">01</p>
+          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Notice the details</h2>
+          <p class="mt-3 text-sm leading-relaxed text-ink-soft">Small observations often decide how a larger idea finds its shape.</p>
+        </article>
+        <article>
+          <p class="font-mono text-xs text-accent">02</p>
+          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Keep a trail</h2>
+          <p class="mt-3 text-sm leading-relaxed text-ink-soft">Notes make room for unfinished thoughts to become useful later.</p>
+        </article>
+        <article>
+          <p class="font-mono text-xs text-accent">03</p>
+          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Stay curious</h2>
+          <p class="mt-3 text-sm leading-relaxed text-ink-soft">The best direction is often found by following a question a little further.</p>
+        </article>
+      </FadeSection>
+    </section>
+
+    <section class="personal-section border-t border-border py-20">
+      <SectionEyebrow index="03" label="Elsewhere" status="LINKS" />
+      <div class="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <p class="max-w-md text-base leading-relaxed text-ink-soft">
+          技术之外的生活会慢慢在这里留下痕迹，也欢迎从我的文章和工作继续认识我。
+        </p>
+        <ul class="space-y-2 sm:min-w-48">
+          {socialLinks.map(([label, href]) => (
+            <li>
+              <a
+                href={href}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noopener' : undefined}
+                class="font-mono text-sm text-accent no-underline"
+              >
+                {label} &rarr;
+              </a>
+            </li>
+          ))}
+          <li><a href="/blog" class="font-mono text-sm text-accent no-underline">Notes &rarr;</a></li>
+        </ul>
+      </div>
+    </section>
   </div>
 </Base>

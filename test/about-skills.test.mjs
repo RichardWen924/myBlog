@@ -4,12 +4,12 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const about = readFileSync(resolve(root, 'src/pages/about.astro'), 'utf8');
+const work = readFileSync(resolve(root, 'src/pages/work.astro'), 'utf8');
 const orbitPath = resolve(root, 'src/components/react/SkillsOrbit.tsx');
 
-test('About renders the interactive skills orbit instead of progress bars', () => {
+test('Work renders the interactive skills orbit instead of progress bars', () => {
   assert.equal(existsSync(orbitPath), true);
-  assert.match(about, /SkillsOrbit/);
+  assert.match(work, /SkillsOrbit/);
 
   const orbit = readFileSync(orbitPath, 'utf8');
   assert.match(orbit, /viewBox/);

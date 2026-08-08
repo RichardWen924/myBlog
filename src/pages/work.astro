@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import FadeSection from '../components/react/FadeSection';
+import ProjectCard from '../components/react/ProjectCard';
+import SkillsOrbit from '../components/react/SkillsOrbit';
+import Timeline from '../components/react/Timeline';
+import SectionEyebrow from '../components/home/SectionEyebrow.astro';
+import { getProjects } from '../lib/content';
+
+const projects = getProjects();
+---
+
+<Base title="Work" fullBleed>
+  <section class="work-skill-hero">
+    <div class="work-skill-layout mx-auto max-w-6xl px-6">
+      <div class="work-skill-copy">
+        <SectionEyebrow index="01" label="Technical practice" status="WORK / SYSTEMS" />
+        <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+          Systems I build, and the thinking behind them.
+        </h1>
+        <p class="mt-6 max-w-md text-base leading-relaxed text-ink-soft">
+          Backend systems, interfaces and tools shaped by a preference for clarity, resilience and thoughtful details.
+        </p>
+        <div class="work-skill-signals mt-12">
+          <div class="work-skill-signal">
+            <span class="font-mono text-xs text-accent">01</span>
+            <div><h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Make complexity easier to understand and maintain.</p></div>
+          </div>
+          <div class="work-skill-signal">
+            <span class="font-mono text-xs text-accent">02</span>
+            <div><h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Design the boundaries where tools, data and people meet.</p></div>
+          </div>
+          <div class="work-skill-signal">
+            <span class="font-mono text-xs text-accent">03</span>
+            <div><h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Follow the question until the useful pattern appears.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="work-skill-visual">
+        <SkillsOrbit client:load />
+      </div>
+    </div>
+  </section>
+
+  <div class="work-content mx-auto max-w-4xl px-4">
+    <section class="work-section mt-24">
+      <SectionEyebrow index="02" label="Selected work" status="PROJECTS" />
+      <FadeSection client:visible className="mt-8">
+        {projects.length > 0 ? (
+          <ul>
+            {projects.map((project, i) => <ProjectCard client:visible project={project} index={i} />)}
+          </ul>
+        ) : (
+          <p class="py-12 text-center font-serif text-lg text-ink-soft">No projects yet.</p>
+        )}
+      </FadeSection>
+    </section>
+
+    <section class="work-section mt-24 border-t border-border pt-24">
+      <SectionEyebrow index="03" label="Experience" status="TIMELINE" />
+      <div class="mt-8">
+        <Timeline client:visible />
+      </div>
+    </section>
+
+    <section class="work-section mt-24 border-t border-border pb-24 pt-24">
+      <SectionEyebrow index="04" label="Continue exploring" status="DETAILS" />
+      <div class="mt-8 flex flex-wrap gap-5">
+        <a href="/projects" class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
+        <a href="/blog" class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </section>
+  </div>
+</Base>

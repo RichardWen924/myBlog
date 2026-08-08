@@ -410,7 +410,25 @@ html.home-scroll-snap {
   background: color-mix(in srgb, var(--color-paper) 94%, var(--color-warm));
 }
 
+.work-skill-hero {
+  min-height: calc(100vh - 4.25rem);
+  min-height: calc(100svh - 4.25rem);
+  margin-top: -3rem;
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-paper) 94%, var(--color-warm));
+}
+
 .about-skill-layout {
+  display: grid;
+  min-height: inherit;
+  grid-template-columns: minmax(18rem, 0.76fr) minmax(0, 1.55fr);
+  align-items: stretch;
+  gap: clamp(2rem, 6vw, 6rem);
+}
+
+.work-skill-layout {
   display: grid;
   min-height: inherit;
   grid-template-columns: minmax(18rem, 0.76fr) minmax(0, 1.55fr);
@@ -425,7 +443,22 @@ html.home-scroll-snap {
   padding: 4rem 0;
 }
 
+.work-skill-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 0;
+}
+
 .about-skill-visual {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.work-skill-visual {
   display: flex;
   min-width: 0;
   align-items: center;
@@ -437,7 +470,19 @@ html.home-scroll-snap {
   border-top: 1px solid var(--color-border);
 }
 
+.work-skill-signals {
+  border-top: 1px solid var(--color-border);
+}
+
 .about-skill-signal {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 0;
+}
+
+.work-skill-signal {
   display: grid;
   grid-template-columns: 2rem minmax(0, 1fr);
   gap: 0.8rem;
@@ -582,7 +627,16 @@ html.home-scroll-snap {
     margin-top: -3rem;
   }
 
+  .work-skill-hero {
+    min-height: auto;
+    margin-top: -3rem;
+  }
+
   .about-skill-layout {
+    display: block;
+  }
+
+  .work-skill-layout {
     display: block;
   }
 
@@ -590,7 +644,16 @@ html.home-scroll-snap {
     padding: 3rem 0 1rem;
   }
 
+  .work-skill-copy {
+    padding: 3rem 0 1rem;
+  }
+
   .about-skill-visual {
+    min-height: 490px;
+    padding: 0 0 2rem;
+  }
+
+  .work-skill-visual {
     min-height: 490px;
     padding: 0 0 2rem;
   }
