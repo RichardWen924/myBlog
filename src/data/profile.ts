@@ -1,18 +1,6 @@
 import profile from './profile.json';
+import type { Profile } from '../../packages/content-contracts/src';
 
-export interface Profile {
-  name: string;
-  title: string;
-  bio: string[];
-  avatar?: string;
-  location?: string;
-  email?: string;
-  socials: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    email?: string;
-  };
-}
+export type { Profile } from '../../packages/content-contracts/src';
 
 export default profile as Profile;

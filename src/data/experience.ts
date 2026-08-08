@@ -1,14 +1,6 @@
 import experienceJson from './experience.json';
+import type { ExperienceItem } from '../../packages/content-contracts/src';
 
-export interface ExperienceItem {
-  type: 'work' | 'education';
-  title: string;
-  organization: string;
-  location?: string;
-  startDate: string; // "2023-06"
-  endDate?: string; // undefined means "Present"
-  description: string[];
-  technologies?: string[];
-}
+export type { ExperienceItem } from '../../packages/content-contracts/src';
 
 export default experienceJson.experience as ExperienceItem[];

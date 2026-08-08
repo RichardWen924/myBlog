@@ -1,16 +1,6 @@
 import projectsJson from './projects.json';
+import type { Project } from '../../packages/content-contracts/src';
 
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  longDescription?: string;
-  technologies: string[];
-  url?: string;
-  repo?: string;
-  image?: string;
-  featured: boolean;
-  year: number;
-}
+export type { Project } from '../../packages/content-contracts/src';
 
 export default projectsJson.projects as Project[];

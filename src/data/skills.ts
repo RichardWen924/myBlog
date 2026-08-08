@@ -1,13 +1,6 @@
 import skillsJson from './skills.json';
+import type { SkillCategory } from '../../packages/content-contracts/src';
 
-export interface SkillItem {
-  name: string;
-  level?: number; // 1-5, optional
-}
-
-export interface SkillCategory {
-  category: string;
-  items: SkillItem[];
-}
+export type { SkillCategory, SkillItem } from '../../packages/content-contracts/src';
 
 export default skillsJson.skills as SkillCategory[];
