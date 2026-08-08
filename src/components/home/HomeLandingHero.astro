@@ -1,0 +1,146 @@
+---
+import profile from '../../data/profile';
+---
+
+<section class="home-landing-hero" data-home-landing-hero aria-labelledby="home-landing-title">
+  <div class="home-landing-hero__grain" aria-hidden="true"></div>
+
+  <div class="home-landing-hero__art" data-home-hero-art aria-hidden="true">
+    <div class="home-landing-hero__halo"></div>
+    <div class="home-landing-hero__orbit" data-home-hero-orbit>
+      <span class="home-landing-hero__orbit-dot home-landing-hero__orbit-dot--warm"></span>
+      <span class="home-landing-hero__orbit-dot home-landing-hero__orbit-dot--sage"></span>
+      <span class="home-landing-hero__orbit-dot home-landing-hero__orbit-dot--ink"></span>
+    </div>
+    <svg class="home-landing-hero__paths" viewBox="0 0 1000 760" fill="none">
+      <path class="home-landing-hero__path home-landing-hero__path--fine" d="M-40 500C170 150 290 160 460 395S800 700 1060 220" />
+      <path class="home-landing-hero__path home-landing-hero__path--warm" d="M-20 285C180 620 380 610 520 350S780 65 1035 445" />
+      <path class="home-landing-hero__path home-landing-hero__path--sage" d="M90 790C240 540 365 510 500 560S770 670 920 -30" />
+      <path class="home-landing-hero__dash" data-home-hero-dash d="M120 176C300 76 455 118 610 194S820 306 920 188" />
+    </svg>
+    <div class="home-landing-hero__note" data-home-hero-note>
+      <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">01 / FIELD NOTE</span>
+      <span class="home-landing-hero__note-line"></span>
+      <span class="home-landing-hero__note-scribble">make room for the next idea</span>
+      <span class="home-landing-hero__note-mark">↗</span>
+    </div>
+  </div>
+
+  <div class="home-landing-hero__grid mx-auto max-w-6xl px-6" data-home-hero-grid>
+    <div class="home-landing-hero__index font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">
+      <span>Personal archive</span>
+      <span class="home-landing-hero__index-rule" aria-hidden="true"></span>
+      <span>Shanghai · 2026</span>
+    </div>
+
+    <div class="home-landing-hero__copy" data-home-hero-copy>
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">A life in systems</p>
+      <h1 id="home-landing-title" class="home-landing-hero__title" data-home-hero-title>
+        <span>{profile.name}</span>
+        <em>in progress.</em>
+      </h1>
+      <p class="home-landing-hero__lede">
+        A personal field guide to the things I build, notice and keep thinking about.
+      </p>
+      <a href="#introduction" class="home-landing-hero__cta chapter-link" data-home-hero-cta>
+        Start with the story <span aria-hidden="true">↘</span>
+      </a>
+    </div>
+
+    <div class="home-landing-hero__caption" data-home-hero-caption>
+      <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">Now exploring</span>
+      <strong>{profile.title}</strong>
+      <span class="text-sm leading-relaxed text-ink-soft">Systems, small experiments and the shape of a good question.</span>
+    </div>
+  </div>
+
+  <a class="home-landing-hero__scroll" href="#introduction" aria-label="Scroll to introduction">
+    <span class="font-mono text-[10px] uppercase tracking-[0.18em]">Scroll to enter</span>
+    <span class="home-landing-hero__scroll-line" aria-hidden="true"></span>
+  </a>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const hero = document.querySelector('[data-home-landing-hero]');
+
+  if (hero) {
+    const context = gsap.context(() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const art = hero.querySelector('[data-home-hero-art]');
+      const orbit = hero.querySelector('[data-home-hero-orbit]');
+      const note = hero.querySelector('[data-home-hero-note]');
+      const copy = hero.querySelector('[data-home-hero-copy]');
+      const dash = hero.querySelector('[data-home-hero-dash]');
+      const reveal = hero.querySelectorAll('[data-home-hero-grid] > *, [data-home-hero-title] > *');
+
+      if (reduceMotion) {
+        gsap.set(reveal, { autoAlpha: 1, clearProps: 'transform' });
+        return;
+      }
+
+      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      intro
+        .from(reveal, { autoAlpha: 0, y: 28, duration: 0.85, stagger: 0.08 })
+        .fromTo(dash, { strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut' }, '-=0.45')
+        .from(note, { autoAlpha: 0, scale: 0.88, rotate: 5, duration: 0.8 }, '-=1.2');
+
+      gsap.to(orbit, { rotation: 360, duration: 48, repeat: -1, ease: 'none' });
+      gsap.to(note, { y: -12, rotation: -2, duration: 4.8, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+      gsap.to(hero.querySelectorAll('.home-landing-hero__path'), {
+        y: -8,
+        duration: 5.5,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.35,
+        ease: 'sine.inOut',
+      });
+
+      gsap.to(art, {
+        yPercent: -13,
+        scale: 1.08,
+        opacity: 0.56,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.2,
+        },
+      });
+
+      gsap.to(copy, {
+        yPercent: -18,
+        autoAlpha: 0.28,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      });
+
+      const handlePointerMove = (event) => {
+        const bounds = hero.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        gsap.to(art, { x: x * 12, y: y * 8, duration: 0.8, overwrite: 'auto', ease: 'power2.out' });
+      };
+      const handlePointerLeave = () => gsap.to(art, { x: 0, y: 0, duration: 1, ease: 'power3.out' });
+
+      hero.addEventListener('pointermove', handlePointerMove, { passive: true });
+      hero.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+
+      document.addEventListener('astro:before-swap', () => {
+        hero.removeEventListener('pointermove', handlePointerMove);
+        hero.removeEventListener('pointerleave', handlePointerLeave);
+        context.revert();
+      }, { once: true });
+    }, hero);
+  }
+</script>

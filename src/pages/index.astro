@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import HeroReactive from '../components/react/HeroReactive';
+import HomeLandingHero from '../components/home/HomeLandingHero.astro';
 import FadeSection from '../components/react/FadeSection';
 import ProjectCard from '../components/react/ProjectCard';
 import PostCard from '../components/home/PostCard.astro';
@@ -25,7 +25,7 @@ const featuredProjects = await getFeaturedProjects();
   <div class="home-content home-sequence">
     <div class="home-hero-panel">
       <div class="-mt-12">
-        <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} />
+        <HomeLandingHero />
       </div>
     </div>
 
@@ -184,4 +184,40 @@ const featuredProjects = await getFeaturedProjects();
 
   chapters.forEach((chapter) => observer.observe(chapter));
   setActiveChapter(chapters[0]?.dataset.chapter ?? 'introduction');
+
+  const homeHero = document.querySelector('.home-landing-hero');
+  const homeSections = [homeHero, ...chapters].filter(Boolean);
+
+  const isTextControl = (target) => {
+    if (!(target instanceof HTMLElement)) return false;
+    return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+  };
+
+  const getCurrentSectionIndex = () => {
+    const marker = window.scrollY + window.innerHeight * 0.35;
+    const currentIndex = homeSections.findIndex((section) => {
+      const top = section.offsetTop;
+      return marker >= top && marker < top + section.offsetHeight;
+    });
+
+    return currentIndex === -1 ? 0 : currentIndex;
+  };
+
+  window.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
+
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    const currentIndex = getCurrentSectionIndex();
+    const nextIndex = Math.min(Math.max(currentIndex + direction, 0), homeSections.length - 1);
+    const nextSection = homeSections[nextIndex];
+
+    if (!nextSection || nextIndex === currentIndex) return;
+
+    event.preventDefault();
+    if (nextSection === homeHero) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 </script>

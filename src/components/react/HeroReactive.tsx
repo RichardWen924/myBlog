@@ -6,6 +6,7 @@ interface HeroReactiveProps {
   name: string;
   title: string;
   email?: string;
+  scrollTarget?: string;
 }
 
 /**
@@ -13,7 +14,7 @@ interface HeroReactiveProps {
  * visual (left) + content (right: serif heading → subtitle → prompt field).
  * The prompt choices are navigation links, not a backend-powered form.
  */
-export default function HeroReactive({ name, title, email }: HeroReactiveProps) {
+export default function HeroReactive({ name, title, email, scrollTarget = '#introduction' }: HeroReactiveProps) {
   return (
     <section className="hero-stage relative isolate flex items-center overflow-hidden">
       {/* Generated thinking orbit: a soft, full-bleed paper layer behind the Hero */}
@@ -88,7 +89,7 @@ export default function HeroReactive({ name, title, email }: HeroReactiveProps) 
         </div>
       </div>
 
-      <a className="hero-scroll-cue" href="#introduction" aria-label="Scroll to introduction">
+      <a className="hero-scroll-cue" href={scrollTarget} aria-label="Scroll to next section">
         <span className="hero-scroll-cue__label font-mono text-[10px] uppercase tracking-[0.18em]">
           Continue
         </span>
