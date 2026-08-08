@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import HomeLandingHero from '../components/home/HomeLandingHero.astro';
+import HomeChapterNavigation from '../components/home/HomeChapterNavigation.astro';
 import FadeSection from '../components/react/FadeSection';
 import ProjectCard from '../components/react/ProjectCard';
 import PostCard from '../components/home/PostCard.astro';
@@ -15,12 +16,7 @@ const featuredProjects = await getFeaturedProjects();
 ---
 
 <Base title="Home" description={SITE_DESCRIPTION} fullBleed showEntryLoader scrollSnap>
-  <nav class="home-chapter-rail" aria-label="Homepage chapters">
-    <a href="#introduction" data-rail-link="introduction" aria-label="Introduction"><span>01</span></a>
-    <a href="#projects" data-rail-link="projects" aria-label="Projects"><span>02</span></a>
-    <a href="#notes" data-rail-link="notes" aria-label="Notes"><span>03</span></a>
-    <a href="#contact" data-rail-link="contact" aria-label="Contact"><span>04</span></a>
-  </nav>
+  <HomeChapterNavigation />
 
   <div class="home-content home-sequence">
     <div class="home-hero-panel">
@@ -159,65 +155,3 @@ const featuredProjects = await getFeaturedProjects();
     </section>
   </div>
 </Base>
-
-<script>
-  const chapters = [...document.querySelectorAll('[data-chapter]')];
-  const railLinks = [...document.querySelectorAll('[data-rail-link]')];
-
-  const setActiveChapter = (id) => {
-    railLinks.forEach((link) => {
-      const isActive = link.dataset.railLink === id;
-      link.toggleAttribute('data-active', isActive);
-      link.setAttribute('aria-current', isActive ? 'step' : 'false');
-    });
-  };
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActiveChapter(visible.target.dataset.chapter);
-    },
-    { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
-  );
-
-  chapters.forEach((chapter) => observer.observe(chapter));
-  setActiveChapter(chapters[0]?.dataset.chapter ?? 'introduction');
-
-  const homeHero = document.querySelector('.home-landing-hero');
-  const homeSections = [homeHero, ...chapters].filter(Boolean);
-
-  const isTextControl = (target) => {
-    if (!(target instanceof HTMLElement)) return false;
-    return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
-  };
-
-  const getCurrentSectionIndex = () => {
-    const marker = window.scrollY + window.innerHeight * 0.35;
-    const currentIndex = homeSections.findIndex((section) => {
-      const top = section.offsetTop;
-      return marker >= top && marker < top + section.offsetHeight;
-    });
-
-    return currentIndex === -1 ? 0 : currentIndex;
-  };
-
-  window.addEventListener('keydown', (event) => {
-    if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
-
-    const direction = event.key === 'ArrowDown' ? 1 : -1;
-    const currentIndex = getCurrentSectionIndex();
-    const nextIndex = Math.min(Math.max(currentIndex + direction, 0), homeSections.length - 1);
-    const nextSection = homeSections[nextIndex];
-
-    if (!nextSection || nextIndex === currentIndex) return;
-
-    event.preventDefault();
-    if (nextSection === homeHero) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-</script>
