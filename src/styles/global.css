@@ -149,70 +149,86 @@ html.home-scroll-snap {
 }
 
 .home-chapter__inner {
+  position: relative;
+  z-index: 1;
   display: grid;
   width: 100%;
   align-items: center;
-  gap: clamp(2.5rem, 7vw, 8rem);
 }
 
-.home-chapter__inner--visual-left,
-.home-chapter__inner--visual-right {
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+.home-chapter__inner--copy-left {
+  justify-content: flex-start;
 }
 
-.home-chapter__inner--visual-right .home-chapter__copy {
-  order: 1;
-}
-
-.home-chapter__inner--visual-right .chapter-visual {
-  order: 2;
+.home-chapter__inner--copy-right {
+  justify-content: flex-end;
 }
 
 .home-chapter__copy {
-  position: relative;
-  z-index: 2;
+  width: min(100%, 34rem);
 }
 
-.chapter-visual {
-  position: relative;
-  min-height: clamp(18rem, 43vw, 34rem);
-  overflow: visible;
-  animation: chapter-visual-float 12s ease-in-out infinite alternate;
-  will-change: transform;
+.chapter-art {
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-paper);
 }
 
-.chapter-visual__image {
+.chapter-art::before,
+.chapter-art__wash {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+.chapter-art::before {
+  background: color-mix(in srgb, var(--color-paper) 22%, transparent);
+  opacity: 0.7;
+}
+
+.chapter-art__wash {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-paper) 88%, transparent) 0%,
+    color-mix(in srgb, var(--color-paper) 35%, transparent) 46%,
+    color-mix(in srgb, var(--color-paper) 82%, transparent) 100%
+  );
+}
+
+.chapter-art--intro .chapter-art__wash,
+.chapter-art--notes .chapter-art__wash {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-paper) 28%, transparent) 0%,
+    color-mix(in srgb, var(--color-paper) 38%, transparent) 38%,
+    color-mix(in srgb, var(--color-paper) 94%, transparent) 92%
+  );
+}
+
+.chapter-art--build .chapter-art__wash {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-paper) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-paper) 48%, transparent) 58%,
+    color-mix(in srgb, var(--color-paper) 20%, transparent) 100%
+  );
+}
+
+.chapter-art__image {
   display: block;
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   mix-blend-mode: multiply;
-  opacity: 0.86;
-  transform: scale(1.12);
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 600ms ease;
+  opacity: 0.52;
+  transform: scale(1.04);
+  animation: chapter-art-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.home-chapter:has(.home-chapter__copy:hover) .chapter-visual__image,
-.home-chapter:has(.chapter-visual:hover) .chapter-visual__image {
-  opacity: 1;
-  transform: scale(1.16) rotate(-1deg);
-}
-
-.chapter-visual__thread {
-  position: absolute;
-  bottom: 8%;
-  left: 7%;
-  height: 1px;
-  width: 86%;
-  background: var(--color-ink);
-  opacity: 0.14;
-  transform: rotate(-4deg) scaleX(0.7);
-  transform-origin: left center;
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.home-chapter:hover .chapter-visual__thread {
-  transform: rotate(-4deg) scaleX(1);
+.home-chapter:hover .chapter-art__image {
+  opacity: 0.66;
+  transform: scale(1.08);
 }
 
 .home-chapter--introduction {
@@ -304,9 +320,9 @@ html.home-scroll-snap {
   transform: translateY(3px);
 }
 
-@keyframes chapter-visual-float {
-  from { transform: translate3d(-0.5%, 0, 0) rotate(-0.4deg); }
-  to { transform: translate3d(0.5%, -1.5%, 0) rotate(0.4deg); }
+@keyframes chapter-art-drift {
+  from { transform: scale(1.04) translate3d(-0.5%, 0, 0); }
+  to { transform: scale(1.08) translate3d(0.5%, -1%, 0); }
 }
 
 @media (max-width: 767px) {
@@ -314,31 +330,8 @@ html.home-scroll-snap {
     right: 0.75rem;
   }
 
-  .home-chapter__inner--visual-left,
-  .home-chapter__inner--visual-right {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-
-  .home-chapter__inner--visual-right .home-chapter__copy,
-  .home-chapter__inner--visual-right .chapter-visual,
-  .home-chapter__inner--visual-left .home-chapter__copy,
-  .home-chapter__inner--visual-left .chapter-visual {
-    order: initial;
-  }
-
-  .home-chapter__inner--visual-right .home-chapter__copy,
-  .home-chapter__inner--visual-left .home-chapter__copy {
-    order: 1;
-  }
-
-  .home-chapter__inner--visual-right .chapter-visual,
-  .home-chapter__inner--visual-left .chapter-visual {
-    order: 2;
-  }
-
-  .chapter-visual {
-    min-height: 15rem;
+  .home-chapter__copy {
+    width: min(100%, 28rem);
   }
 }
 
@@ -347,16 +340,14 @@ html.home-scroll-snap {
     scroll-snap-type: none;
   }
 
-  .chapter-visual,
-  .chapter-visual__image,
-  .chapter-visual__thread,
+  .chapter-art__image,
   .hero-scroll-cue__line,
   .hero-scroll-cue__arrow {
     animation: none;
     transition: none;
   }
 
-  .chapter-visual__image {
+  .chapter-art__image {
     transform: none;
   }
 }

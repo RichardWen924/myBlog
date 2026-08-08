@@ -30,19 +30,19 @@ const featuredProjects = await getFeaturedProjects();
     </div>
 
     <section id="introduction" class="home-chapter home-chapter--introduction" data-chapter="introduction">
-      <div class="home-chapter__inner home-chapter__inner--visual-left mx-auto max-w-6xl px-6">
-        <div class="chapter-visual chapter-visual--intro" aria-hidden="true">
-          <img
-            src="/section-introduction-orbit.png"
-            alt=""
-            width="1536"
-            height="1024"
-            loading="lazy"
-            decoding="async"
-            class="chapter-visual__image"
-          />
-          <span class="chapter-visual__thread" aria-hidden="true"></span>
-        </div>
+      <div class="chapter-art chapter-art--intro pointer-events-none absolute inset-0" aria-hidden="true">
+        <img
+          src="/section-introduction-orbit.png"
+          alt=""
+          width="1536"
+          height="1024"
+          loading="lazy"
+          decoding="async"
+          class="chapter-art__image"
+        />
+        <span class="chapter-art__wash" aria-hidden="true"></span>
+      </div>
+      <div class="home-chapter__inner home-chapter__inner--copy-right mx-auto max-w-6xl px-6">
         <div class="home-chapter__copy">
           <SectionEyebrow index="01" label="How I work" status="INTRODUCTION" />
           <FadeSection client:visible className="mt-8">
@@ -64,7 +64,19 @@ const featuredProjects = await getFeaturedProjects();
     {
       featuredProjects.length > 0 && (
         <section id="projects" class="home-chapter home-chapter--projects" data-chapter="projects">
-          <div class="home-chapter__inner home-chapter__inner--visual-right mx-auto max-w-6xl px-6">
+          <div class="chapter-art chapter-art--build pointer-events-none absolute inset-0" aria-hidden="true">
+            <img
+              src="/section-build-route.png"
+              alt=""
+              width="1536"
+              height="1024"
+              loading="lazy"
+              decoding="async"
+              class="chapter-art__image"
+            />
+            <span class="chapter-art__wash" aria-hidden="true"></span>
+          </div>
+          <div class="home-chapter__inner home-chapter__inner--copy-left mx-auto max-w-6xl px-6">
             <div class="home-chapter__copy">
               <SectionEyebrow index="02" label="Things I build" status="SELECTED WORK" />
               <FadeSection client:visible className="mt-8">
@@ -84,18 +96,6 @@ const featuredProjects = await getFeaturedProjects();
                 </a>
               </FadeSection>
             </div>
-            <div class="chapter-visual chapter-visual--build" aria-hidden="true">
-              <img
-                src="/section-build-route.png"
-                alt=""
-                width="1536"
-                height="1024"
-                loading="lazy"
-                decoding="async"
-                class="chapter-visual__image"
-              />
-              <span class="chapter-visual__thread" aria-hidden="true"></span>
-            </div>
           </div>
         </section>
       )
@@ -104,19 +104,19 @@ const featuredProjects = await getFeaturedProjects();
     {
       featuredPosts.length > 0 && (
         <section id="notes" class="home-chapter home-chapter--notes" data-chapter="notes">
-          <div class="home-chapter__inner home-chapter__inner--visual-left mx-auto max-w-6xl px-6">
-            <div class="chapter-visual chapter-visual--notes" aria-hidden="true">
-              <img
-                src="/section-notes-paper.png"
-                alt=""
-                width="1536"
-                height="1024"
-                loading="lazy"
-                decoding="async"
-                class="chapter-visual__image"
-              />
-              <span class="chapter-visual__thread" aria-hidden="true"></span>
-            </div>
+          <div class="chapter-art chapter-art--notes pointer-events-none absolute inset-0" aria-hidden="true">
+            <img
+              src="/section-notes-paper.png"
+              alt=""
+              width="1536"
+              height="1024"
+              loading="lazy"
+              decoding="async"
+              class="chapter-art__image"
+            />
+            <span class="chapter-art__wash" aria-hidden="true"></span>
+          </div>
+          <div class="home-chapter__inner home-chapter__inner--copy-right mx-auto max-w-6xl px-6">
             <div class="home-chapter__copy">
               <SectionEyebrow index="03" label="Notes from the desk" status="RECENT NOTES" />
               <FadeSection client:visible className="mt-8">
