@@ -1,9 +1,10 @@
 import express from 'express';
 import { execFileSync } from 'child_process';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
+import { sortModules, validateModules } from './module-utils.mjs';
 
 const __dirname = resolve(fileURLToPath(new URL('.', import.meta.url)));
 
@@ -11,6 +12,8 @@ const __dirname = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const BLOG_ROOT = resolve(__dirname, '../..');
 const DATA_DIR = join(BLOG_ROOT, 'src/data');
 const CONTENT_DIR = join(BLOG_ROOT, 'src/content/blog');
+const MODULES_DIR = join(BLOG_ROOT, 'src/content/modules');
+const TRUSTED_MODULES_DIR = join(BLOG_ROOT, 'src/modules/trusted');
 
 const app = express();
 app.use(express.json());
@@ -71,6 +74,19 @@ app.get('/api/blog/:slug', (req, res) => {
   }
 });
 
+// GET /api/modules → returns the current module collection entries.
+app.get('/api/modules', (req, res) => {
+  try {
+    if (!existsSync(MODULES_DIR)) return res.json([]);
+    const modules = readdirSync(MODULES_DIR)
+      .filter((file) => file.endsWith('.json'))
+      .map((file) => JSON.parse(readFileSync(join(MODULES_DIR, file), 'utf-8')));
+    res.json(sortModules(modules));
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 // --- Sync APIs ---
 
 // POST /api/sync/data  { topic, data, message }
@@ -105,6 +121,50 @@ app.post('/api/sync/blog', (req, res) => {
     res.json({ ok: true, files: [file], ...result });
   } catch (e) {
     res.status(500).json({ error: String(e) });
+  }
+});
+
+// POST /api/sync/modules { modules, sources, message }
+// Writes the complete module collection and optional trusted TS sources, then commits and pushes.
+app.post('/api/sync/modules', (req, res) => {
+  const { modules, sources = {}, message } = req.body;
+  if (!message) return res.status(400).json({ error: 'Commit message required' });
+  try {
+    validateModules(modules);
+    if (!sources || typeof sources !== 'object' || Array.isArray(sources)) {
+      return res.status(400).json({ error: 'sources must be an object' });
+    }
+    for (const [id, source] of Object.entries(sources)) {
+      if (!/^[a-z0-9][a-z0-9-_]*$/.test(id) || typeof source !== 'string') {
+        return res.status(400).json({ error: `Invalid trusted module source: ${id}` });
+      }
+      if (!modules.some((module) => module.id === id && module.type === 'trusted')) {
+        return res.status(400).json({ error: `Trusted source has no trusted module entry: ${id}` });
+      }
+    }
+
+    mkdirSync(MODULES_DIR, { recursive: true });
+    mkdirSync(TRUSTED_MODULES_DIR, { recursive: true });
+
+    const currentFiles = readdirSync(MODULES_DIR).filter((file) => file.endsWith('.json'));
+    const nextFiles = new Set(modules.map((module) => `${module.id}.json`));
+    for (const file of currentFiles) {
+      if (!nextFiles.has(file)) unlinkSync(join(MODULES_DIR, file));
+    }
+    for (const module of modules) {
+      writeFileSync(join(MODULES_DIR, `${module.id}.json`), JSON.stringify(module, null, 2) + '\n', 'utf-8');
+    }
+
+    const files = modules.map((module) => join('src/content/modules', `${module.id}.json`));
+    for (const [id, source] of Object.entries(sources)) {
+      writeFileSync(join(TRUSTED_MODULES_DIR, `${id}.ts`), source, 'utf-8');
+      files.push(join('src/modules/trusted', `${id}.ts`));
+    }
+
+    const result = gitCommitPush(message);
+    res.json({ ok: true, files, ...result });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message ?? e) });
   }
 });
 
@@ -147,7 +207,7 @@ function toYmd(value) {
 
 function gitCommitPush(message) {
   // execFileSync passes args as an array — no shell interpolation, no injection.
-  execFileSync('git', ['add', 'src/data', 'src/content/blog'], {
+  execFileSync('git', ['add', 'src/data', 'src/content/blog', 'src/content/modules', 'src/modules'], {
     cwd: BLOG_ROOT,
     encoding: 'utf-8',
   });

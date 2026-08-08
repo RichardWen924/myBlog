@@ -4,57 +4,184 @@ import HeroReactive from '../components/react/HeroReactive';
 import FadeSection from '../components/react/FadeSection';
 import ProjectCard from '../components/react/ProjectCard';
 import PostCard from '../components/home/PostCard.astro';
+import SectionEyebrow from '../components/home/SectionEyebrow.astro';
 import profile from '../data/profile';
 import { SITE_DESCRIPTION } from '../lib/constants';
 import { getPublishedPosts, getFeaturedPosts, getFeaturedProjects } from '../lib/content';
 
 const posts = await getPublishedPosts();
 const featuredPosts = getFeaturedPosts(posts);
-const featuredProjects = getFeaturedProjects();
+const featuredProjects = await getFeaturedProjects();
 ---
 
-<Base title="Home" description={SITE_DESCRIPTION}>
-  <!-- Hero: React island, full-screen above fold, offsets main's top padding -->
-  <div class="-mt-12">
-    <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} />
-  </div>
+<Base title="Home" description={SITE_DESCRIPTION} fullBleed showEntryLoader scrollSnap>
+  <nav class="home-chapter-rail" aria-label="Homepage chapters">
+    <a href="#introduction" data-rail-link="introduction" aria-label="Introduction"><span>01</span></a>
+    <a href="#projects" data-rail-link="projects" aria-label="Projects"><span>02</span></a>
+    <a href="#notes" data-rail-link="notes" aria-label="Notes"><span>03</span></a>
+    <a href="#contact" data-rail-link="contact" aria-label="Contact"><span>04</span></a>
+  </nav>
 
-  <!-- Bio: static Astro, zero JS -->
-  <FadeSection client:visible className="mt-14">
-    <div class="prose prose-gray max-w-none">
-      {profile.bio.map((p) => <p>{p}</p>)}
+  <div class="home-content home-sequence">
+    <div class="home-hero-panel">
+      <div class="-mt-12">
+        <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} />
+      </div>
     </div>
-  </FadeSection>
 
-  <!-- Featured Projects: React island, hydrate on scroll -->
-  {
-    featuredProjects.length > 0 && (
-      <FadeSection client:visible className="mt-16">
-        <h2 class="mb-2 font-serif text-2xl font-bold text-ink">Projects</h2>
-        <ul>
-          {featuredProjects.map((project, i) => (
-            <ProjectCard client:visible project={project} index={i} />
-          ))}
-        </ul>
-        <a href="/projects" class="mt-4 inline-block font-mono text-sm text-accent no-underline">
-          View all projects &rarr;
-        </a>
-      </FadeSection>
-    )
-  }
+    <section id="introduction" class="home-chapter home-chapter--introduction" data-chapter="introduction">
+      <div class="home-chapter__inner home-chapter__inner--visual-left mx-auto max-w-6xl px-6">
+        <div class="chapter-visual chapter-visual--intro" aria-hidden="true">
+          <img
+            src="/section-introduction-orbit.png"
+            alt=""
+            width="1536"
+            height="1024"
+            loading="lazy"
+            decoding="async"
+            class="chapter-visual__image"
+          />
+          <span class="chapter-visual__thread" aria-hidden="true"></span>
+        </div>
+        <div class="home-chapter__copy">
+          <SectionEyebrow index="01" label="How I work" status="INTRODUCTION" />
+          <FadeSection client:visible className="mt-8">
+            <h1 class="font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+              Richard builds with clarity.
+            </h1>
+            <div class="prose prose-gray mt-6 max-w-md">
+              {profile.bio.filter((paragraph) => paragraph.trim().length > 0).map((paragraph) => <p>{paragraph}</p>)}
+              {profile.location && <p class="font-mono text-sm text-ink-soft">{profile.location}</p>}
+            </div>
+            <p class="mt-8 max-w-sm text-sm leading-relaxed text-ink-soft">
+              From the first loose idea to the systems that make it dependable, I like finding the line that connects the pieces.
+            </p>
+          </FadeSection>
+        </div>
+      </div>
+    </section>
 
-  <!-- Recent Posts: pure Astro, zero JS -->
-  {
-    featuredPosts.length > 0 && (
-      <section class="mt-16">
-        <h2 class="mb-2 font-serif text-2xl font-bold text-ink">Recent Posts</h2>
-        <ul class="divide-y divide-border">
-          {featuredPosts.map((post, i) => <PostCard post={post} index={i} />)}
-        </ul>
-        <a href="/blog" class="mt-4 inline-block font-mono text-sm text-accent no-underline">
-          View all posts &rarr;
-        </a>
-      </section>
-    )
-  }
+    {
+      featuredProjects.length > 0 && (
+        <section id="projects" class="home-chapter home-chapter--projects" data-chapter="projects">
+          <div class="home-chapter__inner home-chapter__inner--visual-right mx-auto max-w-6xl px-6">
+            <div class="home-chapter__copy">
+              <SectionEyebrow index="02" label="Things I build" status="SELECTED WORK" />
+              <FadeSection client:visible className="mt-8">
+                <h2 class="font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+                  Ideas become useful when they can hold weight.
+                </h2>
+                <p class="mt-5 max-w-md text-base leading-relaxed text-ink-soft">
+                  A small selection of projects, systems and experiments where structure makes room for better work.
+                </p>
+                <ul class="mt-8">
+                  {featuredProjects.map((project, i) => (
+                    <ProjectCard client:visible project={project} index={i} />
+                  ))}
+                </ul>
+                <a href="/projects" class="chapter-link mt-6 inline-flex items-center gap-2 font-mono text-sm text-accent no-underline">
+                  View all projects <span aria-hidden="true">&rarr;</span>
+                </a>
+              </FadeSection>
+            </div>
+            <div class="chapter-visual chapter-visual--build" aria-hidden="true">
+              <img
+                src="/section-build-route.png"
+                alt=""
+                width="1536"
+                height="1024"
+                loading="lazy"
+                decoding="async"
+                class="chapter-visual__image"
+              />
+              <span class="chapter-visual__thread" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      featuredPosts.length > 0 && (
+        <section id="notes" class="home-chapter home-chapter--notes" data-chapter="notes">
+          <div class="home-chapter__inner home-chapter__inner--visual-left mx-auto max-w-6xl px-6">
+            <div class="chapter-visual chapter-visual--notes" aria-hidden="true">
+              <img
+                src="/section-notes-paper.png"
+                alt=""
+                width="1536"
+                height="1024"
+                loading="lazy"
+                decoding="async"
+                class="chapter-visual__image"
+              />
+              <span class="chapter-visual__thread" aria-hidden="true"></span>
+            </div>
+            <div class="home-chapter__copy">
+              <SectionEyebrow index="03" label="Notes from the desk" status="RECENT NOTES" />
+              <FadeSection client:visible className="mt-8">
+                <h2 class="font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+                  Keep the unfinished thoughts.
+                </h2>
+                <p class="mt-5 max-w-md text-base leading-relaxed text-ink-soft">
+                  Short essays, observations and experiments that are still finding their shape.
+                </p>
+                <ul class="mt-8 divide-y divide-border">
+                  {featuredPosts.map((post, i) => <PostCard post={post} index={i} />)}
+                </ul>
+                <a href="/blog" class="chapter-link mt-6 inline-flex items-center gap-2 font-mono text-sm text-accent no-underline">
+                  View all notes <span aria-hidden="true">&rarr;</span>
+                </a>
+              </FadeSection>
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <section id="contact" class="home-chapter home-chapter--contact closing-cta" data-chapter="contact" aria-labelledby="closing-cta-title">
+      <div class="home-chapter__inner mx-auto max-w-4xl px-6">
+        <SectionEyebrow index="04" label="Keep thinking" status="CONTACT" />
+        <FadeSection client:visible className="mt-8 max-w-2xl">
+          <h2 id="closing-cta-title" class="font-serif text-4xl font-semibold leading-tight text-ink md:text-6xl">
+            What are you working through?
+          </h2>
+          <p class="mt-5 max-w-lg text-base leading-relaxed text-ink-soft">
+            欢迎写信来聊聊正在构建的系统、值得记录的观察，或者下一次可以一起解决的问题。
+          </p>
+          {profile.email && (
+            <a href={`mailto:${profile.email}`} class="chapter-link mt-8 inline-flex items-center gap-2 font-mono text-sm text-ink no-underline">
+              {profile.email} <span aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+        </FadeSection>
+      </div>
+    </section>
+  </div>
 </Base>
+
+<script>
+  const chapters = [...document.querySelectorAll('[data-chapter]')];
+  const railLinks = [...document.querySelectorAll('[data-rail-link]')];
+
+  const setActiveChapter = (id) => {
+    railLinks.forEach((link) => {
+      const isActive = link.dataset.railLink === id;
+      link.toggleAttribute('data-active', isActive);
+      link.setAttribute('aria-current', isActive ? 'step' : 'false');
+    });
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveChapter(visible.target.dataset.chapter);
+    },
+    { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
+  );
+
+  chapters.forEach((chapter) => observer.observe(chapter));
+  setActiveChapter(chapters[0]?.dataset.chapter ?? 'introduction');
+</script>

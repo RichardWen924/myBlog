@@ -1,0 +1,248 @@
+<div
+  class="entry-progress-loader"
+  aria-label="Loading page"
+  aria-hidden="false"
+>
+  <div
+    class="entry-progress"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    aria-label="Page loading progress"
+  >
+    <div class="entry-progress__track" aria-hidden="true">
+      <div class="entry-progress__fill"></div>
+    </div>
+
+    <div class="entry-progress__steps" aria-hidden="true">
+      <div class="entry-progress__step is-current" data-progress="0%" data-value="0">
+        <span class="entry-progress__dot"></span>
+        <span class="entry-progress__value">0%</span>
+      </div>
+      <div class="entry-progress__step" data-progress="25%" data-value="25">
+        <span class="entry-progress__dot"></span>
+        <span class="entry-progress__value">25%</span>
+      </div>
+      <div class="entry-progress__step" data-progress="50%" data-value="50">
+        <span class="entry-progress__dot"></span>
+        <span class="entry-progress__value">50%</span>
+      </div>
+      <div class="entry-progress__step" data-progress="75%" data-value="75">
+        <span class="entry-progress__dot"></span>
+        <span class="entry-progress__value">75%</span>
+      </div>
+      <div class="entry-progress__step" data-progress="100%" data-value="100">
+        <span class="entry-progress__dot"></span>
+        <span class="entry-progress__value">100%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .entry-progress-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    min-height: 100dvh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    will-change: transform;
+  }
+
+  /* If the client script cannot load, fail open after the visual has had time
+     to register instead of leaving a fixed layer over the page forever. */
+  .entry-progress-loader:not([data-runtime]) {
+    animation: entry-progress-loader-fallback-exit 2.2s ease 0.1s forwards;
+  }
+
+  .entry-progress-loader:not([data-runtime]) .entry-progress__fill {
+    animation: entry-progress-loader-fallback-fill 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .entry-progress {
+    position: relative;
+    width: 100vw;
+    max-width: none;
+    padding-top: 2.7rem;
+  }
+
+  .entry-progress__track {
+    position: absolute;
+    top: 0.42rem;
+    right: 0;
+    left: 0;
+    height: 1px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+
+  .entry-progress__fill {
+    width: 100%;
+    height: 100%;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .entry-progress__steps {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .entry-progress__step {
+    display: flex;
+    min-width: 2.75rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--color-ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: -0.04em;
+    transition: color 220ms ease, transform 220ms ease;
+  }
+
+  .entry-progress__dot {
+    display: block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-paper);
+    transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease,
+      transform 220ms ease;
+  }
+
+  .entry-progress__step.is-complete {
+    color: var(--color-accent);
+  }
+
+  .entry-progress__step.is-complete .entry-progress__dot {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+  }
+
+  .entry-progress__step.is-current {
+    transform: translateY(-0.2rem);
+  }
+
+  .entry-progress__step.is-current .entry-progress__dot {
+    border-color: var(--color-warm);
+    background: var(--color-warm);
+    box-shadow: 0 0 0 0.28rem color-mix(in srgb, var(--color-warm) 14%, transparent);
+    transform: scale(1.08);
+  }
+
+  @media (max-width: 520px) {
+    .entry-progress {
+      padding-top: 2.35rem;
+    }
+
+    .entry-progress__step {
+      min-width: 2.35rem;
+      font-size: 0.58rem;
+    }
+
+    .entry-progress__dot {
+      width: 0.68rem;
+      height: 0.68rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .entry-progress__step,
+    .entry-progress__dot {
+      transition: none;
+    }
+  }
+
+  @keyframes entry-progress-loader-fallback-fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes entry-progress-loader-fallback-exit {
+    to {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const loader = document.querySelector('.entry-progress-loader');
+  const fill = loader?.querySelector('.entry-progress__fill');
+  const progressbar = loader?.querySelector('[role="progressbar"]');
+  const milestones = loader ? gsap.utils.toArray('.entry-progress__step', loader) : [];
+  const pageContent = document.querySelector('[data-entry-content]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const setProgress = (value: number) => {
+    progressbar?.setAttribute('aria-valuenow', String(value));
+
+    milestones.forEach((step) => {
+      const stepValue = Number((step as HTMLElement).dataset.value);
+      step.classList.toggle('is-complete', stepValue <= value);
+      step.classList.toggle('is-current', stepValue === value);
+    });
+  };
+
+  const lockDocument = () => {
+    document.documentElement.classList.add('entry-progress-lock');
+    pageContent?.setAttribute('inert', '');
+  };
+
+  const unlockDocument = () => {
+    document.documentElement.classList.remove('entry-progress-lock');
+    pageContent?.removeAttribute('inert');
+  };
+
+  const removeLoader = () => {
+    loader?.setAttribute('aria-hidden', 'true');
+    gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
+    unlockDocument();
+    loader?.remove();
+  };
+
+  if (loader && fill && progressbar) {
+    loader.dataset.runtime = 'js';
+    lockDocument();
+
+    if (reducedMotion) {
+      setProgress(100);
+      gsap.set(fill, { scaleX: 1 });
+      window.setTimeout(() => removeLoader(), 180);
+    } else {
+      const timeline = gsap.timeline({
+        defaults: { ease: 'power2.out' },
+        onComplete: () => {
+          loader.setAttribute('aria-hidden', 'true');
+          gsap.to(loader, {
+            yPercent: -100,
+            duration: 0.65,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              removeLoader();
+            },
+          });
+        },
+      });
+
+      [0, 25, 50, 75, 100].forEach((value, index) => {
+        const duration = index === 0 ? 0.08 : 0.305;
+        timeline.to({}, { duration, onStart: () => setProgress(value) });
+        timeline.to(fill, { scaleX: value / 100, duration }, '<');
+      });
+    }
+  }
+</script>

@@ -1,3 +1,25 @@
+import type { ComponentType, ReactNode } from 'react';
+
+export type ModuleType =
+  | 'hero'
+  | 'profile'
+  | 'skill'
+  | 'project'
+  | 'experience'
+  | 'post'
+  | 'trusted';
+
+export interface ModuleEntry<T = Record<string, unknown>> {
+  id: string;
+  type: ModuleType;
+  group: string;
+  title: string;
+  order: number;
+  visible: boolean;
+  sourceId?: string;
+  data?: T;
+}
+
 export interface Profile {
   name: string;
   title: string;
@@ -47,22 +69,14 @@ export interface ExperienceItem {
   technologies?: string[];
 }
 
-export type ModuleType =
-  | 'hero'
-  | 'profile'
-  | 'skill'
-  | 'project'
-  | 'experience'
-  | 'post'
-  | 'trusted';
+export interface TrustedModuleProps {
+  data: Record<string, unknown>;
+  module: ModuleEntry;
+}
 
-export interface ModuleEntry {
+export interface TrustedModuleDefinition {
   id: string;
-  type: ModuleType;
-  group: string;
   title: string;
-  order: number;
-  visible: boolean;
-  sourceId?: string;
-  data?: Record<string, unknown>;
+  Component: ComponentType<TrustedModuleProps>;
+  render?: (props: TrustedModuleProps) => ReactNode;
 }

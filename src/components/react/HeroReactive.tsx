@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import BlurText from './bits/BlurText';
+import DynamicIllustration from './DynamicIllustration';
+import PromptNav from './PromptNav';
 
 interface HeroReactiveProps {
   name: string;
@@ -10,32 +11,33 @@ interface HeroReactiveProps {
 /**
  * Claude-style hero adapted to the paper-feel spec:
  * visual (left) + content (right: serif heading → subtitle → prompt field).
- * The prompt field is decorative for now — no backend.
+ * The prompt choices are navigation links, not a backend-powered form.
  */
 export default function HeroReactive({ name, title, email }: HeroReactiveProps) {
-  const [value, setValue] = useState('');
-
   return (
-    <section className="relative flex min-h-screen items-center">
-      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-10 px-4 md:grid-cols-5 md:gap-8">
-        {/* Left visual: hand-drawn scribble circle (paper substitute for Lottie) */}
-        <div className="flex items-start justify-center pt-6 md:col-span-2">
-        <svg
-          viewBox="0 0 120 120"
-          className="h-44 w-44 text-accent opacity-40"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <path d="M60,6 C90,10 112,34 112,60 C112,86 90,110 60,114 C30,110 8,86 8,60 C8,34 30,10 60,6 Z" />
-          <path d="M60,18 C82,22 100,42 100,60 C100,78 82,98 60,102 C38,98 20,78 20,60 C20,42 38,22 60,18 Z" opacity="0.5" />
-        </svg>
+    <section className="hero-stage relative isolate flex items-center overflow-hidden">
+      {/* Generated thinking orbit: a soft, full-bleed paper layer behind the Hero */}
+      <div
+        className="hero-thinking-orbit pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <img
+          src="/hero-thinking-orbit.png"
+          alt=""
+          width="1536"
+          height="1024"
+          loading="eager"
+          decoding="async"
+          className="h-full w-full object-cover object-left mix-blend-multiply"
+        />
+
       </div>
 
-      {/* Right content: heading → subtitle → prompt field */}
-        <div className="flex flex-col items-start md:col-span-3 md:items-end">
+      <DynamicIllustration />
+
+      <div className="relative z-10 mx-auto grid w-full max-w-4xl grid-cols-1 gap-10 px-4 md:grid-cols-5 md:gap-8">
+        {/* Hero content: heading → subtitle → prompt field */}
+        <div className="flex flex-col items-start md:col-span-3 md:col-start-3 md:items-end">
           <BlurText
             text={name}
             className="font-serif text-5xl font-bold leading-tight text-ink md:text-right"
@@ -43,6 +45,12 @@ export default function HeroReactive({ name, title, email }: HeroReactiveProps) 
             animateBy="characters"
           />
           <p className="mt-4 text-right text-lg text-ink-soft">{title}</p>
+
+          <div className="mt-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-soft/60">
+            <span>Personal site</span>
+            <span aria-hidden="true">·</span>
+            <span>{title}</span>
+          </div>
 
           {/* Hand-drawn underline, warm accent */}
           <svg
@@ -57,28 +65,17 @@ export default function HeroReactive({ name, title, email }: HeroReactiveProps) 
             <path d="M3,6 Q30,1 60,6 T117,5" />
           </svg>
 
-          {/* Prompt field — Claude-style, paper-feel, decorative for now */}
-          <div className="mt-10 w-full md:max-w-md">
-            <label
-              htmlFor="hero-prompt"
-              className="mb-2 block font-mono text-xs tracking-wide text-ink-soft/70"
-            >
-              对这个世界，我好奇的是…
-            </label>
-            <div className="relative">
-              <input
-                id="hero-prompt"
-                type="text"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="输入你的想法，然后按下回车"
-                className="w-full border-b border-border bg-transparent py-3 pr-10 font-serif text-base text-ink placeholder:text-ink-soft/40 focus:border-accent focus:outline-none"
-              />
-              {/* Paper arrow at the right */}
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 font-mono text-accent" aria-hidden="true">
-                &rarr;
-              </span>
-            </div>
+          <div className="mt-10 w-full md:max-w-lg">
+            <p className="mb-3 text-right font-mono text-xs tracking-wide text-ink-soft/70">
+              从这里开始探索
+            </p>
+            <PromptNav
+              items={[
+                { label: 'Build', hint: 'projects and systems', href: '/projects', accent: 'sage' },
+                { label: 'Think', hint: 'about the way I work', href: '/about', accent: 'warm' },
+                { label: 'Note', hint: 'short essays and experiments', href: '/blog', accent: 'sage' },
+              ]}
+            />
             {email && (
               <p className="mt-3 text-xs text-ink-soft/60">
                 或者，直接给我写信：{' '}
@@ -90,6 +87,14 @@ export default function HeroReactive({ name, title, email }: HeroReactiveProps) 
           </div>
         </div>
       </div>
+
+      <a className="hero-scroll-cue" href="#introduction" aria-label="Scroll to introduction">
+        <span className="hero-scroll-cue__label font-mono text-[10px] uppercase tracking-[0.18em]">
+          Continue
+        </span>
+        <span className="hero-scroll-cue__line" aria-hidden="true" />
+        <span className="hero-scroll-cue__arrow" aria-hidden="true">↓</span>
+      </a>
     </section>
   );
 }

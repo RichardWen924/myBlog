@@ -1,0 +1,9 @@
+{
+  "id": "post-hello-blog",
+  "type": "post",
+  "group": "blog",
+  "title": "Hello, Blog",
+  "order": 70,
+  "visible": true,
+  "sourceId": "hello-blog"
+}

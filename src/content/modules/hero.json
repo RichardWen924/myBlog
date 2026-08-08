@@ -1,0 +1,13 @@
+{
+  "id": "hero",
+  "type": "hero",
+  "group": "home",
+  "title": "Hero",
+  "order": 0,
+  "visible": true,
+  "data": {
+    "name": "Richard",
+    "title": "backend Developer",
+    "email": "Wen314016548@163.com"
+  }
+}

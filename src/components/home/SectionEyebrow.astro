@@ -1,0 +1,18 @@
+---
+interface Props {
+  index: string;
+  label: string;
+  status?: string;
+}
+
+const { index, label, status } = Astro.props;
+---
+
+<div class="section-eyebrow" aria-label={`${index} ${label}`}>
+  <span class="section-eyebrow__index font-mono text-xs text-accent">({index})</span>
+  <span class="section-eyebrow__label font-mono text-xs uppercase tracking-[0.18em] text-ink-soft">
+    {label}
+  </span>
+  <span class="section-eyebrow__line" aria-hidden="true"></span>
+  {status && <span class="section-eyebrow__status font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/55">{status}</span>}
+</div>

@@ -5,6 +5,7 @@ import ProjectEditor from './components/ProjectEditor';
 import SkillsEditor from './components/SkillsEditor';
 import ExperienceEditor from './components/ExperienceEditor';
 import BlogEditor from './components/BlogEditor';
+import ModulesEditor from './components/ModulesEditor';
 
 export default function App() {
   return (
@@ -12,7 +13,8 @@ export default function App() {
       <Nav />
       <main className="flex-1 overflow-auto p-6">
         <Routes>
-          <Route path="/" element={<Navigate to="/profile" replace />} />
+          <Route path="/" element={<Navigate to="/modules" replace />} />
+          <Route path="/modules" element={<ModulesEditor />} />
           <Route path="/profile" element={<ProfileEditor />} />
           <Route path="/projects" element={<ProjectEditor />} />
           <Route path="/skills" element={<SkillsEditor />} />

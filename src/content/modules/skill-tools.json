@@ -1,0 +1,16 @@
+{
+  "id": "skill-tools",
+  "type": "skill",
+  "group": "skills",
+  "title": "Tools",
+  "order": 50,
+  "visible": true,
+  "data": {
+    "category": "Tools",
+    "items": [
+      { "name": "Git", "level": 5 },
+      { "name": "Figma", "level": 3 },
+      { "name": "Docker", "level": 3 }
+    ]
+  }
+}

@@ -1,8 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import FadeSection from '../components/react/FadeSection';
-import SkillsGrid from '../components/react/SkillsGrid';
+import SkillsOrbit from '../components/react/SkillsOrbit';
 import Timeline from '../components/react/Timeline';
+import SectionEyebrow from '../components/home/SectionEyebrow.astro';
 import profile from '../data/profile';
 import { PROFILE } from '../lib/constants';
 
@@ -11,38 +12,65 @@ const socialLinks = Object.entries(PROFILE.socials).filter(
 );
 ---
 
-<Base title="About">
-  <div class="mx-auto max-w-prose pt-8">
-    <h1 class="font-serif text-3xl font-bold text-ink">About</h1>
+<Base title="About" fullBleed>
+  <section class="about-skill-hero">
+    <div class="about-skill-layout mx-auto max-w-6xl px-6">
+      <div class="about-skill-copy">
+        <SectionEyebrow index="01" label="Skill map" status="ABOUT / PRACTICE" />
+        <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+          How I turn ideas into systems.
+        </h1>
+        <div class="prose prose-gray mt-6 max-w-md">
+          {profile.bio.filter((paragraph) => paragraph.trim().length > 0).map((paragraph) => <p>{paragraph}</p>)}
+          {profile.location && <p class="font-mono text-sm text-ink-soft">{profile.location}</p>}
+        </div>
 
-    <!-- Bio: static -->
-    <div class="prose prose-gray mt-8 max-w-none">
-      {profile.bio.map((p) => <p>{p}</p>)}
-      {profile.location && (
-        <p class="font-mono text-sm text-ink-soft">
-          {profile.location}
-        </p>
-      )}
+        <div class="about-skill-signals mt-12">
+          <div class="about-skill-signal">
+            <span class="about-skill-signal__index font-mono text-xs text-accent">01</span>
+            <div>
+              <h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2>
+              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Reliable backend systems with interfaces that stay understandable.</p>
+            </div>
+          </div>
+          <div class="about-skill-signal">
+            <span class="about-skill-signal__index font-mono text-xs text-accent">02</span>
+            <div>
+              <h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2>
+              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Tools, patterns and people connected by thoughtful decisions.</p>
+            </div>
+          </div>
+          <div class="about-skill-signal">
+            <span class="about-skill-signal__index font-mono text-xs text-accent">03</span>
+            <div>
+              <h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2>
+              <p class="mt-1 text-sm leading-relaxed text-ink-soft">Hover a category to see the technologies orbiting around it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-skill-visual">
+        <SkillsOrbit client:load />
+      </div>
     </div>
+  </section>
 
-    <!-- Skills: React island (animated hairline bars) -->
-    <FadeSection client:visible className="mt-16">
-      <h2 class="mb-6 font-serif text-2xl font-bold text-ink">Skills</h2>
-      <SkillsGrid client:visible />
-    </FadeSection>
-
+  <div class="about-content mx-auto max-w-4xl px-4">
     <!-- Experience: React island (scroll-triggered timeline) -->
-    <FadeSection client:visible className="mt-16">
-      <h2 class="mb-6 font-serif text-2xl font-bold text-ink">Experience</h2>
-      <Timeline client:visible />
+    <FadeSection client:visible className="mt-24">
+      <SectionEyebrow index="02" label="Experience" status="TIMELINE" />
+      <div class="mt-8">
+        <Timeline client:visible />
+      </div>
     </FadeSection>
 
     <!-- Social links: plain text, no icons -->
     {
       socialLinks.length > 0 && (
-        <div class="mt-16 border-t border-border pt-8">
-          <h2 class="mb-4 font-serif text-xl font-bold text-ink">Links</h2>
-          <ul class="space-y-2">
+        <div class="mt-24 border-t border-border pt-8">
+          <SectionEyebrow index="03" label="Links" status="ELSEWHERE" />
+          <ul class="mt-6 space-y-2">
             {socialLinks.map(([label, href]) => (
               <li>
                 <a

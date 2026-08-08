@@ -1,0 +1,16 @@
+{
+  "id": "skill-languages",
+  "type": "skill",
+  "group": "skills",
+  "title": "Languages",
+  "order": 30,
+  "visible": true,
+  "data": {
+    "category": "Languages",
+    "items": [
+      { "name": "TypeScript", "level": 5 },
+      { "name": "JavaScript", "level": 5 },
+      { "name": "Python", "level": 3 }
+    ]
+  }
+}

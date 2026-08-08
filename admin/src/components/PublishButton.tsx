@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface PublishButtonProps {
-  topic: 'data' | 'blog';
+  topic: 'data' | 'blog' | 'modules';
   payload: Record<string, unknown>;
   defaultMessage?: string;
   onSuccess?: () => void;

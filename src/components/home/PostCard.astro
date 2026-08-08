@@ -9,7 +9,7 @@ interface Props {
 const { post, index = 0 } = Astro.props;
 ---
 
-<li class="py-5 animate-reveal" style={`animation-delay: ${index * 80}ms`}>
+<li class="post-row group py-5 animate-reveal" style={`animation-delay: ${index * 80}ms`}>
   <a href={`/blog/${post.id}`} class="group block no-underline">
     <h2 class="font-serif text-lg font-semibold leading-snug text-ink">
       {post.data.title}
@@ -24,6 +24,9 @@ const { post, index = 0 } = Astro.props;
       {post.data.tags.slice(0, 2).map((tag) => (
         <span class="font-mono text-xs text-accent/60">#{tag}</span>
       ))}
+      <span class="post-row__arrow ml-auto font-mono text-sm text-accent opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100" aria-hidden="true">
+        &rarr;
+      </span>
     </div>
   </a>
 </li>
