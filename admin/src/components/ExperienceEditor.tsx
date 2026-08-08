@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTopicData } from '../lib/useTopicData';
-import PublishButton from './PublishButton';
+import SaveButton from './SaveButton';
 import type { ExperienceItem } from '../data-types';
 
 export default function ExperienceEditor() {
@@ -137,10 +137,9 @@ export default function ExperienceEditor() {
         )}
       </div>
 
-      <PublishButton
+      <SaveButton
         topic="data"
         payload={{ topic: 'experience', data: { experience: items } }}
-        defaultMessage="Update experience"
         onSuccess={reload}
       />
     </div>

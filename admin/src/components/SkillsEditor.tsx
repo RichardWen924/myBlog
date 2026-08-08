@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTopicData } from '../lib/useTopicData';
-import PublishButton from './PublishButton';
+import SaveButton from './SaveButton';
 import type { SkillCategory } from '../data-types';
 
 export default function SkillsEditor() {
@@ -102,10 +102,9 @@ export default function SkillsEditor() {
         + Add category
       </button>
 
-      <PublishButton
+      <SaveButton
         topic="data"
         payload={{ topic: 'skills', data: { skills } }}
-        defaultMessage="Update skills"
         onSuccess={reload}
       />
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import PublishButton from './PublishButton';
+import SaveButton from './SaveButton';
 
 interface PostMeta {
   slug: string;
@@ -165,7 +165,7 @@ export default function BlogEditor() {
               />
             </Field>
 
-            <PublishButton
+            <SaveButton
               topic="blog"
               payload={{
                 slug: detail.slug,
@@ -179,7 +179,6 @@ export default function BlogEditor() {
                 },
                 content: detail.content,
               }}
-              defaultMessage={`Update post: ${detail.data.title}`}
               onSuccess={() => loadPosts()}
             />
           </div>

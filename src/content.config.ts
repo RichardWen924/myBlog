@@ -15,21 +15,4 @@ const blog = defineCollection({
   }),
 });
 
-const modules = defineCollection({
-  loader: glob({
-    base: './src/content/modules',
-    pattern: '**/*.json',
-  }),
-  schema: z.object({
-    id: z.string(),
-    type: z.enum(['hero', 'profile', 'skill', 'project', 'experience', 'post', 'trusted']),
-    group: z.string(),
-    title: z.string(),
-    order: z.number().int().nonnegative(),
-    visible: z.boolean().default(true),
-    sourceId: z.string().optional(),
-    data: z.record(z.string(), z.unknown()).optional(),
-  }),
-});
-
-export const collections = { blog, modules };
+export const collections = { blog };

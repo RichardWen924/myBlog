@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTopicData } from '../lib/useTopicData';
-import PublishButton from './PublishButton';
+import SaveButton from './SaveButton';
 import type { Profile } from '../data-types';
 
 export default function ProfileEditor() {
@@ -80,10 +80,9 @@ export default function ProfileEditor() {
         </div>
       </div>
 
-      <PublishButton
+      <SaveButton
         topic="data"
         payload={{ topic: 'profile', data: profile }}
-        defaultMessage="Update profile"
         onSuccess={reload}
       />
     </div>

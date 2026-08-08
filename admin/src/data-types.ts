@@ -46,23 +46,3 @@ export interface ExperienceItem {
   description: string[];
   technologies?: string[];
 }
-
-export type ModuleType =
-  | 'hero'
-  | 'profile'
-  | 'skill'
-  | 'project'
-  | 'experience'
-  | 'post'
-  | 'trusted';
-
-export interface ModuleEntry {
-  id: string;
-  type: ModuleType;
-  group: string;
-  title: string;
-  order: number;
-  visible: boolean;
-  sourceId?: string;
-  data?: Record<string, unknown>;
-}

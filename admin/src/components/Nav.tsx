@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 
 const links = [
-  { to: '/modules', label: 'Modules' },
   { to: '/profile', label: 'Profile' },
   { to: '/projects', label: 'Projects' },
   { to: '/skills', label: 'Skills' },
@@ -34,8 +33,8 @@ export default function Nav() {
       </nav>
       <div className="mt-8 border-t border-border pt-4">
         <p className="px-2 text-xs text-ink-soft">
-          Edits are written to <code>src/content/modules/*.json</code> and{' '}
-          <code>src/modules/trusted/*.ts</code>, then committed and pushed.
+          Changes are saved directly to <code>src/data</code> and{' '}
+          <code>src/content/blog</code>. Use Git separately when you are ready to version or deploy them.
         </p>
       </div>
     </aside>
