@@ -20,3 +20,15 @@ test('home owns the GSAP landing hero while work owns the previous reactive hero
   assert.match(hero, /ScrollTrigger/);
   assert.match(hero, /prefers-reduced-motion/);
 });
+
+test('home hero uses a welcome message and keeps the copy visible after scroll reset', () => {
+  const heroPath = resolve(root, 'src/components/home/HomeLandingHero.astro');
+  const hero = readFileSync(heroPath, 'utf8');
+  const copyTween = hero.match(/gsap\.to\(copy,[\s\S]*?\n      \}\);/)?.[0];
+
+  assert.match(hero, /<span>Welcome to<\/span>/);
+  assert.match(hero, /<em>Richard's notes\.<\/em>/);
+  assert.doesNotMatch(hero, /<em>in progress\.<\/em>/);
+  assert.ok(copyTween, 'expected a scroll tween for the hero copy');
+  assert.doesNotMatch(copyTween, /autoAlpha|opacity/);
+});
