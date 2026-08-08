@@ -395,7 +395,6 @@ html.home-scroll-snap {
   padding-top: 1rem;
 }
 
-.home-landing-hero__index-rule { height: 3rem; width: 1px; background: var(--color-border); }
 .home-landing-hero__copy { max-width: 37rem; }
 .home-landing-hero__title { margin-top: 1.15rem; color: var(--color-ink); font-family: var(--font-serif); font-size: clamp(4.5rem, 10vw, 9.5rem); font-weight: 600; letter-spacing: -0.075em; line-height: 0.86; }
 .home-landing-hero__title span,
@@ -974,11 +973,6 @@ html.home-scroll-snap {
     flex-direction: row;
     align-items: center;
     padding-top: 0;
-  }
-
-  .home-landing-hero__index-rule {
-    height: 1px;
-    width: 2rem;
   }
 
   .home-landing-hero__copy {

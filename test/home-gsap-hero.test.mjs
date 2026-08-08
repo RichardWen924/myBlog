@@ -32,3 +32,13 @@ test('home hero uses a welcome message and keeps the copy visible after scroll r
   assert.ok(copyTween, 'expected a scroll tween for the hero copy');
   assert.doesNotMatch(copyTween, /autoAlpha|opacity/);
 });
+
+test('home hero archive metadata has no decorative divider', () => {
+  const heroPath = resolve(root, 'src/components/home/HomeLandingHero.astro');
+  const stylesPath = resolve(root, 'src/styles/global.css');
+  const hero = readFileSync(heroPath, 'utf8');
+  const styles = readFileSync(stylesPath, 'utf8');
+
+  assert.doesNotMatch(hero, /home-landing-hero__index-rule/);
+  assert.doesNotMatch(styles, /home-landing-hero__index-rule/);
+});
