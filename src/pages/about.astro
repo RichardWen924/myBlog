@@ -3,10 +3,9 @@ import Base from '../layouts/Base.astro';
 import FadeSection from '../components/react/FadeSection';
 import SectionEyebrow from '../components/home/SectionEyebrow.astro';
 import profile from '../data/profile';
-import { PROFILE } from '../lib/constants';
 
-const socialLinks = Object.entries(PROFILE.socials).filter(
-  ([, href]) => typeof href === 'string',
+const socialLinks = Object.entries(profile.socials).filter(
+  ([label, href]): href is string => label !== 'email' && typeof href === 'string',
 );
 ---
 
@@ -73,6 +72,13 @@ const socialLinks = Object.entries(PROFILE.socials).filter(
               </a>
             </li>
           ))}
+          {profile.email && (
+            <li>
+              <a href={`mailto:${profile.email}`} class="font-mono text-sm text-accent no-underline">
+                email &rarr;
+              </a>
+            </li>
+          )}
           <li><a href="/blog" class="font-mono text-sm text-accent no-underline">Notes &rarr;</a></li>
         </ul>
       </div>

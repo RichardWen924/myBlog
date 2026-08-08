@@ -4,7 +4,9 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFile
 import { resolve, join } from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
+import { getBlogFile, sanitizeBlogSlug } from './blog-utils.mjs';
 import { sortModules, validateModules } from './module-utils.mjs';
+import { isAllowedAdminOrigin } from './security-utils.mjs';
 
 const __dirname = resolve(fileURLToPath(new URL('.', import.meta.url)));
 
@@ -17,6 +19,10 @@ const TRUSTED_MODULES_DIR = join(BLOG_ROOT, 'src/modules/trusted');
 
 const app = express();
 app.use(express.json());
+app.use('/api/sync', (req, res, next) => {
+  if (isAllowedAdminOrigin(req.get('origin'))) return next();
+  return res.status(403).json({ error: 'Origin not allowed' });
+});
 
 // --- Read APIs ---
 
@@ -61,10 +67,13 @@ app.get('/api/blog', (req, res) => {
 
 // GET /api/blog/:slug  →  returns full frontmatter + content of one post
 app.get('/api/blog/:slug', (req, res) => {
-  const { slug } = req.params;
-  const file = join(CONTENT_DIR, `${slug}.md`);
-  const fileMdx = join(CONTENT_DIR, `${slug}.mdx`);
-  const target = existsSync(file) ? file : existsSync(fileMdx) ? fileMdx : null;
+  let slug;
+  try {
+    slug = sanitizeBlogSlug(req.params.slug);
+  } catch {
+    return res.status(400).json({ error: 'Invalid post slug' });
+  }
+  const target = getBlogFile(CONTENT_DIR, slug);
   if (!target) return res.status(404).json({ error: 'Post not found' });
   try {
     const parsed = matter(readFileSync(target, 'utf-8'));
@@ -109,18 +118,27 @@ app.post('/api/sync/data', (req, res) => {
 // POST /api/sync/blog  { slug, data, content, message }
 // Writes/creates <slug>.md in src/content/blog/, then git commit + push
 app.post('/api/sync/blog', (req, res) => {
-  const { slug, data, content, message } = req.body;
-  if (!slug || !data || !content) return res.status(400).json({ error: 'slug/data/content required' });
+  const { slug, originalSlug = slug, data, content, message } = req.body;
+  if (!slug || !data || typeof content !== 'string') return res.status(400).json({ error: 'slug/data/content required' });
   if (!message) return res.status(400).json({ error: 'Commit message required' });
-  const safeSlug = slug.replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
-  const file = join(CONTENT_DIR, `${safeSlug}.md`);
-  const frontmatter = matter.stringify(content, data);
   try {
+    const safeSlug = sanitizeBlogSlug(slug);
+    const safeOriginalSlug = sanitizeBlogSlug(originalSlug);
+    const originalFile = getBlogFile(CONTENT_DIR, safeOriginalSlug);
+    const existingTarget = getBlogFile(CONTENT_DIR, safeSlug);
+    if (existingTarget && existingTarget !== originalFile) {
+      return res.status(409).json({ error: 'A post with that slug already exists' });
+    }
+
+    const extension = originalFile?.endsWith('.mdx') ? '.mdx' : '.md';
+    const file = join(CONTENT_DIR, `${safeSlug}${extension}`);
+    const frontmatter = matter.stringify(content, data);
     writeFileSync(file, frontmatter, 'utf-8');
+    if (originalFile && originalFile !== file) unlinkSync(originalFile);
     const result = gitCommitPush(message);
     res.json({ ok: true, files: [file], ...result });
   } catch (e) {
-    res.status(500).json({ error: String(e) });
+    res.status(400).json({ error: String(e.message ?? e) });
   }
 });
 
@@ -232,7 +250,8 @@ function gitCommitPush(message) {
 }
 
 const PORT = process.env.PORT || 8787;
-app.listen(PORT, () => {
-  console.log(`[admin] API server running at http://localhost:${PORT}`);
+const HOST = process.env.ADMIN_HOST || '127.0.0.1';
+app.listen(PORT, HOST, () => {
+  console.log(`[admin] API server running at http://${HOST}:${PORT}`);
   console.log(`[admin] data dir: ${DATA_DIR}`);
 });

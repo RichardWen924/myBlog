@@ -28,3 +28,8 @@ test('about page is personal rather than a duplicate technical profile', () => {
   assert.doesNotMatch(about, /SkillsOrbit/);
   assert.doesNotMatch(about, /<Timeline/);
 });
+
+test('about page uses the canonical profile email', () => {
+  assert.match(about, /profile\.email/);
+  assert.doesNotMatch(about, /PROFILE\.socials/);
+});

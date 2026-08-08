@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { sanitizeBlogSlug } from './blog-utils.mjs';
 import { moveModule, sortModules, validateModules } from './module-utils.mjs';
+import { isAllowedAdminOrigin } from './security-utils.mjs';
 
 const modules = [
   { id: 'project', type: 'project', group: 'projects', title: 'Project', order: 20, visible: true },
@@ -42,4 +44,16 @@ test('validateModules rejects duplicate ids and invalid fields', () => {
     () => validateModules([{ ...modules[0], visible: 'yes' }]),
     /visible/i,
   );
+});
+
+test('sanitizeBlogSlug produces a safe stable filename slug', () => {
+  assert.equal(sanitizeBlogSlug('  Hello, New Post!  '), 'hello-new-post');
+  assert.throws(() => sanitizeBlogSlug('---'), /slug/i);
+});
+
+test('admin mutation origin policy allows local tools and rejects foreign origins', () => {
+  assert.equal(isAllowedAdminOrigin(undefined), true);
+  assert.equal(isAllowedAdminOrigin('http://localhost:5173'), true);
+  assert.equal(isAllowedAdminOrigin('http://127.0.0.1:5173'), true);
+  assert.equal(isAllowedAdminOrigin('https://attacker.example'), false);
 });

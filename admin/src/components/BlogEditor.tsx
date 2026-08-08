@@ -169,6 +169,7 @@ export default function BlogEditor() {
               topic="blog"
               payload={{
                 slug: detail.slug,
+                originalSlug: selectedSlug ?? detail.slug,
                 data: {
                   title: detail.data.title,
                   description: detail.data.description ?? '',
