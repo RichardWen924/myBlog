@@ -118,6 +118,11 @@ a:hover {
   transition: color 180ms ease;
 }
 
+.site-header__inner {
+  width: min(calc(100% - clamp(2rem, 10vw, 10rem)), 72rem);
+  margin-inline: auto;
+}
+
 .site-header__link::after {
   position: absolute;
   right: 0;

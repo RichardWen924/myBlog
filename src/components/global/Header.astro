@@ -1,57 +1,17 @@
 ---
 import { SITE_TITLE } from '../../lib/constants';
+import { getNavigationItems } from '../../data/navigation';
+import HeaderBrand from './HeaderBrand.astro';
+import HeaderLinks from './HeaderLinks.astro';
+import HeaderMobileMenu from './HeaderMobileMenu.astro';
 
-const pathname = Astro.url.pathname;
-const isActive = (href: string) => {
-  if (href === '/') return pathname === '/';
-  if (href === '/work') {
-    return pathname === '/work' || pathname === '/projects' || pathname.startsWith('/projects/');
-  }
-  return pathname === href || pathname.startsWith(`${href}/`);
-};
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Work', href: '/work' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'About', href: '/about' },
-].map((item) => ({ ...item, active: isActive(item.href) }));
+const navItems = getNavigationItems(Astro.url.pathname);
 ---
 
 <header class="sticky top-0 z-40 border-b border-border bg-paper/90 backdrop-blur-sm">
-  <nav class="relative mx-auto flex max-w-4xl items-center justify-between px-4 py-4" aria-label="Primary navigation">
-    <a href="/" class="font-serif text-xl font-bold text-ink no-underline">
-      {SITE_TITLE}
-    </a>
-
-    <div class="site-header__desktop-links hidden items-center gap-6 md:flex">
-      {navItems.map((item) => (
-        <a
-          href={item.href}
-          class:list={['site-header__link', { 'is-active': item.active }]}
-          aria-current={item.active ? 'page' : undefined}
-        >
-          {item.label}
-        </a>
-      ))}
-    </div>
-
-    <details class="site-header__mobile md:hidden">
-      <summary class="site-header__menu" aria-label="Open navigation menu">
-        <span>Menu</span>
-        <span class="site-header__menu-icon" aria-hidden="true">↘</span>
-      </summary>
-      <div class="site-header__mobile-panel">
-        {navItems.map((item) => (
-          <a
-            href={item.href}
-            class:list={['site-header__link', { 'is-active': item.active }]}
-            aria-current={item.active ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-    </details>
+  <nav class="site-header__inner relative flex items-center justify-between py-4" aria-label="Primary navigation">
+    <HeaderBrand title={SITE_TITLE} />
+    <HeaderLinks items={navItems} />
+    <HeaderMobileMenu items={navItems} />
   </nav>
 </header>

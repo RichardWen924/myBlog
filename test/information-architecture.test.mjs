@@ -5,12 +5,14 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const header = readFileSync(resolve(root, 'src/components/global/Header.astro'), 'utf8');
+const navigationPath = resolve(root, 'src/data/navigation.ts');
+const navigation = existsSync(navigationPath) ? readFileSync(navigationPath, 'utf8') : '';
 const about = readFileSync(resolve(root, 'src/pages/about.astro'), 'utf8');
 
 test('public navigation separates personal About from technical Work', () => {
-  assert.match(header, /\{ label: 'About', href: '\/about' \}/);
-  assert.match(header, /\{ label: 'Work', href: '\/work' \}/);
-  assert.doesNotMatch(header, /label: 'Projects'/);
+  assert.match(navigation, /label: 'About', href: '\/about'/);
+  assert.match(navigation, /label: 'Work', href: '\/work'/);
+  assert.doesNotMatch(navigation, /label: 'Projects'/);
 });
 
 test('work page owns skills, projects, and experience content', () => {

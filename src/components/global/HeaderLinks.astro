@@ -1,0 +1,21 @@
+---
+import type { NavigationItem } from '../../data/navigation';
+
+interface Props {
+  items: NavigationItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="site-header__desktop-links hidden items-center gap-6 md:flex">
+  {items.map((item) => (
+    <a
+      href={item.href}
+      class:list={['site-header__link', { 'is-active': item.active }]}
+      aria-current={item.active ? 'page' : undefined}
+    >
+      {item.label}
+    </a>
+  ))}
+</div>

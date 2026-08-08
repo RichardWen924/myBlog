@@ -1,0 +1,27 @@
+---
+import type { NavigationItem } from '../../data/navigation';
+
+interface Props {
+  items: NavigationItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<details class="site-header__mobile md:hidden">
+  <summary class="site-header__menu" aria-label="Open navigation menu">
+    <span>Menu</span>
+    <span class="site-header__menu-icon" aria-hidden="true">↘</span>
+  </summary>
+  <div class="site-header__mobile-panel">
+    {items.map((item) => (
+      <a
+        href={item.href}
+        class:list={['site-header__link', { 'is-active': item.active }]}
+        aria-current={item.active ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    ))}
+  </div>
+</details>
