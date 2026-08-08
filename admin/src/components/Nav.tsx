@@ -1,12 +1,5 @@
 import { NavLink } from 'react-router-dom';
-
-const links = [
-  { to: '/profile', label: 'Profile' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/skills', label: 'Skills' },
-  { to: '/experience', label: 'Experience' },
-  { to: '/blog', label: 'Blog' },
-];
+import { topicRegistry } from '../registry/topics';
 
 export default function Nav() {
   return (
@@ -15,10 +8,10 @@ export default function Nav() {
         Blog Admin
       </h1>
       <nav className="flex flex-col gap-1">
-        {links.map((l) => (
+        {topicRegistry.map((topic) => (
           <NavLink
-            key={l.to}
-            to={l.to}
+            key={topic.path}
+            to={topic.path}
             className={({ isActive }) =>
               `rounded px-3 py-2 text-sm no-underline transition-colors ${
                 isActive
@@ -27,7 +20,7 @@ export default function Nav() {
               }`
             }
           >
-            {l.label}
+            {topic.label}
           </NavLink>
         ))}
       </nav>
