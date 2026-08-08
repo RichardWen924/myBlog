@@ -8,9 +8,9 @@ const header = readFileSync(resolve(root, 'src/components/global/Header.astro'),
 const about = readFileSync(resolve(root, 'src/pages/about.astro'), 'utf8');
 
 test('public navigation separates personal About from technical Work', () => {
-  assert.match(header, /href="\/about"/);
-  assert.match(header, /href="\/work"/);
-  assert.doesNotMatch(header, /href="\/projects"/);
+  assert.match(header, /\{ label: 'About', href: '\/about' \}/);
+  assert.match(header, /\{ label: 'Work', href: '\/work' \}/);
+  assert.doesNotMatch(header, /label: 'Projects'/);
 });
 
 test('work page owns skills, projects, and experience content', () => {

@@ -104,6 +104,122 @@ a:hover {
   color: var(--color-accent);
 }
 
+.site-header__link {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.site-header__link::after {
+  position: absolute;
+  right: 0;
+  bottom: 0.35rem;
+  left: 0;
+  height: 1px;
+  background: var(--color-accent);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 180ms ease;
+}
+
+.site-header__link:hover,
+.site-header__link:focus-visible,
+.site-header__link.is-active {
+  color: var(--color-accent);
+}
+
+.site-header__link:hover::after,
+.site-header__link:focus-visible::after,
+.site-header__link.is-active::after {
+  transform: scaleX(1);
+}
+
+.site-header__link:focus-visible,
+.site-header__menu:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 72%, transparent);
+  outline-offset: 4px;
+}
+
+.site-header__mobile {
+  position: relative;
+}
+
+.site-header__menu {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  list-style: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.site-header__menu::-webkit-details-marker {
+  display: none;
+}
+
+.site-header__menu:hover,
+.site-header__mobile[open] .site-header__menu {
+  color: var(--color-accent);
+}
+
+.site-header__menu-icon {
+  color: var(--color-accent);
+  font-size: 1rem;
+  transition: transform 180ms ease;
+}
+
+.site-header__mobile[open] .site-header__menu-icon {
+  transform: rotate(90deg);
+}
+
+.site-header__mobile-panel {
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 0;
+  z-index: 2;
+  display: grid;
+  min-width: min(12rem, calc(100vw - 2rem));
+  gap: 0.15rem;
+  padding: 0.6rem;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-paper) 96%, transparent);
+  box-shadow: 0 1rem 2rem color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
+.site-header__mobile-panel .site-header__link {
+  min-height: 3rem;
+  padding: 0 0.75rem;
+}
+
+.site-header__mobile-panel .site-header__link::after {
+  right: 0.75rem;
+  left: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__link,
+  .site-header__link::after,
+  .site-header__menu,
+  .site-header__menu-icon {
+    transition-duration: 0ms;
+  }
+}
+
 .home-chapter {
   scroll-margin-top: 2rem;
 }
