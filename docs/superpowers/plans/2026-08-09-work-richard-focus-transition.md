@@ -72,7 +72,7 @@ The controller must require only host and target nodes. Remove percent/status re
 
 - [ ] **Step 3: Measure the visual brand center**
 
-At `prepareStaticState`, find the visible `.site-header__brand`, read its bounding rectangle, and set viewport focus X/Y custom properties. Use responsive fallback points when unavailable. Also store document-space Y for the source transform origin.
+At `prepareStaticState`, find the visible desktop `.site-header__brand`, read its bounding rectangle, and set viewport focus X/Y custom properties. Use a fixed desktop fallback point when unavailable. Also store document-space Y for the source transform origin.
 
 - [ ] **Step 4: Map new frame values to CSS variables**
 
@@ -106,7 +106,7 @@ Scale the inert destination page from the same focus, reveal it with a circle ap
 
 - [ ] **Step 3: Style the focus aperture**
 
-Create a thin accent ring, subtle radial glow, and short pulse driven by `--work-transition-focus-pulse`. Localize optional streaks around the focus and hide them on compact screens.
+Create a thin accent ring, subtle radial glow, and short pulse driven by `--work-transition-focus-pulse`. Localize optional streaks around the desktop focus.
 
 - [ ] **Step 4: Delete all progress-system CSS**
 
@@ -138,9 +138,9 @@ Capture source contraction, midpoint aperture, target expansion, stable outline 
 
 Confirm both directions use the measured brand point, cached clones contain no islands or particle layer, and no blank/repeated final frame occurs.
 
-- [ ] **Step 4: Verify compact layout and page integrity**
+- [ ] **Step 4: Verify page integrity**
 
-Confirm the mobile brand is the focus, streaks are hidden, all six Work chapters remain, and transition target is empty after cleanup.
+Confirm all six Work chapters remain and the transition target is empty after cleanup. Mobile-specific verification is out of scope.
 
 - [ ] **Step 5: Final verification**
 

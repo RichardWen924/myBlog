@@ -20,8 +20,8 @@ The user approved removing the track, nodes, percentage, route label, and status
 
 - Measure the visible `.site-header__brand` bounding-box center at transition start.
 - Store the focus as viewport pixel coordinates so scrolling does not move it during the transition.
-- On compact layouts, use the same measured mobile brand; do not substitute the menu button.
-- If the brand cannot be measured, fall back to a conservative responsive point near the upper-left header area.
+- This redesign targets the desktop layout only.
+- If the desktop brand cannot be measured, fall back to a conservative fixed point near the upper-left header area.
 
 ## Motion phases
 
@@ -54,15 +54,15 @@ The user approved removing the track, nodes, percentage, route label, and status
 - After clone cleanup, the live Hero pauses briefly and particleizes exactly once.
 - Cached or previously hydrated `astro-island` state must never run inside the transition clone.
 
-## Responsive and reduced motion
+## Scope and reduced motion
 
-- Desktop and mobile derive movement from the measured brand point.
-- Compact screens use less blur and no speed streaks but preserve the contraction/expansion narrative.
+- Only the desktop transition is redesigned and verified in this task.
+- No new mobile transition rules, motion parameters, or mobile regression work are included.
 - Reduced-motion users skip contraction, aperture, blur, and particle gathering; navigation swaps immediately to the stable destination.
 
 ## Verification
 
 - Unit-test exact enter/exit endpoints, midpoint minimum scale, and stable final-frame values.
 - Build the Astro project.
-- Browser-test direct Work entry, Home → Work, Work → Home, repeated cached entry, compact viewport, and reduced motion.
+- Browser-test direct Work entry, Home → Work, Work → Home, repeated cached entry, and reduced motion on desktop.
 - Confirm all six Work chapters remain present and transition clones are empty after cleanup.
