@@ -1,5 +1,30 @@
 /* ===== Work archive landing ===== */
 
+html.work-page {
+  --color-paper: #080909;
+  --color-surface: #111313;
+  --color-ink: #f3f0e8;
+  --color-ink-soft: #a4aaa5;
+  --color-border: #2b302f;
+  --color-accent: #8ee6c2;
+  --color-warm: #ff9b76;
+  --color-steel: #9aabb5;
+}
+
+html.work-page .glow-layer {
+  opacity: 0.32;
+  background: radial-gradient(
+    ellipse 68% 50% at 52% 0%,
+    color-mix(in srgb, var(--color-accent) 9%, transparent),
+    transparent 72%
+  );
+}
+
+html.work-page .hero-thinking-orbit img {
+  mix-blend-mode: screen;
+  opacity: 0.3;
+}
+
 html.work-scroll-snap {
   scroll-snap-type: y mandatory;
 }
@@ -13,10 +38,6 @@ html.work-scroll-snap {
   scroll-margin-top: var(--site-header-height);
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-
-.work-chapter--hero {
-  overflow: hidden;
 }
 
 .work-chapter--content,

@@ -12,7 +12,8 @@ const globalStyles = readFileSync(resolve(root, 'src/styles/global.css'), 'utf8'
 test('About is composed as four growing-notebook sections', () => {
   const about = readFileSync(aboutPath, 'utf8');
 
-  assert.match(about, /PageHero/);
+  assert.match(about, /HeroReactive/);
+  assert.match(about, /about-reactive-hero/);
   assert.match(about, /SectionHeading/);
   assert.match(about, /ContentDivider/);
   assert.match(about, /MotionReveal/);
@@ -20,7 +21,7 @@ test('About is composed as four growing-notebook sections', () => {
   assert.match(about, /id="the-path"/);
   assert.match(about, /id="how-i-keep-growing"/);
   assert.match(about, /id="elsewhere"/);
-  assert.match(about, /eyebrow="Now"/);
+  assert.match(about, /id="now"/);
   assert.match(about, /label="The path"/);
   assert.match(about, /label="How I keep growing"/);
   assert.match(about, /label="Elsewhere"/);

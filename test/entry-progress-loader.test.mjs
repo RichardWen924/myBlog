@@ -121,3 +121,13 @@ test('Base supports an optional loader and homepage enables it', () => {
   assert.match(base, /<EntryProgressLoader \/>/);
   assert.match(home, /showEntryLoader/);
 });
+
+test('Base supports the Work-only transition loader without changing homepage behavior', () => {
+  const work = readFileSync(resolve(root, 'src/pages/work.astro'), 'utf8');
+  assert.match(base, /showWorkTransition\?: boolean/);
+  assert.match(base, /showWorkTransition = false/);
+  assert.match(base, /<WorkTransitionProgress \/>/);
+  assert.match(work, /showWorkTransition/);
+  assert.match(work, /work-page/);
+  assert.doesNotMatch(home, /showWorkTransition/);
+});

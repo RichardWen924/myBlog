@@ -10,12 +10,12 @@ const navigation = readFileSync(resolve(root, 'src/components/work/WorkChapterNa
 const css = readSiteStyles(root);
 
 test('work page uses full-page magnetic chapters', () => {
-  assert.match(page, /htmlClass="work-scroll-snap"/);
-  assert.match(page, /data-work-chapter="hero"/);
+  assert.match(page, /htmlClass="work-scroll-snap work-page"/);
   assert.match(page, /data-work-chapter="systems"/);
   assert.match(page, /data-work-chapter="projects"/);
   assert.match(page, /data-work-chapter="experience"/);
   assert.match(page, /data-work-chapter="more"/);
+  assert.doesNotMatch(page, /HeroReactive/);
   assert.match(css, /html\.work-scroll-snap\s*\{[^}]*scroll-snap-type:\s*y mandatory/s);
   assert.match(css, /\.work-chapter\s*\{[^}]*scroll-snap-align:\s*start/s);
   assert.match(css, /\.work-chapter\s*\{[^}]*scroll-snap-stop:\s*always/s);

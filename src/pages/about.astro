@@ -3,8 +3,8 @@ import Base from '../layouts/Base.astro';
 import ArchiveLink from '../components/global/ArchiveLink.astro';
 import ContentDivider from '../components/global/ContentDivider.astro';
 import MotionReveal from '../components/global/MotionReveal.astro';
-import PageHero from '../components/global/PageHero.astro';
 import SectionHeading from '../components/global/SectionHeading.astro';
+import HeroReactive from '../components/react/HeroReactive';
 import experience from '../data/experience';
 import profile from '../data/profile';
 
@@ -26,17 +26,9 @@ const formatDate = (value: string) => {
 <Base title="About" fullBleed lang="zh-CN">
   <div class="about-page">
     <section id="now" data-about-section="now" class="about-section about-section--now">
-      <PageHero
-        eyebrow="Now"
-        title="一个还在生长的开发者。"
-        description="我在学习如何把复杂的事做清楚，也在记录那些让我继续向前的问题。这里是关于我如何成为现在这个人的一页笔记。"
-        variant="notebook"
-      >
-        <div class="about-hero-note">
-          <p class="about-hero-note__statement">慢一点，事情会开始露出自己的形状。</p>
-          {profile.location && <p class="about-hero-note__location">{profile.location}</p>}
-        </div>
-      </PageHero>
+      <div class="about-reactive-hero -mt-12">
+        <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} scrollTarget="#the-path" />
+      </div>
 
       <div class="page-shell about-section__inner about-now__inner">
         <MotionReveal>
@@ -44,6 +36,10 @@ const formatDate = (value: string) => {
             <p class="about-statement">我更愿意把自己看作一个独立创造者：保持好奇，把想法做出来，也给还没想完的事情留一点空间。</p>
             <div class="about-profile-copy">
               <p class="about-profile-copy__title">{profile.title}</p>
+              <div class="about-hero-note">
+                <p class="about-hero-note__statement">慢一点，事情会开始露出自己的形状。</p>
+                {profile.location && <p class="about-hero-note__location">{profile.location}</p>}
+              </div>
               {bio.map((paragraph) => <p>{paragraph}</p>)}
             </div>
           </div>

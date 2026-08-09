@@ -26,8 +26,8 @@ test('work page owns skills, projects, and experience content', () => {
 });
 
 test('about page is personal rather than a duplicate technical profile', () => {
-  assert.match(about, /PageHero/);
-  assert.match(about, /eyebrow="Now"/);
+  assert.match(about, /HeroReactive/);
+  assert.match(about, /about-reactive-hero/);
   assert.match(about, /label="The path"/);
   assert.match(about, /label="How I keep growing"/);
   assert.match(about, /label="Elsewhere"/);

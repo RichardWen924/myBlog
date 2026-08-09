@@ -1,0 +1,262 @@
+<div
+  class="work-transition-loader"
+  data-work-transition-duration-ms="1100"
+  aria-label="Entering Work"
+  aria-hidden="false"
+>
+  <div class="work-transition-progress">
+    <div
+      class="work-transition-progress__bar"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      aria-label="Work theme transition progress"
+    >
+      <div class="work-transition-progress__track" aria-hidden="true">
+        <div class="work-transition-progress__fill"></div>
+      </div>
+      <div class="work-transition-progress__steps" aria-hidden="true">
+        <div class="work-transition-progress__step is-current" data-value="0"><span>01</span></div>
+        <div class="work-transition-progress__step" data-value="25"><span>02</span></div>
+        <div class="work-transition-progress__step" data-value="50"><span>03</span></div>
+        <div class="work-transition-progress__step" data-value="75"><span>04</span></div>
+        <div class="work-transition-progress__step" data-value="100"><span>05</span></div>
+      </div>
+    </div>
+    <div class="work-transition-progress__caption">
+      <span>SHIFTING PALETTE</span>
+      <span data-work-transition-value>0%</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .work-transition-loader {
+    --transition-paper: #f4f0e8;
+    --transition-ink: #1d1d1a;
+    --transition-border: #d8d2c7;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--transition-paper);
+    color: var(--transition-ink);
+    will-change: transform, background-color, color;
+  }
+
+  .work-transition-loader:not([data-runtime]) {
+    animation: work-transition-loader-fallback-exit 1.2s cubic-bezier(0.76, 0, 0.24, 1) 0.05s forwards;
+  }
+
+  .work-transition-loader:not([data-runtime]) .work-transition-progress__fill {
+    animation: work-transition-loader-fallback-fill 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      work-transition-gradient 1.8s linear infinite;
+  }
+
+  .work-transition-loader:not([data-runtime])::before {
+    position: absolute;
+    inset: 0;
+    background: #080909;
+    content: '';
+    opacity: 0;
+    animation: work-transition-loader-fallback-theme 1.1s ease forwards;
+  }
+
+  .work-transition-progress {
+    position: relative;
+    z-index: 1;
+    width: 100vw;
+    padding-inline: clamp(1rem, 4vw, 4rem);
+  }
+
+  .work-transition-progress__bar {
+    position: relative;
+    padding-top: 1.75rem;
+  }
+
+  .work-transition-progress__track {
+    position: absolute;
+    top: 0.42rem;
+    right: 0;
+    left: 0;
+    height: 2px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--transition-border) 85%, transparent);
+  }
+
+  .work-transition-progress__fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #6e8cff 0%, #9b6cff 28%, #ed6f9d 62%, #ffb56e 100%);
+    background-size: 180% 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: work-transition-gradient 2.4s linear infinite;
+  }
+
+  .work-transition-progress__steps {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .work-transition-progress__step {
+    display: grid;
+    width: 1.25rem;
+    height: 1.25rem;
+    place-items: center;
+    border: 1px solid var(--transition-border);
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--transition-ink) 48%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    transition: border-color 220ms ease, background-color 220ms ease, color 220ms ease, transform 220ms ease;
+  }
+
+  .work-transition-progress__step.is-complete {
+    border-color: #ed6f9d;
+    background: #ed6f9d;
+    color: #fff;
+  }
+
+  .work-transition-progress__step.is-current {
+    border-color: #6e8cff;
+    background: #6e8cff;
+    color: #fff;
+    box-shadow: 0 0 0 0.3rem color-mix(in srgb, #6e8cff 16%, transparent);
+    transform: translateY(-0.18rem) scale(1.08);
+  }
+
+  .work-transition-progress__caption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    color: color-mix(in srgb, var(--transition-ink) 62%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+  }
+
+  @keyframes work-transition-gradient {
+    from { background-position: 0% 50%; }
+    to { background-position: 180% 50%; }
+  }
+
+  @keyframes work-transition-loader-fallback-fill {
+    to { transform: scaleX(1); }
+  }
+
+  @keyframes work-transition-loader-fallback-theme {
+    0%, 48% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes work-transition-loader-fallback-exit {
+    to {
+      background: #080909;
+      color: #f3f0e8;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transform: translateY(-100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-transition-loader:not([data-runtime]) {
+      animation: none;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .work-transition-loader:not([data-runtime])::before {
+      animation: none;
+      opacity: 0;
+    }
+
+    .work-transition-loader:not([data-runtime]) .work-transition-progress__fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+
+    .work-transition-progress__step,
+    .work-transition-progress__fill {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const loader = document.querySelector('.work-transition-loader');
+  const fill = loader?.querySelector('.work-transition-progress__fill');
+  const progressbar = loader?.querySelector('[role="progressbar"]');
+  const valueLabel = loader?.querySelector('[data-work-transition-value]');
+  const milestones = loader ? gsap.utils.toArray('.work-transition-progress__step', loader) : [];
+  const pageContent = document.querySelector('[data-entry-content]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const setProgress = (value: number) => {
+    progressbar?.setAttribute('aria-valuenow', String(value));
+    if (valueLabel) valueLabel.textContent = `${value}%`;
+
+    milestones.forEach((step) => {
+      const stepValue = Number((step as HTMLElement).dataset.value);
+      step.classList.toggle('is-complete', stepValue <= value);
+      step.classList.toggle('is-current', stepValue === value);
+    });
+  };
+
+  const unlockDocument = () => {
+    document.documentElement.classList.remove('entry-progress-lock');
+    pageContent?.removeAttribute('inert');
+  };
+
+  const removeLoader = () => {
+    loader?.setAttribute('aria-hidden', 'true');
+    gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
+    unlockDocument();
+    loader?.remove();
+  };
+
+  if (loader && fill && progressbar) {
+    loader.dataset.runtime = 'js';
+    document.documentElement.classList.add('entry-progress-lock');
+    pageContent?.setAttribute('inert', '');
+
+    if (reducedMotion) {
+      setProgress(100);
+      gsap.set(fill, { scaleX: 1 });
+      gsap.set(loader, { backgroundColor: '#080909', color: '#f3f0e8' });
+      window.setTimeout(removeLoader, 0);
+    } else {
+      const timeline = gsap.timeline({
+        defaults: { ease: 'power2.out' },
+        onComplete: () => {
+          gsap.to(loader, {
+            yPercent: -100,
+            duration: 0.42,
+            ease: 'power3.inOut',
+            onComplete: removeLoader,
+          });
+        },
+      });
+
+      const milestoneDuration = 0.2;
+      [0, 25, 50, 75, 100].forEach((value, index) => {
+        const duration = index === 0 ? 0.08 : milestoneDuration;
+        timeline.to({}, { duration, onStart: () => setProgress(value) });
+        timeline.to(fill, { scaleX: value / 100, duration }, '<');
+      });
+
+      timeline.to(loader, { backgroundColor: '#080909', color: '#f3f0e8', duration: 0.56 }, 0.28);
+    }
+  }
+</script>

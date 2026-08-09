@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/global/Header.astro';
 import Footer from '../components/global/Footer.astro';
 import EntryProgressLoader from '../components/entry/EntryProgressLoader.astro';
+import WorkTransitionProgress from '../components/entry/WorkTransitionProgress.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/constants';
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
   lang?: string;
   fullBleed?: boolean;
   showEntryLoader?: boolean;
+  showWorkTransition?: boolean;
   scrollSnap?: boolean;
   htmlClass?: string;
 }
@@ -20,6 +22,7 @@ const {
   lang = 'en',
   fullBleed = false,
   showEntryLoader = false,
+  showWorkTransition = false,
   scrollSnap = false,
   htmlClass = '',
 } = Astro.props;
@@ -54,6 +57,7 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
 
     <div class="relative z-10">
       {showEntryLoader && <EntryProgressLoader />}
+      {showWorkTransition && <WorkTransitionProgress />}
       <div data-entry-content>
         <Header />
         <main class={fullBleed ? 'w-full py-12' : 'mx-auto max-w-4xl px-4 py-12'}>

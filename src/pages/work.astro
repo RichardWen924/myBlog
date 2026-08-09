@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import HeroReactive from '../components/react/HeroReactive';
 import FadeSection from '../components/react/FadeSection';
 import ProjectCard from '../components/react/ProjectCard';
 import SkillsOrbit from '../components/react/SkillsOrbit';
@@ -13,13 +12,9 @@ import profile from '../data/profile';
 const projects = getProjects();
 ---
 
-<Base title="Work" fullBleed htmlClass="work-scroll-snap">
+<Base title="Work" fullBleed showWorkTransition htmlClass="work-scroll-snap work-page">
   <div class="work-sequence">
-    <section id="work-intro" class="work-chapter work-chapter--hero work-reactive-hero -mt-12" data-work-chapter="hero" aria-label="Work introduction">
-      <HeroReactive client:load name={profile.name} title={profile.title} email={profile.email} scrollTarget="#work-systems" />
-    </section>
-
-    <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero" data-work-chapter="systems">
+    <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero -mt-12" data-work-chapter="systems">
       <div class="work-skill-layout mx-auto max-w-6xl px-6">
         <div class="work-skill-copy">
           <SectionEyebrow index="01" label="Technical practice" status="WORK / SYSTEMS" />
@@ -121,7 +116,7 @@ const projects = getProjects();
   );
 
   chapters.forEach((chapter) => observer.observe(chapter));
-  setActiveChapter(chapters[0]?.dataset.workChapter ?? 'hero');
+  setActiveChapter(chapters[0]?.dataset.workChapter ?? 'systems');
 
   const isInteractiveControl = (target) => {
     if (!(target instanceof HTMLElement)) return false;
