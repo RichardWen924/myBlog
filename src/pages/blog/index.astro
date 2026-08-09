@@ -16,21 +16,113 @@ const summaries = posts.map((post) => ({
 const yearGroups = groupByYear(posts);
 ---
 
-<Base title="Archive" fullBleed>
-  <BlogHero posts={summaries} recentPosts={summaries.slice(0, 3)} />
+<Base title="Archive" fullBleed htmlClass="blog-scroll-snap">
+  <div class="blog-sequence">
+    <section
+      id="blog-hero"
+      class="blog-chapter blog-chapter--hero"
+      data-blog-chapter="hero"
+      aria-labelledby="blog-hero-title"
+    >
+      <BlogHero posts={summaries} recentPosts={summaries.slice(0, 3)} />
+    </section>
 
-  <section id="blog-archive" class="page-shell blog-archive" aria-labelledby="archive-title">
-    <h2 id="archive-title" class="blog-archive__heading">Archive</h2>
-    {
-      yearGroups.size > 0 ? (
-        [...yearGroups.entries()].map(([year, yearPosts]) => (
-          <YearGroup year={year} posts={yearPosts} />
-        ))
-      ) : (
-        <p class="py-12 text-center font-serif text-lg text-ink-soft">
-          No posts yet.
-        </p>
-      )
-    }
-  </section>
+    <section
+      id="blog-archive"
+      class="blog-chapter blog-chapter--archive"
+      data-blog-chapter="archive"
+      aria-labelledby="archive-title"
+    >
+      <div class="page-shell blog-archive">
+        <h2 id="archive-title" class="blog-archive__heading">Archive</h2>
+        {
+          yearGroups.size > 0 ? (
+            [...yearGroups.entries()].map(([year, yearPosts]) => (
+              <YearGroup year={year} posts={yearPosts} />
+            ))
+          ) : (
+            <p class="py-12 text-center font-serif text-lg text-ink-soft">
+              No posts yet.
+            </p>
+          )
+        }
+      </div>
+    </section>
+  </div>
+
+  <nav class="blog-chapter-rail" data-blog-chapter-rail aria-label="Blog chapters">
+    <a href="#blog-hero" data-blog-rail-link="hero" aria-label="Blog welcome" aria-current="step">01</a>
+    <a href="#blog-archive" data-blog-rail-link="archive" aria-label="Blog archive">02</a>
+  </nav>
 </Base>
+
+<script>
+  const chapters = [...document.querySelectorAll('[data-blog-chapter]')];
+  const railLinks = [...document.querySelectorAll('[data-blog-rail-link]')];
+
+  const setActiveChapter = (id) => {
+    railLinks.forEach((link) => {
+      const isActive = link.dataset.blogRailLink === id;
+      link.toggleAttribute('data-active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'step');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveChapter(visible.target.dataset.blogChapter);
+    },
+    { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
+  );
+
+  chapters.forEach((chapter) => observer.observe(chapter));
+  setActiveChapter(chapters[0]?.dataset.blogChapter ?? 'hero');
+
+  const isTextControl = (target) => {
+    if (!(target instanceof HTMLElement)) return false;
+    return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+  };
+
+  const getCurrentSectionIndex = () => {
+    const marker = window.scrollY + window.innerHeight * 0.35;
+    const currentIndex = chapters.findIndex((chapter) => {
+      const top = chapter.offsetTop;
+      return marker >= top && marker < top + chapter.offsetHeight;
+    });
+
+    return currentIndex === -1 ? 0 : currentIndex;
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
+
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    const currentIndex = getCurrentSectionIndex();
+    const nextIndex = Math.min(Math.max(currentIndex + direction, 0), chapters.length - 1);
+    const nextSection = chapters[nextIndex];
+
+    if (!nextSection || nextIndex === currentIndex) return;
+
+    event.preventDefault();
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    if (nextIndex === 0) {
+      window.scrollTo({ top: 0, behavior: scrollBehavior });
+    } else {
+      nextSection.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+
+  document.addEventListener('astro:before-swap', () => {
+    observer.disconnect();
+    window.removeEventListener('keydown', handleKeyDown);
+  }, { once: true });
+</script>
