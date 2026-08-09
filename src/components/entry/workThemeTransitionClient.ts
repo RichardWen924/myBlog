@@ -28,7 +28,6 @@ const ROOT_STYLE_PROPERTIES = [
   '--work-transition-source-blur',
   '--work-transition-target-scale',
   '--work-transition-target-opacity',
-  '--work-transition-aperture-radius',
   '--work-transition-focus-pulse',
   '--work-transition-streak-opacity',
 ] as const;
@@ -46,7 +45,6 @@ export const initWorkThemeTransition = () => {
   const root = document.documentElement;
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let pendingDirection: WorkTransitionDirection | null = null;
-  let initialPageHandled = false;
   let activeTween: gsap.core.Tween | null = null;
   let lockedSource: HTMLElement | null = null;
   let bodyPaddingRight = '';
@@ -66,13 +64,12 @@ export const initWorkThemeTransition = () => {
     setRootProperty('--work-transition-source-blur', frame.sourceBlur);
     setRootProperty('--work-transition-target-scale', frame.targetScale);
     setRootProperty('--work-transition-target-opacity', frame.targetOpacity);
-    setRootProperty('--work-transition-aperture-radius', frame.apertureRadius);
     setRootProperty('--work-transition-focus-pulse', frame.focusPulse);
     setRootProperty('--work-transition-streak-opacity', frame.streakOpacity);
 
     const targetTone = direction === 'enter' ? 'work' : 'archive';
     const sourceTone = direction === 'enter' ? 'archive' : 'work';
-    root.dataset.workTransitionTone = frame.targetProgress >= 0.16 ? targetTone : sourceTone;
+    root.dataset.workTransitionTone = frame.targetOpacity >= 0.5 ? targetTone : sourceTone;
     root.toggleAttribute('data-work-transition-settled', frame.targetProgress >= 0.999);
   };
 
@@ -96,15 +93,14 @@ export const initWorkThemeTransition = () => {
     if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
   };
 
-  const prepareStaticState = (direction: WorkTransitionDirection, direct = false) => {
+  const prepareStaticState = (direction: WorkTransitionDirection) => {
     const source = getSitePage();
     if (!source) return null;
 
     pendingDirection = direction;
     root.dataset.workTransitionActive = '';
     root.dataset.workTransitionDirection = direction;
-    root.toggleAttribute('data-work-transition-direct', direct);
-    source.toggleAttribute('data-work-transition-source', !direct);
+    source.setAttribute('data-work-transition-source', '');
     measureBrandFocus(source);
     lockDocument(source);
     renderFrame(direction, getTransitionFrame(direction, 0, {
@@ -122,7 +118,6 @@ export const initWorkThemeTransition = () => {
       element.remove();
     });
     page.removeAttribute('data-work-transition-source');
-    page.removeAttribute('data-work-transition-direct-target');
     page.setAttribute('aria-hidden', 'true');
     page.inert = true;
   };
@@ -188,10 +183,9 @@ export const initWorkThemeTransition = () => {
   const cleanup = (completeWorkArrival = false) => {
     activeTween?.kill();
     activeTween = null;
-    document.querySelectorAll<HTMLElement>('[data-work-transition-source], [data-work-transition-direct-target]')
+    document.querySelectorAll<HTMLElement>('[data-work-transition-source]')
       .forEach((page) => {
         page.removeAttribute('data-work-transition-source');
-        page.removeAttribute('data-work-transition-direct-target');
         page.inert = false;
         page.style.removeProperty('will-change');
       });
@@ -203,7 +197,6 @@ export const initWorkThemeTransition = () => {
     delete root.dataset.workTransitionDirection;
     delete root.dataset.workTransitionTone;
     root.removeAttribute('data-work-transition-settled');
-    root.removeAttribute('data-work-transition-direct');
     ROOT_STYLE_PROPERTIES.forEach((property) => root.style.removeProperty(property));
     document.body.style.paddingRight = bodyPaddingRight;
     bodyPaddingRight = '';
@@ -261,6 +254,11 @@ export const initWorkThemeTransition = () => {
     transitionEvent.newDocument.documentElement.dataset.workTransitionActive = '';
     transitionEvent.newDocument.documentElement.dataset.workTransitionDirection = pendingDirection;
     transitionEvent.newDocument.documentElement.dataset.workTransitionTone = pendingDirection === 'enter' ? 'work' : 'archive';
+    if (pendingDirection === 'enter') {
+      transitionEvent.newDocument.documentElement.dataset.workHeroArrival = 'pending';
+    } else {
+      transitionEvent.newDocument.documentElement.removeAttribute('data-work-hero-arrival');
+    }
   };
 
   const handleAfterSwap = () => {
@@ -269,20 +267,7 @@ export const initWorkThemeTransition = () => {
     cleanupAfterPaint(completedDirection === 'enter');
   };
 
-  const handleInitialPageLoad = () => {
-    if (initialPageHandled) return;
-    initialPageHandled = true;
-    if (!isWorkPath(window.location.pathname)) return;
-
-    const source = prepareStaticState('enter', true);
-    if (!source) return;
-
-    mountIncomingPage(source, 'enter');
-    void play('enter').finally(() => cleanupAfterPaint(true));
-  };
-
   document.addEventListener('astro:before-preparation', handleBeforePreparation);
   document.addEventListener('astro:before-swap', handleBeforeSwap);
   document.addEventListener('astro:after-swap', handleAfterSwap);
-  document.addEventListener('astro:page-load', handleInitialPageLoad);
 };

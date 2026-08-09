@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the Work progress UI with a brand-anchored source contraction and destination expansion transition.
+**Goal:** Replace the Work progress UI with a brand-anchored camera push-in, theme hold, and destination pull-back transition.
 
-**Architecture:** A pure frame model divides one normalized clock into source absorption and target expansion. The persistent Astro controller measures the visible `Richard` brand once, applies frame values through CSS custom properties, and swaps inert SSR destination content at the midpoint handoff without allowing cloned React islands to hydrate.
+**Architecture:** A pure frame model divides one normalized clock into source camera push-in, magnified brand hold, and target camera pull-back. The persistent Astro controller measures the visible `Richard` brand once, applies frame values through CSS custom properties, and swaps inert SSR destination content without allowing cloned React islands to hydrate.
 
 **Tech Stack:** Astro 7 view transitions, TypeScript, GSAP 3, React 19, CSS transforms/clip-path, Node test runner.
 
@@ -18,7 +18,7 @@
 
 - [ ] **Step 1: Write failing source/target phase tests**
 
-Assert that the source starts full-size, both pages meet at the minimum scale near the midpoint, and the target ends full-size with a stable final frame.
+Assert that the source starts full-size, both pages meet at maximum magnification near the midpoint, and the target ends full-size with a stable final frame.
 
 ```ts
 const start = getTransitionFrame('enter', 0, viewport);
@@ -27,8 +27,8 @@ const end = getTransitionFrame('enter', 1, viewport);
 
 assert.equal(start.sourceScale, 1);
 assert.equal(start.targetOpacity, 0);
-assert.ok(midpoint.sourceScale <= 0.06);
-assert.ok(midpoint.targetScale <= 0.06);
+assert.ok(midpoint.sourceScale >= 5);
+assert.ok(midpoint.targetScale >= 5);
 assert.equal(end.targetScale, 1);
 assert.equal(end.sourceOpacity, 0);
 ```
@@ -41,7 +41,7 @@ Expected: FAIL because the new frame fields do not exist.
 
 - [ ] **Step 3: Implement the new frame model**
 
-Replace camera/portal-specific fields with `sourceScale`, `sourceOpacity`, `targetScale`, `targetOpacity`, `apertureRadius`, `sourceBlur`, `focusPulse`, and `streakOpacity`. Use endpoint-smooth phase curves and complete target expansion before the final frame.
+Replace camera/portal-specific fields with `sourceScale`, `sourceOpacity`, `targetScale`, `targetOpacity`, `sourceBlur`, `focusPulse`, and `streakOpacity`. Use endpoint-smooth zoom curves, a short midpoint color hold, and complete target pull-back before the final frame.
 
 - [ ] **Step 4: Run all motion tests**
 
@@ -64,7 +64,7 @@ git commit -m "Model Richard-focus route transition"
 
 - [ ] **Step 1: Simplify persistent transition markup**
 
-Remove the progressbar, nodes, badge, percent, status, route label, and full-screen conic speed field. Keep the direct-entry paper source, inert target host, a localized focus aperture, and restrained streak layer.
+Remove the progressbar, nodes, badge, percent, status, route label, and full-screen conic speed field. Keep the inert target host, localized focus treatment, and restrained streak layer. Direct page loads no longer use a route-transition source.
 
 - [ ] **Step 2: Remove HUD dependencies from controller initialization**
 
@@ -76,11 +76,11 @@ At `prepareStaticState`, find the visible desktop `.site-header__brand`, read it
 
 - [ ] **Step 4: Map new frame values to CSS variables**
 
-Render source scale/opacity/blur, target scale/opacity, aperture radius, focus pulse, and streak opacity. Keep theme-tone state only for focus color and direct-entry surface choice.
+Render source scale/opacity/blur, target scale/opacity, focus pulse, and streak opacity. Keep theme-tone state only for the midpoint color change.
 
 - [ ] **Step 5: Preserve clone and Hero handoff safety**
 
-Keep `astro-island` unwrapping, cached particle-state removal, two-frame cleanup, and the one-shot Work Hero arrival event unchanged.
+Keep `astro-island` unwrapping, cached particle-state removal, two-frame cleanup, and the one-shot Work Hero arrival event. Remove direct `/work` route-transition playback so refresh triggers only the Hero animation.
 
 - [ ] **Step 6: Build and commit**
 
@@ -91,20 +91,20 @@ git add src/components/entry/WorkThemeTransition.astro src/components/entry/work
 git commit -m "Anchor Work transition to Richard brand"
 ```
 
-### Task 3: Implement contraction, aperture, and expansion styling
+### Task 3: Implement camera push-in, color hold, and pull-back styling
 
 **Files:**
 - Modify: `src/styles/work-theme-transition.css`
 
-- [ ] **Step 1: Apply source contraction**
+- [ ] **Step 1: Apply source camera push-in**
 
-Transform the current `[data-work-transition-source]` and direct paper source around measured focus coordinates using the source frame variables. Apply opacity and blur only from those variables.
+Scale the current `[data-work-transition-source]` above `1` around measured focus coordinates so the camera pushes into the brand while the page continues covering the viewport.
 
-- [ ] **Step 2: Apply destination expansion**
+- [ ] **Step 2: Apply destination camera pull-back**
 
-Scale the inert destination page from the same focus, reveal it with a circle aperture, and keep its theme background behind the clipped content.
+Start the inert destination page at the same magnification, crossfade theme surfaces during the brand hold, and pull the destination back to scale `1`.
 
-- [ ] **Step 3: Style the focus aperture**
+- [ ] **Step 3: Style the focus treatment**
 
 Create a thin accent ring, subtle radial glow, and short pulse driven by `--work-transition-focus-pulse`. Localize optional streaks around the desktop focus.
 
@@ -132,11 +132,11 @@ Open `http://127.0.0.1:4326/` in a fresh page so the persistent controller uses 
 
 - [ ] **Step 2: Verify desktop Home → Work**
 
-Capture source contraction, midpoint aperture, target expansion, stable outline arrival, and final particles. Confirm there is no progress UI.
+Capture source camera push-in, magnified brand color hold, target pull-back, stable outline arrival, and final particles. Confirm there is no progress UI.
 
 - [ ] **Step 3: Verify Work → Home and repeated cached entry**
 
-Confirm both directions use the measured brand point, cached clones contain no islands or particle layer, and no blank/repeated final frame occurs.
+Confirm both directions use the measured brand point, cached clones contain no islands or particle layer, and no blank/repeated final frame occurs. Refresh `/work` and confirm only the Hero particle sequence replays.
 
 - [ ] **Step 4: Verify page integrity**
 

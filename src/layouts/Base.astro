@@ -15,7 +15,6 @@ interface Props {
   showEntryLoader?: boolean;
   scrollSnap?: boolean;
   htmlClass?: string;
-  workHeroArrival?: boolean;
 }
 const {
   title,
@@ -25,7 +24,6 @@ const {
   showEntryLoader = false,
   scrollSnap = false,
   htmlClass = '',
-  workHeroArrival = false,
 } = Astro.props;
 const pageTitle = `${title} | ${SITE_TITLE}`;
 ---
@@ -33,7 +31,6 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
 <!doctype html>
 <html lang={lang}
   class:list={[htmlClass, { 'home-scroll-snap': scrollSnap }]}
-  data-work-hero-arrival={workHeroArrival ? 'pending' : undefined}
   transition:animate="none"
 >
   <head>
