@@ -71,6 +71,8 @@ describe('Work transition frames', () => {
     assert.equal(end.percent, 100);
     assert.equal(end.focusX, 50);
     assert.equal(end.workScale, 1);
+    assert.equal(start.sourceShiftX, 0);
+    assert.equal(end.sourceShiftX, -38);
     assert.ok(end.portalRadius > Math.hypot(1440, 900));
   });
 
@@ -83,6 +85,8 @@ describe('Work transition frames', () => {
     assert.equal(end.percent, 0);
     assert.equal(end.focusX, 12);
     assert.equal(end.workScale, 0.46);
+    assert.equal(start.sourceShiftX, 38);
+    assert.equal(end.sourceShiftX, 0);
     assert.equal(end.portalRadius, 21);
   });
 
@@ -175,7 +179,7 @@ export const getTransitionFrame = (
   const workScale = lerp(initialScale, 1, portalProgress);
   const depthBudget = compact ? 0 : medium ? 0.16 : 0.24;
   const sourceDepthScale = 1 + depthBudget * cameraProgress;
-  const sourceShiftX = (direction === 'enter' ? -1 : 1) * (focusX === 50 ? 38 : Math.abs(startNode - focusX));
+  const sourceShiftX = direction === 'enter' ? focusX - startNode : focusX - endNode;
   const sourceBlur = compact ? 0 : 1.2 * cameraProgress;
   const speedOpacity = compact ? 0 : Math.min(0.24, cameraProgress * (1 - portalProgress) * 0.28);
   return {
