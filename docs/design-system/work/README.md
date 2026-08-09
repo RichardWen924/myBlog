@@ -2,7 +2,7 @@
 
 状态：已确认，待实现
 
-版本：1.0
+版本：1.1
 
 日期：2026-08-09
 
@@ -148,7 +148,7 @@ Work 不使用衬线字体，以强化其相对其他模块的独立性。
 
 ## 9. 动效系统
 
-精确参数、时序、性能预算和 reduced-motion 行为见 [`motion.md`](./motion.md)。总体规则：
+精确参数、时序、性能预算和 reduced-motion 行为见 [`motion.md`](./motion.md)。Work 与其他页面之间的点聚焦穿梭转场见 [`theme-transition.md`](./theme-transition.md)。总体规则：
 
 - Precision Grid 组件默认静止。
 - Kinetic Type 只出现在 Hero、章节标题和少量状态建立时刻。
@@ -201,7 +201,8 @@ docs/
         ├── README.md
         ├── components.md
         ├── motion.md
-        └── responsive.md
+        ├── responsive.md
+        └── theme-transition.md
 ```
 
 静态结构优先使用 Astro 组件；只有粒子、指针响应、复杂时间线或需要客户端状态的组件使用 React island。
