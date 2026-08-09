@@ -21,7 +21,7 @@ html.blog-scroll-snap {
 
 .blog-chapter--archive {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .blog-hero {
@@ -243,8 +243,8 @@ html.blog-scroll-snap {
 
 .blog-archive {
   width: 100%;
-  padding-block: clamp(4rem, 9vw, 7rem);
-  text-align: center;
+  padding-block: clamp(3rem, 7vh, 5rem);
+  text-align: left;
 }
 
 .blog-archive__heading {
@@ -256,20 +256,81 @@ html.blog-scroll-snap {
 }
 
 .blog-archive > section {
-  margin-inline: auto;
+  margin-inline: 0;
   max-width: 48rem;
 }
 
 .blog-archive > section > ul {
-  text-align: center;
+  text-align: left;
 }
 
-.blog-archive > section > ul a {
-  justify-content: center;
+.blog-archive-row {
+  border-bottom: 1px solid var(--color-border);
 }
 
-.blog-archive > section > ul a .ml-auto {
-  margin-left: 0;
+.blog-archive-row__link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: clamp(1rem, 3vw, 2rem);
+  padding: 1.1rem 0;
+  text-decoration: none;
+}
+
+.blog-archive-row__main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.blog-archive-row__title {
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  line-height: 1.2;
+  transition: color 180ms ease;
+}
+
+.blog-archive-row__link:hover .blog-archive-row__title,
+.blog-archive-row__link:focus-visible .blog-archive-row__title {
+  color: var(--color-accent);
+}
+
+.blog-archive-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.blog-archive-row__date {
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.blog-archive-row__media {
+  display: block;
+  width: 7rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.blog-archive-row__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-archive-row__link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 72%, transparent);
+  outline-offset: 4px;
 }
 
 .blog-chapter-rail {
@@ -323,6 +384,18 @@ html.blog-scroll-snap {
   .blog-results__link {
     align-items: center;
     gap: 1rem;
+  }
+
+  .blog-archive-row__link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+  }
+
+  .blog-archive-row__media {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    max-width: 12rem;
   }
 
   .blog-chapter-rail {
