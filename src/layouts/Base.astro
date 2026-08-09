@@ -12,6 +12,7 @@ interface Props {
   fullBleed?: boolean;
   showEntryLoader?: boolean;
   scrollSnap?: boolean;
+  htmlClass?: string;
 }
 const {
   title,
@@ -20,12 +21,15 @@ const {
   fullBleed = false,
   showEntryLoader = false,
   scrollSnap = false,
+  htmlClass = '',
 } = Astro.props;
 const pageTitle = `${title} | ${SITE_TITLE}`;
 ---
 
 <!doctype html>
-<html lang={lang} class:list={[{ 'home-scroll-snap': scrollSnap }]}>
+<html lang={lang}
+  class:list={[htmlClass, { 'home-scroll-snap': scrollSnap }]}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
