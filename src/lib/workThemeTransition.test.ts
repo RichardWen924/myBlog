@@ -61,4 +61,19 @@ describe('Work transition frames', () => {
     assert.equal(frame.sourceDepthScale, 1);
     assert.equal(frame.speedOpacity, 0);
   });
+
+  it('settles camera and portal motion before the final frame', () => {
+    const viewport = { width: 1440, height: 900 };
+    const almostEntered = getTransitionFrame('enter', 0.99, viewport);
+    const entered = getTransitionFrame('enter', 1, viewport);
+    const almostExited = getTransitionFrame('exit', 0.99, viewport);
+    const exited = getTransitionFrame('exit', 1, viewport);
+
+    assert.ok(Math.abs(entered.portalRadius - almostEntered.portalRadius) < 0.01);
+    assert.ok(Math.abs(entered.workScale - almostEntered.workScale) < 0.0001);
+    assert.ok(Math.abs(entered.focusX - almostEntered.focusX) < 0.0001);
+    assert.ok(Math.abs(exited.portalRadius - almostExited.portalRadius) < 0.01);
+    assert.ok(Math.abs(exited.workScale - almostExited.workScale) < 0.0001);
+    assert.ok(Math.abs(exited.focusX - almostExited.focusX) < 0.0001);
+  });
 });

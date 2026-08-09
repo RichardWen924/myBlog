@@ -26,6 +26,10 @@ const easeInOutCubic = (value: number) => {
   const t = clamp01(value);
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 };
+const smootherStep = (value: number) => {
+  const t = clamp01(value);
+  return t * t * t * (t * (t * 6 - 15) + 10);
+};
 
 export const isWorkPath = (value: string | URL) => {
   const pathname = value instanceof URL ? value.pathname : new URL(value, 'https://local.invalid').pathname;
@@ -49,18 +53,19 @@ export const getTransitionFrame = (
   viewport: TransitionViewport,
 ): WorkTransitionFrame => {
   const t = clamp01(rawProgress);
+  const motionProgress = smootherStep(t);
   const compact = viewport.width < 640;
   const medium = !compact && viewport.width < 1024;
   const startNode = compact ? 84 : medium ? 86 : 88;
   const endNode = compact ? 16 : medium ? 14 : 12;
   const initialScale = compact ? 0.62 : medium ? 0.54 : 0.46;
-  const workProgress = direction === 'enter' ? t : 1 - t;
+  const workProgress = direction === 'enter' ? motionProgress : 1 - motionProgress;
   const cameraProgress = direction === 'enter'
-    ? easeOutCubic(clamp01((t - 0.04) / 0.84))
-    : 1 - easeOutCubic(clamp01((t - 0.04) / 0.84));
+    ? easeOutCubic(clamp01((motionProgress - 0.03) / 0.82))
+    : 1 - easeOutCubic(clamp01((motionProgress - 0.03) / 0.82));
   const portalProgress = direction === 'enter'
-    ? easeInOutCubic(clamp01((t - 0.12) / 0.88))
-    : 1 - easeInOutCubic(clamp01(t / 0.88));
+    ? easeInOutCubic(clamp01((motionProgress - 0.08) / 0.84))
+    : 1 - easeInOutCubic(clamp01((motionProgress - 0.08) / 0.84));
   const focusX = direction === 'enter'
     ? lerp(startNode, 50, cameraProgress)
     : lerp(endNode, 50, cameraProgress);
