@@ -1,24 +1,36 @@
 ---
 import Base from '../../layouts/Base.astro';
 import YearGroup from '../../components/YearGroup.astro';
+import BlogHero from '../../components/blog/BlogHero.astro';
 import { getPublishedPosts } from '../../lib/content';
 import { groupByYear } from '../../lib/utils';
 
 const posts = await getPublishedPosts();
+const summaries = posts.map((post) => ({
+  id: post.id,
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date,
+  tags: post.data.tags,
+}));
 const yearGroups = groupByYear(posts);
 ---
 
-<Base title="Archive">
-  <h1 class="mb-8 pt-8 font-serif text-3xl font-bold text-ink">Archive</h1>
-  {
-    yearGroups.size > 0 ? (
-      [...yearGroups.entries()].map(([year, yearPosts]) => (
-        <YearGroup year={year} posts={yearPosts} />
-      ))
-    ) : (
-      <p class="py-12 text-center font-serif text-lg text-ink-soft">
-        No posts yet.
-      </p>
-    )
-  }
+<Base title="Archive" fullBleed>
+  <BlogHero posts={summaries} recentPosts={summaries.slice(0, 3)} />
+
+  <section id="blog-archive" class="page-shell blog-archive" aria-labelledby="archive-title">
+    <h2 id="archive-title" class="blog-archive__heading">Archive</h2>
+    {
+      yearGroups.size > 0 ? (
+        [...yearGroups.entries()].map(([year, yearPosts]) => (
+          <YearGroup year={year} posts={yearPosts} />
+        ))
+      ) : (
+        <p class="py-12 text-center font-serif text-lg text-ink-soft">
+          No posts yet.
+        </p>
+      )
+    }
+  </section>
 </Base>
