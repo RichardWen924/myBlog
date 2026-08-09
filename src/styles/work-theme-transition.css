@@ -180,34 +180,6 @@ html[data-work-transition-direction='exit'] .work-theme-transition__target > [da
   );
 }
 
-/* The inert transition clone does not run the React/SVG drawing lifecycle.
-   Keep its hero legible, then hand back to the live particle hero on cleanup. */
-.work-theme-transition__target[data-target-theme='work'] .future-wordmark {
-  display: grid;
-  place-items: center;
-}
-
-.work-theme-transition__target[data-target-theme='work'] .future-wordmark::after {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: transparent;
-  content: 'BUILD FUTURE';
-  font-family: var(--font-serif);
-  font-size: clamp(4rem, 13vw, 10.5rem);
-  font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.82;
-  white-space: nowrap;
-  -webkit-text-stroke: 1px #ff9b76;
-}
-
-.work-theme-transition__target[data-target-theme='work'] .future-wordmark__stroke,
-.work-theme-transition__target[data-target-theme='work'] .future-wordmark__particle {
-  opacity: 0 !important;
-}
-
 .work-theme-transition__speed {
   --speed-focus: calc(var(--work-transition-focus-x) * 1%);
   z-index: 70;
@@ -405,9 +377,6 @@ html[data-work-transition-direction='exit'] .work-theme-transition__ring {
   .work-theme-transition__badge { min-width: 4.75rem; }
   .work-theme-transition__badge strong { font-size: 1.25rem; }
   .work-theme-transition__speed { display: none; }
-  .work-theme-transition__target[data-target-theme='work'] .future-wordmark::after {
-    font-size: clamp(2rem, 11vw, 3.4rem);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

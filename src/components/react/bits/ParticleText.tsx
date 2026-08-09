@@ -147,6 +147,7 @@ export default function ParticleText({
       const computed = window.getComputedStyle(probe);
       const typography = {
         family: computed.fontFamily || 'sans-serif',
+        weight: computed.fontWeight || String(fontWeight),
         size: parseFloat(computed.fontSize) || 96,
         spacing: parseFloat(computed.letterSpacing) || 0,
       };
@@ -180,7 +181,7 @@ export default function ParticleText({
       const content = glyphs.join('');
       let resolvedSize = typography.size;
       let resolvedSpacing = typography.spacing;
-      let font = `${fontWeight} ${resolvedSize}px ${typography.family}`;
+      let font = `${typography.weight} ${resolvedSize}px ${typography.family}`;
       offCtx.font = font;
       let glyphWidths = glyphs.map((glyph) => offCtx.measureText(glyph).width);
       let runWidth = getSpacedGlyphRunWidth(glyphWidths, resolvedSpacing);
@@ -189,7 +190,7 @@ export default function ParticleText({
         const scale = availableWidth / runWidth;
         resolvedSize = Math.max(18, resolvedSize * scale);
         resolvedSpacing *= resolvedSize / typography.size;
-        font = `${fontWeight} ${resolvedSize}px ${typography.family}`;
+        font = `${typography.weight} ${resolvedSize}px ${typography.family}`;
         offCtx.font = font;
         glyphWidths = glyphs.map((glyph) => offCtx.measureText(glyph).width);
         runWidth = getSpacedGlyphRunWidth(glyphWidths, resolvedSpacing);

@@ -39,6 +39,10 @@ html.work-scroll-snap {
 }
 
 .future-wordmark {
+  --work-wordmark-font-size: clamp(4rem, 15vw, 11rem);
+  --work-wordmark-font-weight: 800;
+  --work-wordmark-letter-spacing: -0.045em;
+  --work-wordmark-line-height: 0.82;
   position: relative;
   width: min(100% - 2rem, 76rem);
   height: clamp(12rem, 30vw, 24rem);
@@ -46,15 +50,25 @@ html.work-scroll-snap {
   font-family: var(--font-serif);
 }
 
-.future-wordmark__stroke,
+.future-wordmark__outline,
 .future-wordmark__particle {
   position: absolute;
   inset: 0;
   transition: opacity 420ms ease, transform 420ms ease;
 }
 
-.future-wordmark__stroke {
+.future-wordmark__outline {
   z-index: 1;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  font-size: var(--work-wordmark-font-size);
+  font-weight: var(--work-wordmark-font-weight);
+  letter-spacing: var(--work-wordmark-letter-spacing);
+  line-height: var(--work-wordmark-line-height);
+  text-rendering: geometricPrecision;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px var(--color-warm);
 }
 
 .future-wordmark__particle {
@@ -63,7 +77,7 @@ html.work-scroll-snap {
   transform: scale(0.985);
 }
 
-.future-wordmark.is-particle-ready .future-wordmark__stroke {
+.future-wordmark.is-particle-ready .future-wordmark__outline {
   opacity: 0;
   transform: scale(1.015);
 }
@@ -75,6 +89,7 @@ html.work-scroll-snap {
 
 @media (max-width: 767px) {
   .future-wordmark {
+    --work-wordmark-font-size: clamp(2rem, 11vw, 3.4rem);
     width: calc(100% - 1rem);
     height: 9rem;
   }
@@ -265,7 +280,7 @@ html.work-scroll-snap {
     transition: none;
   }
 
-  .future-wordmark__stroke,
+  .future-wordmark__outline,
   .future-wordmark__particle {
     transition: none;
   }
