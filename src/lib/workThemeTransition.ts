@@ -1,4 +1,17 @@
 export type WorkTransitionDirection = 'enter' | 'exit';
+export type WorkHeroStartMode = 'particles' | 'await-transition' | 'settle';
+
+export const WORK_HERO_ARRIVAL_EVENT = 'work:hero-arrival';
+export const WORK_HERO_SETTLE_MS = 180;
+export const WORK_HERO_FALLBACK_MS = 2600;
+
+export const getWorkHeroStartMode = (
+  reducedMotion: boolean,
+  arrivalPending: boolean,
+): WorkHeroStartMode => {
+  if (reducedMotion) return 'particles';
+  return arrivalPending ? 'await-transition' : 'settle';
+};
 
 export interface TransitionViewport {
   width: number;

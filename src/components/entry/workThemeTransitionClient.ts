@@ -7,6 +7,7 @@ import {
   getTransitionDirection,
   getTransitionFrame,
   isWorkPath,
+  WORK_HERO_ARRIVAL_EVENT,
   type WorkTransitionDirection,
   type WorkTransitionFrame,
 } from '../../lib/workThemeTransition';
@@ -192,7 +193,7 @@ export const initWorkThemeTransition = () => {
     });
   };
 
-  const cleanup = () => {
+  const cleanup = (completeWorkArrival = false) => {
     activeTween?.kill();
     activeTween = null;
     document.querySelectorAll<HTMLElement>('[data-work-transition-source], [data-work-transition-direct-target]')
@@ -215,6 +216,17 @@ export const initWorkThemeTransition = () => {
     bodyPaddingRight = '';
     hud.setAttribute('aria-hidden', 'true');
     pendingDirection = null;
+
+    if (completeWorkArrival && isWorkPath(window.location.pathname)) {
+      root.dataset.workHeroArrival = 'complete';
+      window.dispatchEvent(new CustomEvent(WORK_HERO_ARRIVAL_EVENT));
+    }
+  };
+
+  const cleanupAfterPaint = (completeWorkArrival = false) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => cleanup(completeWorkArrival));
+    });
   };
 
   const handleBeforePreparation = (event: Event) => {
@@ -261,7 +273,8 @@ export const initWorkThemeTransition = () => {
 
   const handleAfterSwap = () => {
     if (!pendingDirection) return;
-    window.requestAnimationFrame(() => cleanup());
+    const completedDirection = pendingDirection;
+    cleanupAfterPaint(completedDirection === 'enter');
   };
 
   const handleInitialPageLoad = () => {
@@ -273,7 +286,7 @@ export const initWorkThemeTransition = () => {
     if (!source) return;
 
     mountIncomingPage(source, 'enter');
-    void play('enter').finally(() => cleanup());
+    void play('enter').finally(() => cleanupAfterPaint(true));
   };
 
   document.addEventListener('astro:before-preparation', handleBeforePreparation);

@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  getWorkHeroStartMode,
   getTransitionDirection,
   getTransitionFrame,
   isWorkPath,
 } from './workThemeTransition.ts';
+
+describe('Work Hero arrival', () => {
+  it('chooses a single start mode from motion and transition state', () => {
+    assert.equal(getWorkHeroStartMode(true, true), 'particles');
+    assert.equal(getWorkHeroStartMode(false, true), 'await-transition');
+    assert.equal(getWorkHeroStartMode(false, false), 'settle');
+  });
+});
 
 describe('Work route classification', () => {
   it('recognizes only the Work route', () => {
