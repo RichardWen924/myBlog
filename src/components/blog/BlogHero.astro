@@ -19,6 +19,7 @@ const clientPosts = posts.map((post) => ({
   ...post,
   date: post.date.toISOString(),
 }));
+const recentPostLabel = recentPosts.length === 1 ? 'post' : 'posts';
 ---
 
 <section class="blog-hero" aria-labelledby="blog-hero-title">
@@ -55,7 +56,7 @@ const clientPosts = posts.map((post) => ({
       <p class="blog-results__status" data-blog-status aria-live="polite">
         {recentPosts.length === 0
           ? 'No posts yet.'
-          : `Showing the ${recentPosts.length} latest posts`}
+          : `Showing the ${recentPosts.length} latest ${recentPostLabel}`}
       </p>
       <ul class="blog-results__list" data-blog-list>
         {
@@ -139,7 +140,7 @@ const clientPosts = posts.map((post) => ({
 
       if (!query) {
         status.textContent = initialPosts.length
-          ? `Showing the ${initialPosts.length} latest posts`
+          ? `Showing the ${initialPosts.length} latest ${initialPosts.length === 1 ? 'post' : 'posts'}`
           : 'No posts yet.';
       } else if (results.length === 0) {
         status.textContent = 'No matching posts';
