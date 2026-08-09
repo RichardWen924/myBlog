@@ -121,6 +121,21 @@ html.work-scroll-snap {
   line-height: 0.86;
 }
 
+.work-whoami-decrypted {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.work-whoami-decrypted__char,
+.work-whoami-decrypted__encrypted {
+  display: inline-block;
+}
+
+.work-whoami-decrypted__encrypted {
+  color: var(--color-warm);
+  opacity: 0.6;
+}
+
 .work-whoami-name {
   margin-top: clamp(2rem, 5vw, 4rem);
   color: var(--color-ink);
@@ -256,7 +271,8 @@ html.work-scroll-snap {
   }
 
   .work-whoami-lines [style],
-  .work-whoami-timeline [style] {
+  .work-whoami-timeline [style],
+  .work-whoami-decrypted [style] {
     transition: none;
   }
 }
