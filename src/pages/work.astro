@@ -5,10 +5,12 @@ import ProjectCard from '../components/react/ProjectCard';
 import SkillsOrbit from '../components/react/SkillsOrbit';
 import Timeline from '../components/react/Timeline';
 import FutureHero from '../components/react/FutureHero';
+import WhoAmIIntro from '../components/react/WhoAmIIntro';
 import SectionEyebrow from '../components/home/SectionEyebrow.astro';
 import WorkChapterNavigation from '../components/work/WorkChapterNavigation.astro';
 import { getProjects } from '../lib/content';
 import profile from '../data/profile';
+import workTimelineMock from '../data/workTimelineMock';
 
 const projects = getProjects();
 ---
@@ -19,10 +21,19 @@ const projects = getProjects();
       <FutureHero client:load />
     </section>
 
+    <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
+      <div class="work-whoami-layout mx-auto max-w-6xl px-6">
+        <WhoAmIIntro client:visible />
+        <FadeSection client:visible className="work-whoami-timeline" delay={0.55}>
+          <Timeline client:visible items={workTimelineMock} />
+        </FadeSection>
+      </div>
+    </section>
+
     <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero" data-work-chapter="systems">
       <div class="work-skill-layout mx-auto max-w-6xl px-6">
         <div class="work-skill-copy">
-          <SectionEyebrow index="01" label="Technical practice" status="WORK / SYSTEMS" />
+          <SectionEyebrow index="02" label="Technical practice" status="WORK / SYSTEMS" />
           <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
             Systems I build, and the thinking behind them.
           </h1>
@@ -53,7 +64,7 @@ const projects = getProjects();
     <section id="work-projects" class="work-chapter work-chapter--content" data-work-chapter="projects">
       <div class="work-content mx-auto max-w-4xl px-4">
         <section class="work-section">
-          <SectionEyebrow index="02" label="Selected work" status="PROJECTS" />
+          <SectionEyebrow index="03" label="Selected work" status="PROJECTS" />
           <FadeSection client:visible className="mt-8">
             {projects.length > 0 ? (
               <ul>
@@ -70,7 +81,7 @@ const projects = getProjects();
     <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
       <div class="work-content mx-auto max-w-4xl px-4">
         <section class="work-section border-t border-border pt-24">
-          <SectionEyebrow index="03" label="Experience" status="TIMELINE" />
+          <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
           <div class="mt-8">
             <Timeline client:visible />
           </div>
@@ -81,7 +92,7 @@ const projects = getProjects();
     <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
       <div class="work-content mx-auto max-w-4xl px-4">
         <section class="work-section border-t border-border pb-24 pt-24">
-          <SectionEyebrow index="04" label="Continue exploring" status="DETAILS" />
+          <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
           <div class="mt-8 flex flex-wrap gap-5">
             <a href="/projects" class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
             <a href="/blog" class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>

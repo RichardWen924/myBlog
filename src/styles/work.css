@@ -87,6 +87,67 @@ html.work-scroll-snap {
   scroll-snap-stop: always;
 }
 
+.work-chapter--whoami {
+  display: flex;
+  align-items: center;
+}
+
+.work-whoami-layout {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+  align-items: start;
+  gap: clamp(3rem, 9vw, 9rem);
+}
+
+.work-whoami-copy {
+  padding-top: clamp(0rem, 3vw, 2rem);
+}
+
+.work-whoami-kicker {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+}
+
+.work-whoami-heading {
+  margin-top: 1.3rem;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 600;
+  letter-spacing: -0.07em;
+  line-height: 0.86;
+}
+
+.work-whoami-name {
+  margin-top: clamp(2rem, 5vw, 4rem);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.work-whoami-lines {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 2rem;
+  color: var(--color-ink-soft);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.55;
+}
+
+.work-whoami-lines strong {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.work-whoami-timeline {
+  width: 100%;
+  padding-top: clamp(0rem, 4vw, 3rem);
+}
+
 .work-chapter--content,
 .work-chapter--closing {
   display: flex;
@@ -140,6 +201,24 @@ html.work-scroll-snap {
 }
 
 @media (max-width: 767px) {
+  .work-chapter--whoami {
+    align-items: flex-start;
+    padding-block: 5rem 6rem;
+  }
+
+  .work-whoami-layout {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .work-whoami-heading {
+    font-size: clamp(4rem, 19vw, 7rem);
+  }
+
+  .work-whoami-timeline {
+    padding-top: 0;
+  }
+
   .work-chapter--content,
   .work-chapter--closing {
     align-items: flex-start;
@@ -173,6 +252,11 @@ html.work-scroll-snap {
 
   .future-wordmark__stroke,
   .future-wordmark__particle {
+    transition: none;
+  }
+
+  .work-whoami-lines [style],
+  .work-whoami-timeline [style] {
     transition: none;
   }
 }

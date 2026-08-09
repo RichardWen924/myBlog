@@ -1,15 +1,20 @@
 import { motion } from 'framer-motion';
 import experience from '../../data/experience';
+import type { ExperienceItem } from '../../data/experience';
 
 function formatPeriod(start: string, end?: string) {
   return `${start} — ${end ?? 'Present'}`;
 }
 
 /** Work/education timeline: left hairline + dot, scroll-triggered reveal. */
-export default function Timeline() {
+interface TimelineProps {
+  items?: ExperienceItem[];
+}
+
+export default function Timeline({ items = experience }: TimelineProps) {
   return (
     <ol className="relative border-l border-border pl-6">
-      {experience.map((item, i) => (
+      {items.map((item, i) => (
         <motion.li
           key={i}
           className="relative mb-10 last:mb-0"
