@@ -63,7 +63,6 @@ const recentPostLabel = recentPosts.length === 1 ? 'post' : 'posts';
                 <a class="blog-results__link" href={`/blog/${post.id}`}>
                   <span class="blog-results__copy">
                     <span class="blog-results__title">{post.title}</span>
-                    <span class="blog-results__description">{post.description}</span>
                   </span>
                   <time class="blog-results__date" datetime={post.date.toISOString()}>
                     {formatDate(post.date)}
@@ -110,16 +109,12 @@ const recentPostLabel = recentPosts.length === 1 ? 'post' : 'posts';
       title.className = 'blog-results__title';
       title.textContent = post.title;
 
-      const description = document.createElement('span');
-      description.className = 'blog-results__description';
-      description.textContent = post.description;
-
       const date = document.createElement('time');
       date.className = 'blog-results__date';
       date.dateTime = post.date;
       date.textContent = post.date.slice(0, 10);
 
-      copy.append(title, description);
+      copy.append(title);
       link.append(copy, date);
       item.append(link);
       return item;

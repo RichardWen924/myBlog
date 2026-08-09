@@ -151,7 +151,6 @@ html.blog-scroll-snap {
   width: min(100%, 48rem);
   margin-top: clamp(2rem, 5vh, 3.5rem);
   margin-inline: auto;
-  text-align: center;
 }
 
 .blog-results__status {
@@ -177,9 +176,8 @@ html.blog-scroll-snap {
 .blog-results__link {
   display: flex;
   align-items: center;
-  flex-direction: column;
   justify-content: space-between;
-  gap: 0.45rem;
+  gap: 1.5rem;
   padding: 1rem 0;
   text-decoration: none;
 }
@@ -192,8 +190,6 @@ html.blog-scroll-snap {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .blog-results__title {
@@ -204,20 +200,12 @@ html.blog-scroll-snap {
   transition: color 180ms ease;
 }
 
-.blog-results__description {
-  overflow: hidden;
-  color: var(--color-ink-soft);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .blog-results__date {
-  flex: 0 0 auto;
+  margin-left: auto;
   color: var(--color-ink-soft);
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .blog-results__empty {
@@ -334,12 +322,7 @@ html.blog-scroll-snap {
 
   .blog-results__link {
     align-items: center;
-    gap: 0.4rem;
-  }
-
-  .blog-results__description {
-    max-width: 100%;
-    white-space: normal;
+    gap: 1rem;
   }
 
   .blog-chapter-rail {
