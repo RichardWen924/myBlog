@@ -8,10 +8,10 @@ Replace the progress-indicator transition with a restrained two-stage camera mov
 
 The route transition communicates a theme change through spatial continuity rather than progress UI:
 
-1. The current page recedes and contracts toward the visual center of the `Richard` brand.
-2. At minimum scale, the brand point becomes a short lens-like focus aperture.
-3. The route changes while the aperture owns the frame.
-4. The destination page grows outward from the same point until it fills the viewport.
+1. The current page stays full-bleed while the camera zooms toward the visual center of the `Richard` brand.
+2. At maximum magnification, the enlarged brand holds briefly and the surface color changes to the destination theme.
+3. The route changes while the enlarged brand owns the frame.
+4. The camera pulls back from the same magnified brand to reveal the full destination page.
 5. Entering and leaving Work use the same sequence with opposite source and destination themes.
 
 The user approved removing the track, nodes, percentage, route label, and status copy.
@@ -25,25 +25,25 @@ The user approved removing the track, nodes, percentage, route label, and status
 
 ## Motion phases
 
-### Phase 1: Source absorption
+### Phase 1: Camera push-in
 
 - Duration share: approximately 45%.
 - Source transform origin: the measured brand focus.
-- Source scale: `1 → 0.055` with a smooth accelerating curve.
-- Add a small depth blur and lower opacity only near the final part of contraction.
-- Keep the source recognizable for most of the movement; avoid rotation or elastic overshoot.
+- Source scale: `1 → approximately 5.6` around the measured brand point.
+- The page always covers the viewport; it must never become a small floating rectangle.
+- Add a small edge blur only near maximum magnification; avoid rotation or elastic overshoot.
 
-### Phase 2: Destination expansion
+### Phase 2: Camera pull-back
 
 - Duration share: approximately 55%.
-- Destination starts at the same scale and transform origin as the contracted source.
-- Destination scale: `0.055 → 1` with a decelerating endpoint-smooth curve.
-- Reveal the destination through a circular aperture centered on the brand point.
-- The aperture reaches full viewport coverage before the last frame, leaving a stable settle interval.
+- Destination starts at the same maximum scale and transform origin as the magnified source.
+- Crossfade source and destination theme colors during a short brand hold.
+- Destination scale: `approximately 5.6 → 1` with a decelerating endpoint-smooth curve.
+- Complete the pull-back before the last frame, leaving a stable settle interval.
 
-### Focus aperture
+### Focus treatment
 
-- Use one thin green ring, a restrained radial glow, and a short refraction pulse at the midpoint.
+- Use a restrained radial glow and short refraction pulse at the midpoint; the enlarged brand is the primary visual anchor.
 - Speed streaks may appear only around the focus point during contraction/expansion.
 - Do not render a progress bar, number, status text, or full-screen loading copy.
 
@@ -54,15 +54,21 @@ The user approved removing the track, nodes, percentage, route label, and status
 - After clone cleanup, the live Hero pauses briefly and particleizes exactly once.
 - Cached or previously hydrated `astro-island` state must never run inside the transition clone.
 
+## Direct Work refresh
+
+- A direct browser load or refresh of `/work` does not play the route camera transition.
+- It displays the Work page immediately and replays only the Hero outline-to-particle sequence.
+- The camera transition runs only when client-side navigation crosses the Work route boundary.
+
 ## Scope and reduced motion
 
 - Only the desktop transition is redesigned and verified in this task.
 - No new mobile transition rules, motion parameters, or mobile regression work are included.
-- Reduced-motion users skip contraction, aperture, blur, and particle gathering; navigation swaps immediately to the stable destination.
+- Reduced-motion users skip camera zoom, refraction, blur, and particle gathering; navigation swaps immediately to the stable destination.
 
 ## Verification
 
-- Unit-test exact enter/exit endpoints, midpoint minimum scale, and stable final-frame values.
+- Unit-test exact enter/exit endpoints, midpoint maximum scale, and stable final-frame values.
 - Build the Astro project.
-- Browser-test direct Work entry, Home → Work, Work → Home, repeated cached entry, and reduced motion on desktop.
+- Browser-test Work refresh, Home → Work, Work → Home, repeated cached entry, and reduced motion on desktop.
 - Confirm all six Work chapters remain present and transition clones are empty after cleanup.

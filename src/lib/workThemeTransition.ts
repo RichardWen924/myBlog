@@ -24,7 +24,6 @@ export interface WorkTransitionFrame {
   targetScale: number;
   targetOpacity: number;
   targetProgress: number;
-  apertureRadius: number;
   sourceBlur: number;
   focusPulse: number;
   streakOpacity: number;
@@ -56,27 +55,25 @@ export const getTransitionDirection = (
 export const getTransitionFrame = (
   _direction: WorkTransitionDirection,
   rawProgress: number,
-  viewport: TransitionViewport,
+  _viewport: TransitionViewport,
 ): WorkTransitionFrame => {
   const t = clamp01(rawProgress);
-  const minimumScale = 0.055;
-  const sourceProgress = smootherStep(t / 0.46);
-  const targetProgress = smootherStep((t - 0.44) / 0.5);
-  const sourceFade = smootherStep((t - 0.3) / 0.16);
-  const targetFade = smootherStep((t - 0.44) / 0.1);
-  const focusWindow = clamp01(1 - Math.abs(t - 0.47) / 0.16);
-  const streakWindow = clamp01(1 - Math.abs(t - 0.43) / 0.32);
-  const fullRadius = Math.hypot(viewport.width, viewport.height) * 1.08;
+  const maximumScale = 5.6;
+  const sourceProgress = smootherStep(t / 0.42);
+  const targetProgress = smootherStep((t - 0.54) / 0.4);
+  const themeChange = smootherStep((t - 0.43) / 0.12);
+  const focusWindow = clamp01(1 - Math.abs(t - 0.49) / 0.14);
+  const sourceVelocity = Math.sin(Math.PI * clamp01(t / 0.42));
+  const targetVelocity = Math.sin(Math.PI * clamp01((t - 0.54) / 0.4));
 
   return {
-    sourceScale: lerp(1, minimumScale, sourceProgress),
-    sourceOpacity: 1 - sourceFade,
-    targetScale: lerp(minimumScale, 1, targetProgress),
-    targetOpacity: targetFade,
+    sourceScale: lerp(1, maximumScale, sourceProgress),
+    sourceOpacity: 1 - themeChange,
+    targetScale: lerp(maximumScale, 1, targetProgress),
+    targetOpacity: themeChange,
     targetProgress,
-    apertureRadius: lerp(12, fullRadius, targetProgress),
-    sourceBlur: lerp(0, 2.6, sourceFade),
+    sourceBlur: 0.55 * smootherStep(focusWindow),
     focusPulse: smootherStep(focusWindow),
-    streakOpacity: 0.18 * smootherStep(streakWindow),
+    streakOpacity: 0.09 * Math.max(sourceVelocity, targetVelocity),
   };
 };

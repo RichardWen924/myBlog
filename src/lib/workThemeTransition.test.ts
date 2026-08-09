@@ -32,7 +32,7 @@ describe('Work route classification', () => {
 });
 
 describe('Work transition frames', () => {
-  it('contracts the source into the Richard focus before expanding the target', () => {
+  it('pushes the camera into the Richard focus before pulling back the target', () => {
     const viewport = { width: 1440, height: 900 };
     const start = getTransitionFrame('enter', 0, viewport);
     const midpoint = getTransitionFrame('enter', 0.46, viewport);
@@ -41,12 +41,11 @@ describe('Work transition frames', () => {
     assert.equal(start.sourceScale, 1);
     assert.equal(start.sourceOpacity, 1);
     assert.equal(start.targetOpacity, 0);
-    assert.ok(midpoint.sourceScale <= 0.06);
-    assert.ok(midpoint.targetScale <= 0.06);
+    assert.ok(midpoint.sourceScale >= 5);
+    assert.ok(midpoint.targetScale >= 5);
     assert.equal(end.sourceOpacity, 0);
     assert.equal(end.targetScale, 1);
     assert.equal(end.targetOpacity, 1);
-    assert.ok(end.apertureRadius > Math.hypot(viewport.width, viewport.height));
   });
 
   it('uses the same Richard-focus camera sequence when leaving Work', () => {
@@ -62,7 +61,6 @@ describe('Work transition frames', () => {
     const almost = getTransitionFrame('enter', 0.99, viewport);
     const end = getTransitionFrame('enter', 1, viewport);
 
-    assert.ok(Math.abs(end.apertureRadius - almost.apertureRadius) < 0.01);
     assert.ok(Math.abs(end.targetScale - almost.targetScale) < 0.0001);
     assert.ok(Math.abs(end.targetOpacity - almost.targetOpacity) < 0.0001);
   });
