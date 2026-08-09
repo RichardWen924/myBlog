@@ -1,0 +1,28 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  variant?: 'default' | 'quiet' | 'notebook' | 'atlas';
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  variant = 'default',
+} = Astro.props;
+---
+
+<header class:list={['page-hero', `page-hero--${variant}`]}>
+  <div class="page-shell page-hero__inner">
+    <div class="page-hero__copy">
+      {eyebrow && <p class="page-hero__eyebrow micro-label">{eyebrow}</p>}
+      <h1 class="page-hero__title">{title}</h1>
+      {description && <p class="page-hero__description">{description}</p>}
+    </div>
+    <div class="page-hero__visual">
+      <slot />
+    </div>
+  </div>
+</header>

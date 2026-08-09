@@ -2,25 +2,28 @@
 @import 'tailwindcss';
 @import './illustration.css';
 @import './home.css';
+@import './about.css';
 
 /* ===== Typography plugin (v4 CSS-first API) ===== */
 @plugin '@tailwindcss/typography';
 
 /* ===== Design tokens =====
-   Warm paper palette: Xi Cha sage-green accent + Claude terracotta warm.
-   Utility classes generated: bg-paper, text-ink, text-accent, text-warm, border-border, font-serif */
+   Personal Archive mother system: warm paper, quiet structure, real content first. */
 @theme {
   /* Colors */
-  --color-paper: #faf8f5;
-  --color-ink: #1a1a1a;
-  --color-ink-soft: #6b6b6b;
-  --color-accent: #5b7553;
-  --color-warm: #c97b5a;
-  --color-border: #e6e2dd;
+  --color-paper: #f4f0e8;
+  --color-surface: #faf8f3;
+  --color-ink: #1d1d1a;
+  --color-ink-soft: #6e706a;
+  --color-border: #d8d2c7;
+  --color-accent: #64745d;
+  --color-warm: #c97858;
+  --color-steel: #6f7f86;
 
-  /* Fonts — system stacks only, zero external requests */
-  --font-serif: 'Georgia', 'Times New Roman', 'Songti SC', 'Noto Serif SC', serif;
-  --font-mono: 'SF Mono', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  /* Fonts — local/system fallbacks keep content readable without font loading */
+  --font-serif: 'Newsreader', 'Noto Serif SC', Georgia, serif;
+  --font-sans: 'IBM Plex Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
 
   /* Entrance motion — soft, cubic-bezier, transform/opacity only */
   --animate-reveal: reveal 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -44,12 +47,7 @@
 /* ===== Base ===== */
 @layer base {
   html {
-    font-family:
-      system-ui,
-      -apple-system,
-      'PingFang SC',
-      'Microsoft YaHei',
-      sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--color-paper);
     color: var(--color-ink);
     scroll-behavior: smooth;
@@ -110,6 +108,164 @@ a:hover {
   color: var(--color-accent);
 }
 
+/* ===== Shared layout and reading primitives ===== */
+.page-shell {
+  width: min(calc(100% - clamp(2.5rem, 8vw, 8rem)), 74rem);
+  margin-inline: auto;
+}
+
+.micro-label {
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.page-hero {
+  --page-hero-accent: var(--color-accent);
+  padding-block: clamp(4rem, 10vw, 8rem) clamp(3rem, 7vw, 6rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-hero--quiet {
+  --page-hero-accent: var(--color-ink-soft);
+}
+
+.page-hero--notebook {
+  --page-hero-accent: var(--color-warm);
+}
+
+.page-hero--atlas {
+  --page-hero-accent: var(--color-steel);
+}
+
+.page-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+  align-items: end;
+  gap: clamp(2rem, 8vw, 8rem);
+}
+
+.page-hero__copy {
+  max-width: 48rem;
+}
+
+.page-hero__eyebrow,
+.page-hero__description {
+  margin: 0;
+}
+
+.page-hero__eyebrow {
+  margin-bottom: 1.5rem;
+  color: var(--page-hero-accent);
+}
+
+.page-hero__title {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+
+.page-hero__description {
+  max-width: 38rem;
+  margin-top: 2rem;
+  color: var(--color-ink-soft);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  line-height: 1.7;
+}
+
+.page-hero__visual {
+  min-width: 0;
+  color: var(--page-hero-accent);
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: baseline;
+}
+
+.section-heading__index {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.section-heading__label,
+.section-heading__title,
+.section-heading__description {
+  grid-column: 2;
+  margin: 0;
+}
+
+.section-heading__label {
+  color: var(--color-ink-soft);
+}
+
+.section-heading__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.05;
+}
+
+.section-heading__description {
+  max-width: 42rem;
+  margin-top: 1rem;
+  color: var(--color-ink-soft);
+  line-height: 1.7;
+}
+
+.archive-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.archive-link__arrow {
+  color: var(--color-accent);
+  transition: transform 180ms ease;
+}
+
+.archive-link:hover .archive-link__arrow,
+.archive-link:focus-visible .archive-link__arrow {
+  transform: translateX(0.25rem);
+}
+
+.archive-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 72%, transparent);
+  outline-offset: 4px;
+}
+
+.content-divider {
+  width: 100%;
+  margin-block: clamp(2rem, 5vw, 4rem);
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.motion-reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-reveal[data-motion-reveal] {
+  animation: var(--animate-reveal);
+}
+
+.reduced-motion-safe {
+  will-change: auto;
+}
+
 .site-header__link {
   position: relative;
   display: inline-flex;
@@ -117,7 +273,7 @@ a:hover {
   align-items: center;
   color: var(--color-ink-soft);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-decoration: none;
   text-transform: uppercase;
@@ -125,7 +281,7 @@ a:hover {
 }
 
 .site-header__inner {
-  width: min(calc(100% - clamp(2rem, 10vw, 10rem)), 72rem);
+  width: min(calc(100% - clamp(2.5rem, 8vw, 8rem)), 74rem);
   margin-inline: auto;
 }
 
@@ -160,6 +316,11 @@ a:hover {
   outline-offset: 4px;
 }
 
+.site-header__brand:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 72%, transparent);
+  outline-offset: 4px;
+}
+
 .site-header__mobile {
   position: relative;
 }
@@ -172,7 +333,7 @@ a:hover {
   color: var(--color-ink-soft);
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   list-style: none;
   text-transform: uppercase;
@@ -223,11 +384,52 @@ a:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .glow-layer {
+    animation: none;
+  }
+
+  a {
+    transition-duration: 0ms;
+  }
+
+  .archive-link__arrow,
+  .motion-reveal[data-motion-reveal],
   .site-header__link,
   .site-header__link::after,
   .site-header__menu,
   .site-header__menu-icon {
     transition-duration: 0ms;
+  }
+
+  .motion-reveal[data-motion-reveal] {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-hero {
+    padding-block: 3.5rem 3rem;
+  }
+
+  .page-hero__inner {
+    display: block;
+  }
+
+  .page-hero__visual {
+    margin-top: 3rem;
+  }
+
+  .page-hero__title {
+    max-width: 10ch;
+    font-size: clamp(3.25rem, 16vw, 5.5rem);
+  }
+
+  .section-heading {
+    grid-template-columns: 1.75rem minmax(0, 1fr);
   }
 }
 /* ===== About skills constellation ===== */
@@ -397,7 +599,7 @@ a:hover {
 .skill-orbit__center-meta {
   fill: var(--color-ink-soft);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
 }
 
@@ -448,7 +650,7 @@ a:hover {
 .skill-orbit__item-label {
   fill: var(--color-ink-soft);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 0.75rem;
   letter-spacing: 0.02em;
 }
 
@@ -499,7 +701,7 @@ a:hover {
   }
 
   .skill-orbit__item-label {
-    font-size: 10px;
+    font-size: 0.75rem;
   }
 }
 

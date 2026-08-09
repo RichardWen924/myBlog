@@ -33,6 +33,13 @@ test('homepage chapter navigation owns keyboard and active-section behavior', ()
   assert.doesNotMatch(homepage, /addEventListener\(['"]keydown['"]/);
 });
 
+test('homepage keyboard navigation respects reduced motion for both scroll APIs', () => {
+  assert.match(navigation, /prefers-reduced-motion/);
+  assert.match(navigation, /const scrollBehavior/);
+  assert.match(navigation, /window\.scrollTo\(\{\s*top:\s*0,\s*behavior:\s*scrollBehavior/s);
+  assert.match(navigation, /scrollIntoView\(\{\s*behavior:\s*scrollBehavior/s);
+});
+
 test('hero does not draw a second line under the sticky header', () => {
   const heroRule = css.match(/\.home-landing-hero\s*\{([^}]+)\}/s)?.[1] ?? '';
 

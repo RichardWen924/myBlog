@@ -13,7 +13,7 @@ const { items } = Astro.props;
     <span>Menu</span>
     <span class="site-header__menu-icon" aria-hidden="true">↘</span>
   </summary>
-  <div class="site-header__mobile-panel">
+  <div class="site-header__mobile-panel" role="group" aria-label="Mobile navigation links">
     {items.map((item) => (
       <a
         href={item.href}

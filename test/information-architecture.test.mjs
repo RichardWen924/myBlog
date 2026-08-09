@@ -26,9 +26,15 @@ test('work page owns skills, projects, and experience content', () => {
 });
 
 test('about page is personal rather than a duplicate technical profile', () => {
-  assert.match(about, /About|Personal|Life|生活/);
+  assert.match(about, /PageHero/);
+  assert.match(about, /eyebrow="Now"/);
+  assert.match(about, /label="The path"/);
+  assert.match(about, /label="How I keep growing"/);
+  assert.match(about, /label="Elsewhere"/);
+  assert.match(about, /<ArchiveLink href="\/work" label="Work" \/>/);
   assert.doesNotMatch(about, /SkillsOrbit/);
   assert.doesNotMatch(about, /<Timeline/);
+  assert.doesNotMatch(about, /SectionEyebrow/);
 });
 
 test('about page uses the canonical profile email', () => {

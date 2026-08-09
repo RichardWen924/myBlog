@@ -8,7 +8,7 @@ import HeaderMobileMenu from './HeaderMobileMenu.astro';
 const navItems = getNavigationItems(Astro.url.pathname);
 ---
 
-<header class="sticky top-0 z-40 border-b border-border bg-paper/90 backdrop-blur-sm">
+<header class="site-header sticky top-0 z-40 border-b border-border bg-paper">
   <nav class="site-header__inner relative flex items-center justify-between py-4" aria-label="Primary navigation">
     <HeaderBrand title={SITE_TITLE} />
     <HeaderLinks items={navItems} />

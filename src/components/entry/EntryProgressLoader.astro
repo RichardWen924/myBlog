@@ -1,5 +1,6 @@
 <div
   class="entry-progress-loader"
+  data-entry-duration-ms="900"
   aria-label="Loading page"
   aria-hidden="false"
 >
@@ -57,11 +58,11 @@
   /* If the client script cannot load, fail open after the visual has had time
      to register instead of leaving a fixed layer over the page forever. */
   .entry-progress-loader:not([data-runtime]) {
-    animation: entry-progress-loader-fallback-exit 2.2s ease 0.1s forwards;
+    animation: entry-progress-loader-fallback-exit 1.05s ease 0.05s forwards;
   }
 
   .entry-progress-loader:not([data-runtime]) .entry-progress__fill {
-    animation: entry-progress-loader-fallback-fill 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: entry-progress-loader-fallback-fill 0.82s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .entry-progress {
@@ -103,7 +104,7 @@
     gap: 0.8rem;
     color: var(--color-ink-soft);
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     letter-spacing: -0.04em;
     transition: color 220ms ease, transform 220ms ease;
   }
@@ -146,7 +147,7 @@
 
     .entry-progress__step {
       min-width: 2.35rem;
-      font-size: 0.58rem;
+      font-size: 0.75rem;
     }
 
     .entry-progress__dot {
@@ -156,6 +157,18 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .entry-progress-loader:not([data-runtime]) {
+      animation: none;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .entry-progress-loader:not([data-runtime]) .entry-progress__fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+
     .entry-progress__step,
     .entry-progress__dot {
       transition: none;
@@ -187,7 +200,25 @@
   const milestones = loader ? gsap.utils.toArray('.entry-progress__step', loader) : [];
   const pageContent = document.querySelector('[data-entry-content]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ENTRY_SESSION_KEY = 'personal-archive-entry-complete';
+  const ENTRY_PROGRESS_DURATION_MS = 900;
   let completionAnnounced = false;
+
+  const hasCompletedEntry = () => {
+    try {
+      return window.sessionStorage.getItem(ENTRY_SESSION_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  };
+
+  const rememberEntryCompletion = () => {
+    try {
+      window.sessionStorage.setItem(ENTRY_SESSION_KEY, 'true');
+    } catch {
+      // Storage can be blocked by privacy settings. The page remains usable.
+    }
+  };
 
   const setProgress = (value: number) => {
     progressbar?.setAttribute('aria-valuenow', String(value));
@@ -221,39 +252,49 @@
     gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
     unlockDocument();
     loader?.remove();
+    rememberEntryCompletion();
     announceCompletion();
   };
 
   if (loader && fill && progressbar) {
     delete document.documentElement.dataset.entryReady;
     loader.dataset.runtime = 'js';
-    lockDocument();
+    const sessionAlreadyComplete = hasCompletedEntry();
 
-    if (reducedMotion) {
-      setProgress(100);
-      gsap.set(fill, { scaleX: 1 });
-      window.setTimeout(() => removeLoader(), 180);
+    if (sessionAlreadyComplete) {
+      unlockDocument();
+      loader?.remove();
+      announceCompletion();
     } else {
-      const timeline = gsap.timeline({
-        defaults: { ease: 'power2.out' },
-        onComplete: () => {
-          loader.setAttribute('aria-hidden', 'true');
-          gsap.to(loader, {
-            yPercent: -100,
-            duration: 0.65,
-            ease: 'power3.inOut',
-            onComplete: () => {
-              removeLoader();
-            },
-          });
-        },
-      });
+      lockDocument();
 
-      [0, 25, 50, 75, 100].forEach((value, index) => {
-        const duration = index === 0 ? 0.08 : 0.305;
-        timeline.to({}, { duration, onStart: () => setProgress(value) });
-        timeline.to(fill, { scaleX: value / 100, duration }, '<');
-      });
+      if (reducedMotion) {
+        setProgress(100);
+        gsap.set(fill, { scaleX: 1 });
+        window.setTimeout(() => removeLoader(), 0);
+      } else {
+        const timeline = gsap.timeline({
+          defaults: { ease: 'power2.out' },
+          onComplete: () => {
+            loader.setAttribute('aria-hidden', 'true');
+            gsap.to(loader, {
+              yPercent: -100,
+              duration: 0.1,
+              ease: 'power3.inOut',
+              onComplete: () => {
+                removeLoader();
+              },
+            });
+          },
+        });
+
+        const milestoneDuration = (ENTRY_PROGRESS_DURATION_MS / 1000 - 0.06) / 4;
+        [0, 25, 50, 75, 100].forEach((value, index) => {
+          const duration = index === 0 ? 0.06 : milestoneDuration;
+          timeline.to({}, { duration, onStart: () => setProgress(value) });
+          timeline.to(fill, { scaleX: value / 100, duration }, '<');
+        });
+      }
     }
   }
 </script>

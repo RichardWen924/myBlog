@@ -7,9 +7,8 @@ import { readSiteStyles } from './site-styles.mjs';
 const root = resolve(import.meta.dirname, '..');
 const css = readSiteStyles(root);
 
-test('homepage snap does not force-correct the initial scroll position', () => {
+test('homepage snap keeps the initial position passive while enforcing whole chapters', () => {
   const snapRule = css.match(/html\.home-scroll-snap\s*\{([^}]+)\}/)?.[1] ?? '';
 
-  assert.match(snapRule, /scroll-snap-type:\s*y\s+proximity/);
-  assert.doesNotMatch(snapRule, /scroll-snap-type:\s*y\s+mandatory/);
+  assert.match(snapRule, /scroll-snap-type:\s*y\s+mandatory/);
 });

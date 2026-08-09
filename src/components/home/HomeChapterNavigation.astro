@@ -1,4 +1,4 @@
-<nav class="home-chapter-rail" aria-label="Homepage chapters">
+<nav class="home-chapter-rail" data-home-chapter-rail aria-label="Homepage chapters">
   <a href="#introduction" data-rail-link="introduction" aria-label="Introduction"><span>01</span></a>
   <a href="#projects" data-rail-link="projects" aria-label="Projects"><span>02</span></a>
   <a href="#notes" data-rail-link="notes" aria-label="Notes"><span>03</span></a>
@@ -13,7 +13,11 @@
     railLinks.forEach((link) => {
       const isActive = link.dataset.railLink === id;
       link.toggleAttribute('data-active', isActive);
-      link.setAttribute('aria-current', isActive ? 'step' : 'false');
+      if (isActive) {
+        link.setAttribute('aria-current', 'step');
+      } else {
+        link.removeAttribute('aria-current');
+      }
     });
   };
 
@@ -59,10 +63,11 @@
     if (!nextSection || nextIndex === currentIndex) return;
 
     event.preventDefault();
+    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     if (nextSection === homeHero) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: scrollBehavior });
     } else {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      nextSection.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
     }
   };
 

@@ -1,86 +1,147 @@
 ---
 import Base from '../layouts/Base.astro';
-import FadeSection from '../components/react/FadeSection';
-import SectionEyebrow from '../components/home/SectionEyebrow.astro';
+import ArchiveLink from '../components/global/ArchiveLink.astro';
+import ContentDivider from '../components/global/ContentDivider.astro';
+import MotionReveal from '../components/global/MotionReveal.astro';
+import PageHero from '../components/global/PageHero.astro';
+import SectionHeading from '../components/global/SectionHeading.astro';
+import experience from '../data/experience';
 import profile from '../data/profile';
 
+const bio = profile.bio.filter((paragraph) => paragraph.trim().length > 0);
+const verifiedExperience = experience.filter((item) => {
+  const organization = item.organization.toLowerCase();
+  return !/your company|your organization|placeholder|example/.test(organization);
+});
 const socialLinks = Object.entries(profile.socials).filter(
   ([label, href]): href is string => label !== 'email' && typeof href === 'string',
 );
+
+const formatDate = (value: string) => {
+  const [year, month] = value.split('-');
+  return month ? `${year}.${month}` : year;
+};
 ---
 
-<Base title="About">
-  <div class="personal-page mx-auto max-w-4xl">
-    <section class="personal-hero pt-8 pb-20">
-      <SectionEyebrow index="01" label="A little more" status="ABOUT / LIFE" />
-      <div class="mt-12 grid gap-12 md:grid-cols-[1.15fr_0.85fr] md:items-end">
-        <div>
-          <h1 class="font-serif text-5xl font-semibold leading-[0.98] text-ink md:text-7xl">
-            Beyond the systems.
-          </h1>
-          <div class="prose prose-gray mt-8 max-w-xl">
-            {profile.bio.filter((paragraph) => paragraph.trim().length > 0).map((paragraph) => <p>{paragraph}</p>)}
+<Base title="About" fullBleed lang="zh-CN">
+  <div class="about-page">
+    <section id="now" data-about-section="now" class="about-section about-section--now">
+      <PageHero
+        eyebrow="Now"
+        title="一个还在生长的开发者。"
+        description="我在学习如何把复杂的事做清楚，也在记录那些让我继续向前的问题。这里是关于我如何成为现在这个人的一页笔记。"
+        variant="notebook"
+      >
+        <div class="about-hero-note">
+          <p class="about-hero-note__statement">慢一点，事情会开始露出自己的形状。</p>
+          {profile.location && <p class="about-hero-note__location">{profile.location}</p>}
+        </div>
+      </PageHero>
+
+      <div class="page-shell about-section__inner about-now__inner">
+        <MotionReveal>
+          <div class="about-now__columns">
+            <p class="about-statement">我更愿意把自己看作一个独立创造者：保持好奇，把想法做出来，也给还没想完的事情留一点空间。</p>
+            <div class="about-profile-copy">
+              <p class="about-profile-copy__title">{profile.title}</p>
+              {bio.map((paragraph) => <p>{paragraph}</p>)}
+            </div>
           </div>
-        </div>
-        <div class="personal-hero__note border-t border-border pt-4">
-          <p class="font-mono text-xs uppercase tracking-[0.16em] text-accent">Currently</p>
-          <p class="mt-4 font-serif text-2xl leading-snug text-ink">
-            Making space for useful work, quiet observations, and the next question worth following.
-          </p>
-          {profile.location && <p class="mt-5 font-mono text-sm text-ink-soft">{profile.location}</p>}
-        </div>
+        </MotionReveal>
       </div>
     </section>
 
-    <section class="personal-section border-t border-border py-20">
-      <SectionEyebrow index="02" label="What stays with me" status="PERSPECTIVE" />
-      <FadeSection client:visible className="mt-10 grid gap-10 md:grid-cols-3">
-        <article>
-          <p class="font-mono text-xs text-accent">01</p>
-          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Notice the details</h2>
-          <p class="mt-3 text-sm leading-relaxed text-ink-soft">Small observations often decide how a larger idea finds its shape.</p>
-        </article>
-        <article>
-          <p class="font-mono text-xs text-accent">02</p>
-          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Keep a trail</h2>
-          <p class="mt-3 text-sm leading-relaxed text-ink-soft">Notes make room for unfinished thoughts to become useful later.</p>
-        </article>
-        <article>
-          <p class="font-mono text-xs text-accent">03</p>
-          <h2 class="mt-4 font-serif text-2xl font-semibold text-ink">Stay curious</h2>
-          <p class="mt-3 text-sm leading-relaxed text-ink-soft">The best direction is often found by following a question a little further.</p>
-        </article>
-      </FadeSection>
+    <ContentDivider />
+
+    <section id="the-path" data-about-section="the-path" class="about-section about-section--path">
+      <div class="page-shell about-section__inner">
+        <SectionHeading
+          index="01"
+          label="The path"
+          title="成长不是一条直线。"
+          description="只保留已经发生、也能够被确认的节点；缺少真实内容的地方，就先留白。"
+        />
+
+        <MotionReveal>
+          {verifiedExperience.length > 0 ? (
+            <ol class="about-growth-path" aria-label="Verified growth path">
+              {verifiedExperience.map((item) => (
+                <li class="about-path__item">
+                  <div class="about-path__meta">
+                    <span>{formatDate(item.startDate)}</span>
+                    {item.endDate && <span>— {formatDate(item.endDate)}</span>}
+                  </div>
+                  <div class="about-path__content">
+                    <h3>{item.title}</h3>
+                    <p class="about-path__organization">{item.organization}</p>
+                    {item.description.map((description) => <p>{description}</p>)}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div class="about-growth-path about-growth-path--empty">
+              <p class="about-empty">这条路径还在补充中。下一段真实经历，会在发生之后留在这里。</p>
+            </div>
+          )}
+        </MotionReveal>
+      </div>
     </section>
 
-    <section class="personal-section border-t border-border py-20">
-      <SectionEyebrow index="03" label="Elsewhere" status="LINKS" />
-      <div class="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <p class="max-w-md text-base leading-relaxed text-ink-soft">
-          技术之外的生活会慢慢在这里留下痕迹，也欢迎从我的文章和工作继续认识我。
-        </p>
-        <ul class="space-y-2 sm:min-w-48">
-          {socialLinks.map(([label, href]) => (
-            <li>
-              <a
-                href={href}
-                target={href.startsWith('http') ? '_blank' : undefined}
-                rel={href.startsWith('http') ? 'noopener' : undefined}
-                class="font-mono text-sm text-accent no-underline"
-              >
-                {label} &rarr;
-              </a>
-            </li>
-          ))}
-          {profile.email && (
-            <li>
-              <a href={`mailto:${profile.email}`} class="font-mono text-sm text-accent no-underline">
-                email &rarr;
-              </a>
-            </li>
-          )}
-          <li><a href="/blog" class="font-mono text-sm text-accent no-underline">Notes &rarr;</a></li>
-        </ul>
+    <ContentDivider />
+
+    <section id="how-i-keep-growing" data-about-section="how-i-keep-growing" class="about-section about-section--practice">
+      <div class="page-shell about-section__inner">
+        <SectionHeading
+          index="02"
+          label="How I keep growing"
+          title="把注意力放回过程。"
+          description="一些简单的习惯，帮助我在做事、记录和继续提问之间保持联系。"
+        />
+
+        <MotionReveal>
+          <div class="about-practice-grid">
+            <article>
+              <h3>Notice the details</h3>
+              <p>Small observations often decide how a larger idea finds its shape.</p>
+            </article>
+            <article>
+              <h3>Keep a trail</h3>
+              <p>Notes make room for unfinished thoughts to become useful later.</p>
+            </article>
+            <article>
+              <h3>Stay curious</h3>
+              <p>The best direction is often found by following a question a little further.</p>
+            </article>
+          </div>
+        </MotionReveal>
+      </div>
+    </section>
+
+    <ContentDivider />
+
+    <section id="elsewhere" data-about-section="elsewhere" class="about-section about-section--elsewhere">
+      <div class="page-shell about-section__inner">
+        <SectionHeading
+          index="03"
+          label="Elsewhere"
+          title="从不同入口，继续认识我。"
+          description="技术之外的生活会慢慢留下痕迹；工作和文章，则记录我如何把问题变成行动。"
+        />
+
+        <MotionReveal>
+          <div class="about-elsewhere__layout">
+            <p class="about-statement about-statement--small">没有想完的，也先留下来。</p>
+            <nav class="about-elsewhere__links" aria-label="Personal archive links">
+              {socialLinks.map(([label, href]) => (
+                <ArchiveLink href={href} label={label === 'github' ? 'GitHub' : label} external={href.startsWith('http')} />
+              ))}
+              {profile.email && <ArchiveLink href={`mailto:${profile.email}`} label="Email" />}
+              <ArchiveLink href="/work" label="Work" />
+              <ArchiveLink href="/blog" label="Blog" />
+            </nav>
+          </div>
+        </MotionReveal>
       </div>
     </section>
   </div>
