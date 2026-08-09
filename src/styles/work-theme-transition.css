@@ -39,6 +39,10 @@ html[data-work-transition-direct] .work-theme-transition__direct-source {
   visibility: visible;
 }
 
+html[data-work-transition-direct] .work-theme-transition__target {
+  visibility: hidden;
+}
+
 .work-theme-transition__direct-source {
   z-index: 50;
   overflow: hidden;
@@ -204,6 +208,18 @@ html[data-work-transition-direct] [data-work-transition-direct-target] {
   z-index: 80;
   color: #1d1d1a;
   font-family: var(--font-mono);
+}
+
+html[data-work-transition-tone='work'] .work-theme-transition__hud {
+  color: #eef2ef;
+}
+
+html[data-work-transition-tone='work'] .work-theme-transition__track {
+  background: #1b3025;
+}
+
+html[data-work-transition-tone='work'] .work-theme-transition__node {
+  background: #050708;
 }
 
 .work-theme-transition__topline {
