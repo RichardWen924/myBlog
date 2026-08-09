@@ -1,47 +1,40 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { readSiteStyles } from './site-styles.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const hero = readFileSync(resolve(root, 'src/components/react/HeroReactive.tsx'), 'utf8');
+const hero = readFileSync(resolve(root, 'src/components/react/FutureHero.tsx'), 'utf8');
 const css = readSiteStyles(root);
+const work = readFileSync(resolve(root, 'src/pages/work.astro'), 'utf8');
+const workCss = readFileSync(resolve(root, 'src/styles/work.css'), 'utf8');
+const about = readFileSync(resolve(root, 'src/pages/about.astro'), 'utf8');
 const homepage = readFileSync(resolve(root, 'src/pages/index.astro'), 'utf8');
 const baseLayout = readFileSync(resolve(root, 'src/layouts/Base.astro'), 'utf8');
 
-test('Hero references the generated thinking-orbit asset', () => {
-  assert.match(hero, /hero-thinking-orbit\.png/);
-  assert.equal(existsSync(resolve(root, 'public/hero-thinking-orbit.png')), true);
+test('Work Hero renders the BUILD FUTURE outline and particle sequence', () => {
+  assert.match(hero, /StrokeText/);
+  assert.match(hero, /ParticleText/);
+  assert.match(hero, /text="BUILD FUTURE"/g);
+  assert.match(hero, /future-wordmark/);
+  assert.match(work, /<FutureHero client:load \/>/);
 });
 
-test('Hero uses the thinking orbit as a background layer', () => {
-  assert.match(hero, /hero-thinking-orbit pointer-events-none absolute inset-0/);
-  assert.match(hero, /aria-hidden="true"/);
-  assert.match(hero, /md:col-start-3/);
+test('Work Hero no longer renders the previous copy and navigation payload', () => {
+  assert.doesNotMatch(hero, /BlurText|DynamicIllustration|PromptNav/);
+  assert.doesNotMatch(hero, /Personal site|Continue|从这里开始探索/);
 });
 
-test('Hero motion has a reduced-motion fallback', () => {
-  assert.match(css, /prefers-reduced-motion/);
-  assert.match(css, /hero-thinking-orbit/);
+test('Work Hero motion has a reduced-motion fallback', () => {
+  assert.match(workCss, /prefers-reduced-motion/);
+  assert.match(workCss, /future-wordmark/);
 });
 
-const promptNavPath = resolve(root, 'src/components/react/PromptNav.tsx');
-const illustrationPath = resolve(root, 'src/components/react/DynamicIllustration.tsx');
-
-test('Hero has a layered dynamic illustration and prompt navigation', () => {
-  assert.equal(existsSync(promptNavPath), true);
-  assert.equal(existsSync(illustrationPath), true);
-  const promptNav = readFileSync(promptNavPath, 'utf8');
-  const illustration = readFileSync(illustrationPath, 'utf8');
-  assert.match(hero, /DynamicIllustration/);
-  assert.match(hero, /PromptNav/);
-  assert.match(illustration, /aria-hidden/);
-  assert.match(illustration, /prefers-reduced-motion|useReducedMotion/);
-  assert.match(promptNav, /href/);
-  assert.match(hero, /\/projects/);
-  assert.match(hero, /\/about/);
-  assert.match(hero, /\/blog/);
+test('About keeps the restored personal hero', () => {
+  assert.match(about, /name=\{profile\.name\}/);
+  assert.match(about, /title=\{profile\.title\}/);
+  assert.match(about, /scrollTarget="#the-path"/);
 });
 
 test('Homepage sections use Claude-inspired chapter markers', () => {
@@ -51,16 +44,10 @@ test('Homepage sections use Claude-inspired chapter markers', () => {
   assert.match(homepage, /Notes from the desk|Recent Posts/);
 });
 
-test('Dynamic illustration motion is reduced for small screens and reduced motion', () => {
-  assert.match(css, /dynamic-illustration/);
-  assert.match(css, /prefers-reduced-motion/);
-  assert.match(css, /max-width: 767px/);
-});
-
-test('Homepage Hero can escape the reading-width layout', () => {
+test('Work Hero can escape the reading-width layout', () => {
   assert.match(baseLayout, /fullBleed/);
-  assert.match(homepage, /<Base[^>]+fullBleed/);
-  assert.match(homepage, /home-content/);
+  assert.match(work, /<Base[^>]+fullBleed/);
+  assert.match(work, /work-sequence/);
   assert.match(hero, /hero-stage/);
-  assert.match(css, /100svh/);
+  assert.match(workCss, /100svh/);
 });

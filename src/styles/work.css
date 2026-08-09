@@ -33,6 +33,53 @@ html.work-scroll-snap {
   position: relative;
 }
 
+.work-future-hero {
+  min-height: calc(100vh - var(--site-header-height));
+  min-height: calc(100svh - var(--site-header-height));
+}
+
+.future-wordmark {
+  position: relative;
+  width: min(100% - 2rem, 76rem);
+  height: clamp(12rem, 30vw, 24rem);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+}
+
+.future-wordmark__stroke,
+.future-wordmark__particle {
+  position: absolute;
+  inset: 0;
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.future-wordmark__stroke {
+  z-index: 1;
+}
+
+.future-wordmark__particle {
+  z-index: 2;
+  opacity: 0;
+  transform: scale(0.985);
+}
+
+.future-wordmark.is-particle-ready .future-wordmark__stroke {
+  opacity: 0;
+  transform: scale(1.015);
+}
+
+.future-wordmark.is-particle-ready .future-wordmark__particle {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 767px) {
+  .future-wordmark {
+    width: calc(100% - 1rem);
+    height: 9rem;
+  }
+}
+
 .work-chapter {
   min-height: calc(100svh - var(--site-header-height));
   scroll-margin-top: var(--site-header-height);
@@ -121,6 +168,11 @@ html.work-scroll-snap {
   }
 
   .work-chapter-rail a {
+    transition: none;
+  }
+
+  .future-wordmark__stroke,
+  .future-wordmark__particle {
     transition: none;
   }
 }

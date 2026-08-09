@@ -8,7 +8,7 @@ const home = readFileSync(resolve(root, 'src/pages/index.astro'), 'utf8');
 const work = readFileSync(resolve(root, 'src/pages/work.astro'), 'utf8');
 const globalCss = readFileSync(resolve(root, 'src/styles/global.css'), 'utf8');
 
-test('home owns the GSAP landing hero while About owns the previous reactive hero', () => {
+test('home owns the GSAP landing hero while Work owns the React Bits hero', () => {
   const heroPath = resolve(root, 'src/components/home/HomeLandingHero.astro');
   const canvasPath = resolve(root, 'src/components/home/HomeHeroCanvas.astro');
   const motionPath = resolve(root, 'src/components/home/homeHeroMotion.ts');
@@ -19,8 +19,8 @@ test('home owns the GSAP landing hero while About owns the previous reactive her
   assert.equal(existsSync(motionPath), true);
   assert.match(home, /HomeLandingHero/);
   assert.doesNotMatch(home, /HeroReactive/);
+  assert.match(work, /FutureHero/);
   assert.match(about, /HeroReactive/);
-  assert.doesNotMatch(work, /HeroReactive/);
 
   const hero = readFileSync(heroPath, 'utf8');
   const canvas = readFileSync(canvasPath, 'utf8');
