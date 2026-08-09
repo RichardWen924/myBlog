@@ -105,6 +105,10 @@ html[data-work-transition-direction='exit'] [data-work-transition-source] {
   );
 }
 
+html[data-work-transition-direction='enter'][data-work-transition-settled] .work-theme-transition__target {
+  clip-path: none;
+}
+
 html[data-work-transition-direction='exit'] [data-work-transition-source] [data-site-visual] {
   transform: scale(var(--work-transition-work-scale));
   transform-origin: calc(var(--work-transition-focus-x) * 1%) calc(var(--work-transition-center-y) * 1px);

@@ -82,6 +82,7 @@ export const initWorkThemeTransition = () => {
     setRootProperty('--work-transition-badge-x', badgeX);
 
     root.dataset.workTransitionTone = frame.workProgress >= 0.52 ? 'work' : 'archive';
+    root.toggleAttribute('data-work-transition-settled', frame.portalProgress >= 0.999);
     progressbar.setAttribute('aria-valuenow', String(frame.percent));
     value.textContent = `${frame.percent}%`;
 
@@ -132,6 +133,9 @@ export const initWorkThemeTransition = () => {
   };
 
   const stripInactiveRuntime = (page: HTMLElement) => {
+    [...page.querySelectorAll<HTMLElement>('astro-island')]
+      .reverse()
+      .forEach((island) => island.replaceWith(...island.childNodes));
     page.querySelectorAll('script, .entry-progress-loader, [data-work-theme-transition]').forEach((element) => {
       element.remove();
     });
@@ -144,6 +148,12 @@ export const initWorkThemeTransition = () => {
   const mountIncomingPage = (incomingPage: HTMLElement, direction: WorkTransitionDirection) => {
     const clone = document.importNode(incomingPage, true);
     stripInactiveRuntime(clone);
+    if (direction === 'enter') {
+      clone.querySelectorAll<HTMLElement>('.future-wordmark.is-particle-ready')
+        .forEach((wordmark) => wordmark.classList.remove('is-particle-ready'));
+      clone.querySelectorAll('.future-wordmark__particle')
+        .forEach((particleLayer) => particleLayer.remove());
+    }
     target.replaceChildren(clone);
     target.dataset.targetTheme = direction === 'enter' ? 'work' : 'non-work';
   };
@@ -210,6 +220,7 @@ export const initWorkThemeTransition = () => {
     delete root.dataset.workTransitionActive;
     delete root.dataset.workTransitionDirection;
     delete root.dataset.workTransitionTone;
+    root.removeAttribute('data-work-transition-settled');
     root.removeAttribute('data-work-transition-direct');
     ROOT_STYLE_PROPERTIES.forEach((property) => root.style.removeProperty(property));
     document.body.style.paddingRight = bodyPaddingRight;
