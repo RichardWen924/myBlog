@@ -1,0 +1,105 @@
+/* ===== Work archive landing ===== */
+
+html.work-scroll-snap {
+  scroll-snap-type: y mandatory;
+}
+
+.work-sequence {
+  position: relative;
+}
+
+.work-chapter {
+  min-height: calc(100svh - var(--site-header-height));
+  scroll-margin-top: var(--site-header-height);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.work-chapter--hero {
+  overflow: hidden;
+}
+
+.work-chapter--content,
+.work-chapter--closing {
+  display: flex;
+  align-items: center;
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.work-chapter--content .work-content,
+.work-chapter--closing .work-content {
+  width: 100%;
+}
+
+.work-chapter-rail {
+  position: fixed;
+  top: 50%;
+  right: clamp(1rem, 3vw, 3rem);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transform: translateY(-50%);
+}
+
+.work-chapter-rail a {
+  display: flex;
+  width: 1.2rem;
+  height: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: border-color 220ms ease, color 220ms ease, transform 220ms ease, background-color 220ms ease;
+}
+
+.work-chapter-rail a:hover,
+.work-chapter-rail a:focus-visible,
+.work-chapter-rail a[data-active] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-paper);
+  transform: scale(1.18);
+}
+
+.work-chapter-rail a:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .work-chapter--content,
+  .work-chapter--closing {
+    align-items: flex-start;
+    padding-block: 4rem;
+  }
+
+  .work-chapter-rail {
+    top: auto;
+    right: 50%;
+    bottom: 0.8rem;
+    flex-direction: row;
+    padding: 0.2rem;
+    background: color-mix(in srgb, var(--color-paper) 96%, transparent);
+    transform: translateX(50%);
+  }
+
+  .work-chapter-rail a {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.work-scroll-snap {
+    scroll-snap-type: none;
+  }
+
+  .work-chapter-rail a {
+    transition: none;
+  }
+}
