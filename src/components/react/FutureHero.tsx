@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import {
+  getWorkHeroStartMode,
+  WORK_HERO_ARRIVAL_EVENT,
+  WORK_HERO_FALLBACK_MS,
+  WORK_HERO_SETTLE_MS,
+} from '../../lib/workThemeTransition';
 import ParticleText from './bits/ParticleText';
-import StrokeText from './bits/StrokeText';
-
-const OUTLINE_DURATION_MS = 1450;
 
 /** Work hero: an outline resolves into a living particle wordmark. */
 export default function FutureHero() {
@@ -10,31 +13,48 @@ export default function FutureHero() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) {
+    const root = document.documentElement;
+    const startMode = getWorkHeroStartMode(
+      reducedMotion,
+      root.dataset.workHeroArrival === 'pending',
+    );
+
+    if (startMode === 'particles') {
+      root.removeAttribute('data-work-hero-arrival');
       setParticleReady(true);
       return undefined;
     }
 
-    const timer = window.setTimeout(() => setParticleReady(true), OUTLINE_DURATION_MS);
-    return () => window.clearTimeout(timer);
+    let started = false;
+    let settleTimer: number | undefined;
+    let fallbackTimer: number | undefined;
+
+    const startParticles = () => {
+      if (started) return;
+      started = true;
+      window.clearTimeout(fallbackTimer);
+      root.removeAttribute('data-work-hero-arrival');
+      settleTimer = window.setTimeout(() => setParticleReady(true), WORK_HERO_SETTLE_MS);
+    };
+
+    if (startMode === 'await-transition') {
+      window.addEventListener(WORK_HERO_ARRIVAL_EVENT, startParticles, { once: true });
+      fallbackTimer = window.setTimeout(startParticles, WORK_HERO_FALLBACK_MS);
+    } else {
+      startParticles();
+    }
+
+    return () => {
+      window.removeEventListener(WORK_HERO_ARRIVAL_EVENT, startParticles);
+      window.clearTimeout(settleTimer);
+      window.clearTimeout(fallbackTimer);
+    };
   }, []);
 
   return (
     <section className="hero-stage work-future-hero relative isolate flex items-center justify-center overflow-hidden" aria-label="BUILD FUTURE">
       <div className={`future-wordmark ${particleReady ? 'is-particle-ready' : ''}`}>
-        <div className="future-wordmark__stroke" aria-hidden={particleReady}>
-          <StrokeText
-            text="BUILD FUTURE"
-            strokeColor="#ff9b76"
-            strokeWidth={1.6}
-            drawDuration={1.15}
-            stagger={0.02}
-            fillMode="none"
-            fontSize={128}
-            fontWeight={800}
-            letterSpacing={-5}
-          />
-        </div>
+        <div className="future-wordmark__outline" aria-hidden="true">BUILD FUTURE</div>
         {particleReady && (
           <div className="future-wordmark__particle">
             <ParticleText
@@ -50,9 +70,11 @@ export default function FutureHero() {
               repelRadius={130}
               idleDrift={0.55}
               trigger="mount"
-              fontSize="clamp(4rem, 15vw, 11rem)"
-              fontWeight={800}
+              fontSize="var(--work-wordmark-font-size)"
+              fontWeight="var(--work-wordmark-font-weight)"
               fontFamily="inherit"
+              letterSpacing="var(--work-wordmark-letter-spacing)"
+              maxWidthRatio={0.94}
               glow
             />
           </div>

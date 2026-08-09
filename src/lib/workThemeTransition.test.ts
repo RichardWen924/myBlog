@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  getWorkHeroStartMode,
   getTransitionDirection,
   getTransitionFrame,
   isWorkPath,
 } from './workThemeTransition.ts';
+
+describe('Work Hero arrival', () => {
+  it('chooses a single start mode from motion and transition state', () => {
+    assert.equal(getWorkHeroStartMode(true, true), 'particles');
+    assert.equal(getWorkHeroStartMode(false, true), 'await-transition');
+    assert.equal(getWorkHeroStartMode(false, false), 'settle');
+  });
+});
 
 describe('Work route classification', () => {
   it('recognizes only the Work route', () => {
@@ -23,42 +32,38 @@ describe('Work route classification', () => {
 });
 
 describe('Work transition frames', () => {
-  it('maps the enter endpoints from Archive to full-screen Work', () => {
-    const start = getTransitionFrame('enter', 0, { width: 1440, height: 900 });
-    const end = getTransitionFrame('enter', 1, { width: 1440, height: 900 });
+  it('contracts the source into the Richard focus before expanding the target', () => {
+    const viewport = { width: 1440, height: 900 };
+    const start = getTransitionFrame('enter', 0, viewport);
+    const midpoint = getTransitionFrame('enter', 0.46, viewport);
+    const end = getTransitionFrame('enter', 1, viewport);
 
-    assert.equal(start.percent, 0);
-    assert.equal(start.focusX, 88);
-    assert.equal(start.workScale, 0.46);
-    assert.equal(start.sourceShiftX, 0);
-    assert.equal(end.percent, 100);
-    assert.equal(end.focusX, 50);
-    assert.equal(end.workScale, 1);
-    assert.equal(end.sourceShiftX, -38);
-    assert.ok(end.portalRadius > Math.hypot(1440, 900));
+    assert.equal(start.sourceScale, 1);
+    assert.equal(start.sourceOpacity, 1);
+    assert.equal(start.targetOpacity, 0);
+    assert.ok(midpoint.sourceScale <= 0.06);
+    assert.ok(midpoint.targetScale <= 0.06);
+    assert.equal(end.sourceOpacity, 0);
+    assert.equal(end.targetScale, 1);
+    assert.equal(end.targetOpacity, 1);
+    assert.ok(end.apertureRadius > Math.hypot(viewport.width, viewport.height));
   });
 
-  it('maps exit as the semantic reverse at the same viewport size', () => {
-    const start = getTransitionFrame('exit', 0, { width: 1440, height: 900 });
-    const end = getTransitionFrame('exit', 1, { width: 1440, height: 900 });
+  it('uses the same Richard-focus camera sequence when leaving Work', () => {
+    const viewport = { width: 1440, height: 900 };
+    const enterMidpoint = getTransitionFrame('enter', 0.46, viewport);
+    const exitMidpoint = getTransitionFrame('exit', 0.46, viewport);
 
-    assert.equal(start.percent, 100);
-    assert.equal(start.focusX, 50);
-    assert.equal(start.workScale, 1);
-    assert.equal(start.sourceShiftX, 38);
-    assert.equal(end.percent, 0);
-    assert.equal(end.focusX, 12);
-    assert.equal(end.workScale, 0.46);
-    assert.equal(end.sourceShiftX, 0);
-    assert.equal(end.portalRadius, 21);
+    assert.deepEqual(exitMidpoint, enterMidpoint);
   });
 
-  it('reduces depth and uses safe node positions on compact viewports', () => {
-    const frame = getTransitionFrame('enter', 0, { width: 390, height: 844 });
+  it('settles target expansion before the final frame', () => {
+    const viewport = { width: 1440, height: 900 };
+    const almost = getTransitionFrame('enter', 0.99, viewport);
+    const end = getTransitionFrame('enter', 1, viewport);
 
-    assert.equal(frame.focusX, 84);
-    assert.equal(frame.workScale, 0.62);
-    assert.equal(frame.sourceDepthScale, 1);
-    assert.equal(frame.speedOpacity, 0);
+    assert.ok(Math.abs(end.apertureRadius - almost.apertureRadius) < 0.01);
+    assert.ok(Math.abs(end.targetScale - almost.targetScale) < 0.0001);
+    assert.ok(Math.abs(end.targetOpacity - almost.targetOpacity) < 0.0001);
   });
 });

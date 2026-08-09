@@ -3,6 +3,8 @@ import '../../styles/work-theme-transition.css';
 ---
 
 <div data-work-theme-transition transition:persist="work-theme-transition">
+  <div class="work-theme-transition__backdrop" aria-hidden="true"></div>
+
   <div
     class="work-theme-transition__direct-source"
     data-work-transition-direct-source
@@ -22,45 +24,10 @@ import '../../styles/work-theme-transition.css';
     inert
   ></div>
 
-  <div class="work-theme-transition__speed" data-work-transition-speed aria-hidden="true"></div>
-
-  <div class="work-theme-transition__hud" data-work-transition-hud aria-hidden="true">
-    <div class="work-theme-transition__topline">
-      <span>RICHARD / ARCHIVE</span>
-      <span>THEME TRANSITION</span>
-    </div>
-
-    <div
-      class="work-theme-transition__progress"
-      role="progressbar"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-      aria-label="Entering Work theme"
-    >
-      <div class="work-theme-transition__track" aria-hidden="true">
-        <i data-work-transition-fill></i>
-      </div>
-      <div class="work-theme-transition__node work-theme-transition__node--zero" aria-hidden="true">
-        <span>0 / ARCHIVE</span>
-      </div>
-      <div class="work-theme-transition__node work-theme-transition__node--shift" aria-hidden="true">
-        <span>50 / SHIFT</span>
-      </div>
-      <div class="work-theme-transition__node work-theme-transition__node--work" aria-hidden="true">
-        <span>100 / WORK</span>
-      </div>
-      <div class="work-theme-transition__ring" data-work-transition-ring aria-hidden="true"></div>
-      <div class="work-theme-transition__badge" data-work-transition-badge>
-        <strong data-work-transition-value>0%</strong>
-        <span>WORK THEME</span>
-      </div>
-    </div>
-
-    <div class="work-theme-transition__status">
-      <small data-work-transition-status>CAMERA APPROACH</small>
-      <b data-work-transition-route>ARCHIVE → WORK</b>
-    </div>
+  <div class="work-theme-transition__streaks" aria-hidden="true"></div>
+  <div class="work-theme-transition__focus" aria-hidden="true">
+    <i class="work-theme-transition__focus-glow"></i>
+    <i class="work-theme-transition__focus-ring"></i>
   </div>
 </div>
 

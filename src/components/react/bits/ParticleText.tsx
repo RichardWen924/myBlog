@@ -1,4 +1,5 @@
 import { useEffect, useRef, type CSSProperties } from 'react';
+import { getSpacedGlyphRunWidth } from '../../../lib/particleTextLayout';
 import './ParticleText.css';
 
 export interface ParticleTextProps {
@@ -17,6 +18,8 @@ export interface ParticleTextProps {
   fontSize?: number | string;
   fontWeight?: number | string;
   fontFamily?: string;
+  letterSpacing?: number | string;
+  maxWidthRatio?: number;
   glow?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -38,7 +41,8 @@ const easeOut = (value: number) => 1 - Math.pow(1 - value, 3);
 export default function ParticleText({
   text = 'React Bits', particleSize = 2, density = 4, color = '#ffffff', highlightColor = '#8b5cf6', scatter = 180,
   gatherDuration = 1600, stagger = 420, pointerRepel = 40, repelRadius = 120, idleDrift = 0.7, trigger = 'mount',
-  fontSize = 'clamp(3rem, 12vw, 8rem)', fontWeight = 800, fontFamily = 'inherit', glow = true, className = '', style,
+  fontSize = 'clamp(3rem, 12vw, 8rem)', fontWeight = 800, fontFamily = 'inherit', letterSpacing = 0,
+  maxWidthRatio = 0.92, glow = true, className = '', style,
 }: ParticleTextProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -130,19 +134,35 @@ export default function ParticleText({
       animationFrame = window.requestAnimationFrame(render);
     };
 
-    const resolveFontSize = (value: number | string) => {
-      if (typeof value === 'number') return value;
+    const resolveTypography = () => {
       const probe = document.createElement('span');
       probe.textContent = 'M';
-      probe.style.cssText = `position:absolute;visibility:hidden;font-size:${value};font-weight:${fontWeight};font-family:${fontFamily}`;
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      probe.style.fontSize = typeof fontSize === 'number' ? `${fontSize}px` : fontSize;
+      probe.style.fontWeight = String(fontWeight);
+      probe.style.fontFamily = fontFamily;
+      probe.style.letterSpacing = typeof letterSpacing === 'number' ? `${letterSpacing}px` : letterSpacing;
       container.appendChild(probe);
-      const size = parseFloat(window.getComputedStyle(probe).fontSize) || 96;
+      const computed = window.getComputedStyle(probe);
+      const typography = {
+        family: computed.fontFamily || 'sans-serif',
+        weight: computed.fontWeight || String(fontWeight),
+        size: parseFloat(computed.fontSize) || 96,
+        spacing: parseFloat(computed.letterSpacing) || 0,
+      };
       probe.remove();
-      return size;
+      return typography;
     };
 
     const sampleText = async () => {
       const currentBuild = ++buildId;
+      try {
+        await document.fonts?.ready;
+      } catch {
+        // Continue with the resolved fallback stack when font loading is unavailable.
+      }
+      if (currentBuild !== buildId) return;
       const rect = container.getBoundingClientRect();
       width = Math.floor(rect.width);
       height = Math.floor(rect.height);
@@ -153,27 +173,33 @@ export default function ParticleText({
       canvas.style.width = '100%';
       canvas.style.height = '100%';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const computed = window.getComputedStyle(container);
-      const family = fontFamily === 'inherit' ? computed.fontFamily || 'sans-serif' : fontFamily;
-      const size = resolveFontSize(fontSize);
+      const typography = resolveTypography();
       const offscreen = document.createElement('canvas');
       const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
       if (!offCtx) return;
-      const content = String(text || ' ');
-      let resolvedSize = size;
-      let font = `${fontWeight} ${resolvedSize}px ${family}`;
+      const glyphs = Array.from(String(text || ' '));
+      const content = glyphs.join('');
+      let resolvedSize = typography.size;
+      let resolvedSpacing = typography.spacing;
+      let font = `${typography.weight} ${resolvedSize}px ${typography.family}`;
       offCtx.font = font;
-      let metrics = offCtx.measureText(content);
-      if (metrics.width > width * 0.92) {
-        resolvedSize = Math.max(18, resolvedSize * ((width * 0.92) / metrics.width));
-        font = `${fontWeight} ${resolvedSize}px ${family}`;
+      let glyphWidths = glyphs.map((glyph) => offCtx.measureText(glyph).width);
+      let runWidth = getSpacedGlyphRunWidth(glyphWidths, resolvedSpacing);
+      const availableWidth = width * clamp(maxWidthRatio, 0.1, 1);
+      if (runWidth > availableWidth) {
+        const scale = availableWidth / runWidth;
+        resolvedSize = Math.max(18, resolvedSize * scale);
+        resolvedSpacing *= resolvedSize / typography.size;
+        font = `${typography.weight} ${resolvedSize}px ${typography.family}`;
         offCtx.font = font;
-        metrics = offCtx.measureText(content);
+        glyphWidths = glyphs.map((glyph) => offCtx.measureText(glyph).width);
+        runWidth = getSpacedGlyphRunWidth(glyphWidths, resolvedSpacing);
       }
+      const metrics = offCtx.measureText(content);
       const ascent = Math.ceil(metrics.actualBoundingBoxAscent || resolvedSize * 0.78);
       const descent = Math.ceil(metrics.actualBoundingBoxDescent || resolvedSize * 0.22);
       const padding = Math.max(12, Math.ceil(resolvedSize * 0.08));
-      const textWidth = Math.max(1, Math.ceil(metrics.width));
+      const textWidth = Math.max(1, Math.ceil(runWidth));
       const textHeight = Math.max(1, ascent + descent);
       offscreen.width = textWidth + padding * 2;
       offscreen.height = textHeight + padding * 2;
@@ -181,7 +207,11 @@ export default function ParticleText({
       offCtx.font = font;
       offCtx.textBaseline = 'alphabetic';
       offCtx.fillStyle = '#fff';
-      offCtx.fillText(content, padding, padding + ascent);
+      let cursorX = padding;
+      glyphs.forEach((glyph, index) => {
+        offCtx.fillText(glyph, cursorX, padding + ascent);
+        cursorX += glyphWidths[index] + resolvedSpacing;
+      });
       const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
       const targets: Array<{ x: number; y: number; alpha: number }> = [];
       const step = Math.max(2, Math.floor(density));
@@ -237,7 +267,7 @@ export default function ParticleText({
       if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
       if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
     };
-  }, [text, particleSize, density, color, highlightColor, scatter, gatherDuration, stagger, pointerRepel, repelRadius, idleDrift, trigger, fontSize, fontWeight, fontFamily, glow]);
+  }, [text, particleSize, density, color, highlightColor, scatter, gatherDuration, stagger, pointerRepel, repelRadius, idleDrift, trigger, fontSize, fontWeight, fontFamily, letterSpacing, maxWidthRatio, glow]);
 
   return <div ref={containerRef} className={`particle-text ${className}`.trim()} style={style} aria-label={text}><canvas ref={canvasRef} className="particle-text__canvas" aria-hidden="true" /><span className="particle-text__sr">{text}</span></div>;
 }

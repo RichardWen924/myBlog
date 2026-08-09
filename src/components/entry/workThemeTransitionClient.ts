@@ -7,6 +7,7 @@ import {
   getTransitionDirection,
   getTransitionFrame,
   isWorkPath,
+  WORK_HERO_ARRIVAL_EVENT,
   type WorkTransitionDirection,
   type WorkTransitionFrame,
 } from '../../lib/workThemeTransition';
@@ -17,18 +18,19 @@ declare global {
   }
 }
 
-const TRANSITION_DURATION_SECONDS = 1.28;
+const TRANSITION_DURATION_SECONDS = 1.34;
 const ROOT_STYLE_PROPERTIES = [
-  '--work-transition-progress',
   '--work-transition-focus-x',
-  '--work-transition-radius',
-  '--work-transition-center-y',
-  '--work-transition-work-scale',
-  '--work-transition-source-shift-x',
+  '--work-transition-focus-y',
+  '--work-transition-source-focus-y',
   '--work-transition-source-scale',
+  '--work-transition-source-opacity',
   '--work-transition-source-blur',
-  '--work-transition-speed-opacity',
-  '--work-transition-badge-x',
+  '--work-transition-target-scale',
+  '--work-transition-target-opacity',
+  '--work-transition-aperture-radius',
+  '--work-transition-focus-pulse',
+  '--work-transition-streak-opacity',
 ] as const;
 
 export const initWorkThemeTransition = () => {
@@ -36,13 +38,8 @@ export const initWorkThemeTransition = () => {
 
   const host = document.querySelector<HTMLElement>('[data-work-theme-transition]');
   const target = document.querySelector<HTMLElement>('[data-work-transition-target]');
-  const hud = document.querySelector<HTMLElement>('[data-work-transition-hud]');
-  const progressbar = hud?.querySelector<HTMLElement>('[role="progressbar"]');
-  const value = hud?.querySelector<HTMLElement>('[data-work-transition-value]');
-  const status = hud?.querySelector<HTMLElement>('[data-work-transition-status]');
-  const route = hud?.querySelector<HTMLElement>('[data-work-transition-route]');
 
-  if (!host || !target || !hud || !progressbar || !value || !status || !route) return;
+  if (!host || !target) return;
 
   window.__workThemeTransitionController = true;
 
@@ -64,43 +61,31 @@ export const initWorkThemeTransition = () => {
   };
 
   const renderFrame = (direction: WorkTransitionDirection, frame: WorkTransitionFrame) => {
-    const compact = window.innerWidth < 640;
-    const medium = !compact && window.innerWidth < 1024;
-    const trackStart = compact ? 16 : medium ? 14 : 12;
-    const trackEnd = 100 - trackStart;
-    const badgeX = trackStart + (trackEnd - trackStart) * frame.workProgress;
-
-    setRootProperty('--work-transition-progress', frame.workProgress);
-    setRootProperty('--work-transition-focus-x', frame.focusX);
-    setRootProperty('--work-transition-radius', frame.portalRadius);
-    setRootProperty('--work-transition-work-scale', frame.workScale);
-    setRootProperty('--work-transition-source-shift-x', frame.sourceShiftX);
-    setRootProperty('--work-transition-source-scale', frame.sourceDepthScale);
+    setRootProperty('--work-transition-source-scale', frame.sourceScale);
+    setRootProperty('--work-transition-source-opacity', frame.sourceOpacity);
     setRootProperty('--work-transition-source-blur', frame.sourceBlur);
-    setRootProperty('--work-transition-speed-opacity', frame.speedOpacity);
-    setRootProperty('--work-transition-badge-x', badgeX);
+    setRootProperty('--work-transition-target-scale', frame.targetScale);
+    setRootProperty('--work-transition-target-opacity', frame.targetOpacity);
+    setRootProperty('--work-transition-aperture-radius', frame.apertureRadius);
+    setRootProperty('--work-transition-focus-pulse', frame.focusPulse);
+    setRootProperty('--work-transition-streak-opacity', frame.streakOpacity);
 
-    root.dataset.workTransitionTone = frame.workProgress >= 0.52 ? 'work' : 'archive';
-    progressbar.setAttribute('aria-valuenow', String(frame.percent));
-    value.textContent = `${frame.percent}%`;
+    const targetTone = direction === 'enter' ? 'work' : 'archive';
+    const sourceTone = direction === 'enter' ? 'archive' : 'work';
+    root.dataset.workTransitionTone = frame.targetProgress >= 0.16 ? targetTone : sourceTone;
+    root.toggleAttribute('data-work-transition-settled', frame.targetProgress >= 0.999);
+  };
 
-    if (direction === 'enter') {
-      progressbar.setAttribute('aria-label', 'Entering Work theme');
-      route.textContent = 'ARCHIVE → WORK';
-      status.textContent = frame.portalProgress < 0.18
-        ? 'CAMERA APPROACH'
-        : frame.portalProgress < 0.82
-          ? 'EXPANDING WORK'
-          : 'FULL-SCREEN ARRIVAL';
-    } else {
-      progressbar.setAttribute('aria-label', 'Leaving Work theme');
-      route.textContent = 'WORK → ARCHIVE';
-      status.textContent = frame.portalProgress > 0.82
-        ? 'CAMERA PULLBACK'
-        : frame.portalProgress > 0.12
-          ? 'COLLAPSING WORK'
-          : 'RELEASING ARCHIVE';
-    }
+  const measureBrandFocus = (source: HTMLElement) => {
+    const brand = source.querySelector<HTMLElement>('.site-header__brand');
+    const rect = brand?.getBoundingClientRect();
+    const hasVisibleBrand = Boolean(rect && rect.width > 0 && rect.height > 0);
+    const focusX = hasVisibleBrand && rect ? rect.left + rect.width / 2 : 96;
+    const focusY = hasVisibleBrand && rect ? rect.top + rect.height / 2 : 40;
+
+    setRootProperty('--work-transition-focus-x', focusX);
+    setRootProperty('--work-transition-focus-y', focusY);
+    setRootProperty('--work-transition-source-focus-y', window.scrollY + focusY);
   };
 
   const lockDocument = (source: HTMLElement) => {
@@ -119,9 +104,8 @@ export const initWorkThemeTransition = () => {
     root.dataset.workTransitionActive = '';
     root.dataset.workTransitionDirection = direction;
     root.toggleAttribute('data-work-transition-direct', direct);
-    hud.setAttribute('aria-hidden', 'false');
     source.toggleAttribute('data-work-transition-source', !direct);
-    setRootProperty('--work-transition-center-y', window.scrollY + window.innerHeight / 2);
+    measureBrandFocus(source);
     lockDocument(source);
     renderFrame(direction, getTransitionFrame(direction, 0, {
       width: window.innerWidth,
@@ -131,6 +115,9 @@ export const initWorkThemeTransition = () => {
   };
 
   const stripInactiveRuntime = (page: HTMLElement) => {
+    [...page.querySelectorAll<HTMLElement>('astro-island')]
+      .reverse()
+      .forEach((island) => island.replaceWith(...island.childNodes));
     page.querySelectorAll('script, .entry-progress-loader, [data-work-theme-transition]').forEach((element) => {
       element.remove();
     });
@@ -143,6 +130,12 @@ export const initWorkThemeTransition = () => {
   const mountIncomingPage = (incomingPage: HTMLElement, direction: WorkTransitionDirection) => {
     const clone = document.importNode(incomingPage, true);
     stripInactiveRuntime(clone);
+    if (direction === 'enter') {
+      clone.querySelectorAll<HTMLElement>('.future-wordmark.is-particle-ready')
+        .forEach((wordmark) => wordmark.classList.remove('is-particle-ready'));
+      clone.querySelectorAll('.future-wordmark__particle')
+        .forEach((particleLayer) => particleLayer.remove());
+    }
     target.replaceChildren(clone);
     target.dataset.targetTheme = direction === 'enter' ? 'work' : 'non-work';
   };
@@ -192,7 +185,7 @@ export const initWorkThemeTransition = () => {
     });
   };
 
-  const cleanup = () => {
+  const cleanup = (completeWorkArrival = false) => {
     activeTween?.kill();
     activeTween = null;
     document.querySelectorAll<HTMLElement>('[data-work-transition-source], [data-work-transition-direct-target]')
@@ -209,12 +202,23 @@ export const initWorkThemeTransition = () => {
     delete root.dataset.workTransitionActive;
     delete root.dataset.workTransitionDirection;
     delete root.dataset.workTransitionTone;
+    root.removeAttribute('data-work-transition-settled');
     root.removeAttribute('data-work-transition-direct');
     ROOT_STYLE_PROPERTIES.forEach((property) => root.style.removeProperty(property));
     document.body.style.paddingRight = bodyPaddingRight;
     bodyPaddingRight = '';
-    hud.setAttribute('aria-hidden', 'true');
     pendingDirection = null;
+
+    if (completeWorkArrival && isWorkPath(window.location.pathname)) {
+      root.dataset.workHeroArrival = 'complete';
+      window.dispatchEvent(new CustomEvent(WORK_HERO_ARRIVAL_EVENT));
+    }
+  };
+
+  const cleanupAfterPaint = (completeWorkArrival = false) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => cleanup(completeWorkArrival));
+    });
   };
 
   const handleBeforePreparation = (event: Event) => {
@@ -261,7 +265,8 @@ export const initWorkThemeTransition = () => {
 
   const handleAfterSwap = () => {
     if (!pendingDirection) return;
-    window.requestAnimationFrame(() => cleanup());
+    const completedDirection = pendingDirection;
+    cleanupAfterPaint(completedDirection === 'enter');
   };
 
   const handleInitialPageLoad = () => {
@@ -273,7 +278,7 @@ export const initWorkThemeTransition = () => {
     if (!source) return;
 
     mountIncomingPage(source, 'enter');
-    void play('enter').finally(() => cleanup());
+    void play('enter').finally(() => cleanupAfterPaint(true));
   };
 
   document.addEventListener('astro:before-preparation', handleBeforePreparation);
