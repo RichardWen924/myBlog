@@ -150,13 +150,50 @@ export default function SkillsOrbit() {
           })}
         </g>
 
+        <g className="skill-orbit__signals" aria-hidden="true">
+          {categoryNodes.map((category, categoryIndex) => (
+            <motion.circle
+              key={`${category.category}-signal`}
+              className="skill-orbit__signal"
+              r="2.5"
+              initial={reducedMotion ? false : { cx: CENTER.x, cy: CENTER.y }}
+              animate={
+                reducedMotion
+                  ? undefined
+                  : {
+                      cx: [CENTER.x, category.position.x, CENTER.x],
+                      cy: [CENTER.y, category.position.y, CENTER.y],
+                      opacity: [0.18, 0.42, 0.18],
+                    }
+              }
+              transition={{
+                duration: 10 + categoryIndex * 1.5,
+                delay: categoryIndex * 1.1,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+        </g>
+
         <motion.g
           className="skill-orbit__center"
           animate={reducedMotion ? undefined : { y: [0, -3, 0, 2, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}
         >
-          <circle cx={CENTER.x} cy={CENTER.y} r="72" className="skill-orbit__center-glow" />
+          <motion.circle
+            cx={CENTER.x}
+            cy={CENTER.y}
+            r="72"
+            className="skill-orbit__center-glow"
+            animate={
+              reducedMotion
+                ? undefined
+                : { r: [72, 74, 72], opacity: [0.76, 1, 0.76] }
+            }
+            transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+          />
           <circle cx={CENTER.x} cy={CENTER.y} r="56" className="skill-orbit__center-node" />
           <text x={CENTER.x} y={CENTER.y - 4} className="skill-orbit__center-label" textAnchor="middle">RICHARD</text>
           <text x={CENTER.x} y={CENTER.y + 16} className="skill-orbit__center-meta" textAnchor="middle">SKILL MAP / 2026</text>
@@ -181,23 +218,37 @@ export default function SkillsOrbit() {
                 onFocus={() => setActiveCategory(category.category)}
                 onBlur={() => setActiveCategory(null)}
               >
-                <circle cx={category.position.x} cy={category.position.y} r="8" className="skill-orbit__category-dot" />
-                <text x={category.position.x} y={category.position.y - 20} className="skill-orbit__category-label" textAnchor="middle">
-                  {category.category}
-                </text>
-                {category.items.map((item, itemIndex) => (
-                  <g key={`${category.category}-${item.name}`} className="skill-orbit__item">
-                    <circle cx={item.position.x} cy={item.position.y} r="3" className="skill-orbit__item-dot" />
-                    <text
-                      x={item.position.x}
-                      y={item.position.y + (itemIndex % 2 === 0 ? -10 : 18)}
-                      className="skill-orbit__item-label"
-                      textAnchor="middle"
-                    >
-                      {item.name}
-                    </text>
-                  </g>
-                ))}
+                <motion.g
+                  animate={
+                    reducedMotion
+                      ? undefined
+                      : { y: [0, -1.5, 0, 1, 0], opacity: [1, 0.96, 1, 0.98, 1] }
+                  }
+                  transition={{
+                    duration: 13 + categoryIndex * 1.8,
+                    delay: 1.2 + categoryIndex * 1.1,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <circle cx={category.position.x} cy={category.position.y} r="8" className="skill-orbit__category-dot" />
+                  <text x={category.position.x} y={category.position.y - 20} className="skill-orbit__category-label" textAnchor="middle">
+                    {category.category}
+                  </text>
+                  {category.items.map((item, itemIndex) => (
+                    <g key={`${category.category}-${item.name}`} className="skill-orbit__item">
+                      <circle cx={item.position.x} cy={item.position.y} r="3" className="skill-orbit__item-dot" />
+                      <text
+                        x={item.position.x}
+                        y={item.position.y + (itemIndex % 2 === 0 ? -10 : 18)}
+                        className="skill-orbit__item-label"
+                        textAnchor="middle"
+                      >
+                        {item.name}
+                      </text>
+                    </g>
+                  ))}
+                </motion.g>
               </motion.g>
             );
           })}

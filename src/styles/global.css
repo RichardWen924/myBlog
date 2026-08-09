@@ -566,6 +566,12 @@ a:hover {
   stroke: color-mix(in srgb, var(--color-ink) 28%, var(--color-border));
 }
 
+.skill-orbit__signal {
+  fill: color-mix(in srgb, var(--color-warm) 58%, var(--color-paper));
+  opacity: 0.36;
+  pointer-events: none;
+}
+
 .skill-orbit__center-glow {
   fill: color-mix(in srgb, var(--color-warm) 10%, transparent);
   stroke: var(--color-warm);

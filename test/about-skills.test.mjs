@@ -34,3 +34,15 @@ test('Decorative orbit paths stay as strokes instead of filled shapes', () => {
   const orbit = readFileSync(orbitPath, 'utf8');
   assert.match(orbit, /<path[^>]+fill="none"[^>]+stroke="currentColor"/);
 });
+
+test('Skills orbit carries a restrained ambient signal loop', () => {
+  const orbit = readFileSync(orbitPath, 'utf8');
+  const css = readSiteStyles(root);
+
+  assert.match(orbit, /skill-orbit__signal/);
+  assert.match(orbit, /cx:\s*\[/);
+  assert.match(orbit, /cy:\s*\[/);
+  assert.match(orbit, /repeat:\s*Infinity/);
+  assert.match(orbit, /skill-orbit__center-glow[\s\S]*?animate=/);
+  assert.match(css, /\.skill-orbit__signal\s*\{[^}]*fill:/s);
+});
