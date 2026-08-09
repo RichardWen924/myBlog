@@ -1,6 +1,6 @@
 
 .home-chapter {
-  scroll-margin-top: 2rem;
+  scroll-margin-top: var(--site-header-height);
 }
 
 html.home-scroll-snap {
@@ -18,15 +18,15 @@ html.home-scroll-snap {
 }
 
 .home-hero-panel {
-  min-height: calc(100vh - 4.25rem);
-  min-height: calc(100svh - 4.25rem);
+  min-height: calc(100vh - var(--site-header-height));
+  min-height: calc(100svh - var(--site-header-height));
 }
 
 /* ===== GSAP landing hero ===== */
 .home-landing-hero {
   position: relative;
-  min-height: calc(100vh - 4.25rem);
-  min-height: calc(100svh - 4.25rem);
+  min-height: calc(100vh - var(--site-header-height));
+  min-height: calc(100svh - var(--site-header-height));
   overflow: hidden;
   isolation: isolate;
   border-bottom: 1px solid var(--color-border);
@@ -183,7 +183,7 @@ html.home-scroll-snap {
 
 .home-landing-hero__caption { align-self: end; display: grid; max-width: 13rem; gap: 0.7rem; padding-bottom: 2.4rem; }
 .home-landing-hero__caption strong { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; }
-.home-landing-hero__scroll { position: absolute; bottom: 2rem; left: 50%; z-index: 3; display: flex; align-items: center; gap: 0.8rem; color: var(--color-ink-soft); text-decoration: none; transform: translateX(-50%); }
+.home-landing-hero__scroll { position: absolute; bottom: clamp(2.75rem, 5vw, 3.5rem); left: 50%; z-index: 3; display: flex; align-items: center; gap: 0.8rem; color: var(--color-ink-soft); text-decoration: none; transform: translateX(-50%); }
 .home-landing-hero__scroll-line { display: block; height: 1px; width: 4rem; background: var(--color-border); transform-origin: left center; animation: landing-scroll-pulse 2.2s ease-in-out infinite; }
 
 @keyframes landing-scroll-pulse { 0%, 100% { opacity: 0.35; transform: scaleX(0.55); } 50% { opacity: 1; transform: scaleX(1); } }
@@ -196,8 +196,8 @@ html.home-scroll-snap {
 .home-chapter {
   position: relative;
   display: flex;
-  min-height: calc(100vh - 4.25rem);
-  min-height: calc(100svh - 4.25rem);
+  min-height: calc(100vh - var(--site-header-height));
+  min-height: calc(100svh - var(--site-header-height));
   align-items: center;
   overflow: hidden;
   padding: clamp(4rem, 9vw, 8rem) 0;

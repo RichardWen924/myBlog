@@ -37,6 +37,10 @@
   }
 }
 
+:root {
+  --site-header-height: calc(2.75rem + 2rem + 1px);
+}
+
 /* ===== Base ===== */
 @layer base {
   html {
@@ -523,7 +527,7 @@ a:hover {
   }
 
   .home-landing-hero__scroll {
-    bottom: 1.2rem;
+    bottom: 2.5rem;
   }
 
   .about-skill-layout {
