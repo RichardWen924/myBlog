@@ -3,6 +3,7 @@
 @import './illustration.css';
 @import './home.css';
 @import './about.css';
+@import './blog.css';
 
 /* ===== Typography plugin (v4 CSS-first API) ===== */
 @plugin '@tailwindcss/typography';
