@@ -19,7 +19,7 @@ Work 使用独立于 Home、About 和 Blog 的视觉语言，主题名为 **Obsi
 
 色彩使用黑曜石黑作为主背景、藏绿作为结构和局部表面、薄荷绿作为极少量交互信号。Work 保持科技感、简约、动态、高级和艺术性，同时避免常见的 AI 科技模板语言。
 
-本规范替代 `docs/superpowers/specs/2026-08-09-personal-archive-visual-system-design.md` 中关于“Work — 浅色技术图谱”的设计描述。全站其他模块仍遵循原统一视觉规范。
+本规范替代项目此前关于“Work — 浅色技术图谱”的设计方向，并作为 Work 后续设计与实现的唯一正式依据。
 
 ## 2. 目标
 
