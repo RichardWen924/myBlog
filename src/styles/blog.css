@@ -256,8 +256,9 @@ html.blog-scroll-snap {
 }
 
 .blog-archive > section {
+  width: 100%;
   margin-inline: 0;
-  max-width: 48rem;
+  max-width: none;
 }
 
 .blog-archive > section > ul {
