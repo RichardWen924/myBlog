@@ -57,72 +57,81 @@ const yearGroups = groupByYear(posts);
 </Base>
 
 <script>
-  const chapters = [...document.querySelectorAll('[data-blog-chapter]')];
-  const railLinks = [...document.querySelectorAll('[data-blog-rail-link]')];
+  let cleanupBlogPage = () => {};
 
-  const setActiveChapter = (id) => {
-    railLinks.forEach((link) => {
-      const isActive = link.dataset.blogRailLink === id;
-      link.toggleAttribute('data-active', isActive);
-      if (isActive) {
-        link.setAttribute('aria-current', 'step');
+  const setupBlogPage = () => {
+    cleanupBlogPage();
+    const chapters = [...document.querySelectorAll('[data-blog-chapter]')];
+    const railLinks = [...document.querySelectorAll('[data-blog-rail-link]')];
+    if (chapters.length === 0 || railLinks.length === 0) return;
+
+    const setActiveChapter = (id) => {
+      railLinks.forEach((link) => {
+        const isActive = link.dataset.blogRailLink === id;
+        link.toggleAttribute('data-active', isActive);
+        if (isActive) {
+          link.setAttribute('aria-current', 'step');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActiveChapter(visible.target.dataset.blogChapter);
+      },
+      { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
+    );
+
+    chapters.forEach((chapter) => observer.observe(chapter));
+    setActiveChapter(chapters[0]?.dataset.blogChapter ?? 'hero');
+
+    const isTextControl = (target) => {
+      if (!(target instanceof HTMLElement)) return false;
+      return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+    };
+
+    const getCurrentSectionIndex = () => {
+      const marker = window.scrollY + window.innerHeight * 0.35;
+      const currentIndex = chapters.findIndex((chapter) => {
+        const top = chapter.offsetTop;
+        return marker >= top && marker < top + chapter.offsetHeight;
+      });
+
+      return currentIndex === -1 ? 0 : currentIndex;
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
+
+      const direction = event.key === 'ArrowDown' ? 1 : -1;
+      const currentIndex = getCurrentSectionIndex();
+      const nextIndex = Math.min(Math.max(currentIndex + direction, 0), chapters.length - 1);
+      const nextSection = chapters[nextIndex];
+
+      if (!nextSection || nextIndex === currentIndex) return;
+
+      event.preventDefault();
+      const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      if (nextIndex === 0) {
+        window.scrollTo({ top: 0, behavior: scrollBehavior });
       } else {
-        link.removeAttribute('aria-current');
+        nextSection.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
       }
-    });
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    cleanupBlogPage = () => {
+      observer.disconnect();
+      window.removeEventListener('keydown', handleKeyDown);
+      cleanupBlogPage = () => {};
+    };
   };
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActiveChapter(visible.target.dataset.blogChapter);
-    },
-    { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
-  );
-
-  chapters.forEach((chapter) => observer.observe(chapter));
-  setActiveChapter(chapters[0]?.dataset.blogChapter ?? 'hero');
-
-  const isTextControl = (target) => {
-    if (!(target instanceof HTMLElement)) return false;
-    return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
-  };
-
-  const getCurrentSectionIndex = () => {
-    const marker = window.scrollY + window.innerHeight * 0.35;
-    const currentIndex = chapters.findIndex((chapter) => {
-      const top = chapter.offsetTop;
-      return marker >= top && marker < top + chapter.offsetHeight;
-    });
-
-    return currentIndex === -1 ? 0 : currentIndex;
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
-
-    const direction = event.key === 'ArrowDown' ? 1 : -1;
-    const currentIndex = getCurrentSectionIndex();
-    const nextIndex = Math.min(Math.max(currentIndex + direction, 0), chapters.length - 1);
-    const nextSection = chapters[nextIndex];
-
-    if (!nextSection || nextIndex === currentIndex) return;
-
-    event.preventDefault();
-    const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-    if (nextIndex === 0) {
-      window.scrollTo({ top: 0, behavior: scrollBehavior });
-    } else {
-      nextSection.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
-    }
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-
-  document.addEventListener('astro:before-swap', () => {
-    observer.disconnect();
-    window.removeEventListener('keydown', handleKeyDown);
-  }, { once: true });
+  document.addEventListener('astro:page-load', setupBlogPage);
+  document.addEventListener('astro:before-swap', () => cleanupBlogPage());
 </script>

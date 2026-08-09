@@ -194,15 +194,9 @@
   import { gsap } from 'gsap';
   import { ENTRY_PROGRESS_COMPLETE_EVENT } from '../../lib/uiEvents';
 
-  const loader = document.querySelector('.entry-progress-loader');
-  const fill = loader?.querySelector('.entry-progress__fill');
-  const progressbar = loader?.querySelector('[role="progressbar"]');
-  const milestones = loader ? gsap.utils.toArray('.entry-progress__step', loader) : [];
-  const pageContent = document.querySelector('[data-entry-content]');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ENTRY_SESSION_KEY = 'personal-archive-entry-complete';
   const ENTRY_PROGRESS_DURATION_MS = 900;
-  let completionAnnounced = false;
+  let cleanupEntryProgress = () => {};
 
   const hasCompletedEntry = () => {
     try {
@@ -220,81 +214,97 @@
     }
   };
 
-  const setProgress = (value: number) => {
-    progressbar?.setAttribute('aria-valuenow', String(value));
+  const setupEntryProgress = () => {
+    cleanupEntryProgress();
+    const loader = document.querySelector<HTMLElement>('.entry-progress-loader');
+    const fill = loader?.querySelector<HTMLElement>('.entry-progress__fill');
+    const progressbar = loader?.querySelector<HTMLElement>('[role="progressbar"]');
+    const milestones = loader ? gsap.utils.toArray<HTMLElement>('.entry-progress__step', loader) : [];
+    const pageContent = document.querySelector<HTMLElement>('[data-entry-content]');
+    if (!loader || !fill || !progressbar) return;
 
-    milestones.forEach((step) => {
-      const stepValue = Number((step as HTMLElement).dataset.value);
-      step.classList.toggle('is-complete', stepValue <= value);
-      step.classList.toggle('is-current', stepValue === value);
+    let completionAnnounced = false;
+    let timeline: gsap.core.Timeline | null = null;
+    let reducedMotionTimer = 0;
+
+    const setProgress = (progress: number) => {
+      progressbar.setAttribute('aria-valuenow', String(progress));
+      milestones.forEach((step) => {
+        const stepValue = Number(step.dataset.value);
+        step.classList.toggle('is-complete', stepValue <= progress);
+        step.classList.toggle('is-current', stepValue === progress);
+      });
+    };
+
+    const unlockDocument = () => {
+      document.documentElement.classList.remove('entry-progress-lock');
+      pageContent?.removeAttribute('inert');
+    };
+
+    const announceCompletion = () => {
+      if (completionAnnounced) return;
+      completionAnnounced = true;
+      document.documentElement.dataset.entryReady = 'true';
+      document.dispatchEvent(new CustomEvent(ENTRY_PROGRESS_COMPLETE_EVENT));
+    };
+
+    const removeLoader = () => {
+      loader.setAttribute('aria-hidden', 'true');
+      gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
+      unlockDocument();
+      loader.remove();
+      rememberEntryCompletion();
+      announceCompletion();
+    };
+
+    cleanupEntryProgress = () => {
+      timeline?.kill();
+      timeline = null;
+      if (reducedMotionTimer) window.clearTimeout(reducedMotionTimer);
+      unlockDocument();
+      cleanupEntryProgress = () => {};
+    };
+
+    loader.dataset.runtime = 'js';
+    if (hasCompletedEntry()) {
+      unlockDocument();
+      loader.remove();
+      announceCompletion();
+      return;
+    }
+
+    delete document.documentElement.dataset.entryReady;
+    document.documentElement.classList.add('entry-progress-lock');
+    pageContent?.setAttribute('inert', '');
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setProgress(100);
+      gsap.set(fill, { scaleX: 1 });
+      reducedMotionTimer = window.setTimeout(removeLoader, 0);
+      return;
+    }
+
+    timeline = gsap.timeline({
+      defaults: { ease: 'power2.out' },
+      onComplete: () => {
+        loader.setAttribute('aria-hidden', 'true');
+        gsap.to(loader, {
+          yPercent: -100,
+          duration: 0.1,
+          ease: 'power3.inOut',
+          onComplete: removeLoader,
+        });
+      },
+    });
+
+    const milestoneDuration = (ENTRY_PROGRESS_DURATION_MS / 1000 - 0.06) / 4;
+    [0, 25, 50, 75, 100].forEach((progress, index) => {
+      const duration = index === 0 ? 0.06 : milestoneDuration;
+      timeline?.to({}, { duration, onStart: () => setProgress(progress) });
+      timeline?.to(fill, { scaleX: progress / 100, duration }, '<');
     });
   };
 
-  const lockDocument = () => {
-    document.documentElement.classList.add('entry-progress-lock');
-    pageContent?.setAttribute('inert', '');
-  };
-
-  const unlockDocument = () => {
-    document.documentElement.classList.remove('entry-progress-lock');
-    pageContent?.removeAttribute('inert');
-  };
-
-  const announceCompletion = () => {
-    if (completionAnnounced) return;
-    completionAnnounced = true;
-    document.documentElement.dataset.entryReady = 'true';
-    document.dispatchEvent(new CustomEvent(ENTRY_PROGRESS_COMPLETE_EVENT));
-  };
-
-  const removeLoader = () => {
-    loader?.setAttribute('aria-hidden', 'true');
-    gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
-    unlockDocument();
-    loader?.remove();
-    rememberEntryCompletion();
-    announceCompletion();
-  };
-
-  if (loader && fill && progressbar) {
-    delete document.documentElement.dataset.entryReady;
-    loader.dataset.runtime = 'js';
-    const sessionAlreadyComplete = hasCompletedEntry();
-
-    if (sessionAlreadyComplete) {
-      unlockDocument();
-      loader?.remove();
-      announceCompletion();
-    } else {
-      lockDocument();
-
-      if (reducedMotion) {
-        setProgress(100);
-        gsap.set(fill, { scaleX: 1 });
-        window.setTimeout(() => removeLoader(), 0);
-      } else {
-        const timeline = gsap.timeline({
-          defaults: { ease: 'power2.out' },
-          onComplete: () => {
-            loader.setAttribute('aria-hidden', 'true');
-            gsap.to(loader, {
-              yPercent: -100,
-              duration: 0.1,
-              ease: 'power3.inOut',
-              onComplete: () => {
-                removeLoader();
-              },
-            });
-          },
-        });
-
-        const milestoneDuration = (ENTRY_PROGRESS_DURATION_MS / 1000 - 0.06) / 4;
-        [0, 25, 50, 75, 100].forEach((value, index) => {
-          const duration = index === 0 ? 0.06 : milestoneDuration;
-          timeline.to({}, { duration, onStart: () => setProgress(value) });
-          timeline.to(fill, { scaleX: value / 100, duration }, '<');
-        });
-      }
-    }
-  }
+  document.addEventListener('astro:page-load', setupEntryProgress);
+  document.addEventListener('astro:before-swap', () => cleanupEntryProgress());
 </script>

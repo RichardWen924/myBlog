@@ -49,10 +49,19 @@ const { currentPost } = Astro.props;
 <script>
   import { initHomeHeroMotion } from './homeHeroMotion';
 
-  const cleanups = Array.from(document.querySelectorAll<HTMLElement>('[data-home-landing-hero]'))
-    .map((hero) => initHomeHeroMotion(hero));
+  let cleanupHomeHero = () => {};
 
-  document.addEventListener('astro:before-swap', () => {
-    cleanups.forEach((cleanup) => cleanup());
-  }, { once: true });
+  const setupHomeHero = () => {
+    cleanupHomeHero();
+    const cleanups = Array.from(document.querySelectorAll<HTMLElement>('[data-home-landing-hero]'))
+      .map((hero) => initHomeHeroMotion(hero));
+
+    cleanupHomeHero = () => {
+      cleanups.forEach((cleanup) => cleanup());
+      cleanupHomeHero = () => {};
+    };
+  };
+
+  document.addEventListener('astro:page-load', setupHomeHero);
+  document.addEventListener('astro:before-swap', () => cleanupHomeHero());
 </script>
