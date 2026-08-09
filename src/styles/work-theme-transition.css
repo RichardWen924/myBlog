@@ -2,6 +2,7 @@
   --work-transition-progress: 0;
   --work-transition-focus-x: 88;
   --work-transition-radius: 21;
+  --work-transition-center-y: 360;
   --work-transition-work-scale: 0.46;
   --work-transition-source-shift-x: 0;
   --work-transition-source-scale: 1;
@@ -37,10 +38,6 @@ html[data-work-transition-active] .work-theme-transition__hud {
 
 html[data-work-transition-direct] .work-theme-transition__direct-source {
   visibility: visible;
-}
-
-html[data-work-transition-direct] .work-theme-transition__target {
-  visibility: hidden;
 }
 
 .work-theme-transition__direct-source {
@@ -83,7 +80,6 @@ html[data-work-transition-direct] .work-theme-transition__target {
 }
 
 [data-work-transition-source],
-[data-work-transition-direct-target],
 .work-theme-transition__target {
   will-change: transform, clip-path, filter, opacity;
 }
@@ -92,22 +88,27 @@ html[data-work-transition-active] [data-work-transition-source] {
   position: relative;
   z-index: 60;
   min-height: 100dvh;
+  background: var(--color-paper);
 }
 
 html[data-work-transition-direction='enter'] [data-work-transition-source] {
   filter: blur(calc(var(--work-transition-source-blur) * 1px));
   transform: translate3d(calc(var(--work-transition-source-shift-x) * 1vw), -1.8vh, 0)
     scale(var(--work-transition-source-scale));
-  transform-origin: 88% 50%;
+  transform-origin: 88% calc(var(--work-transition-center-y) * 1px);
 }
 
 html[data-work-transition-direction='exit'] [data-work-transition-source] {
   clip-path: circle(
     calc(var(--work-transition-radius) * 1px)
-    at calc(var(--work-transition-focus-x) * 1%) 50%
+    at calc(var(--work-transition-focus-x) * 1%) calc(var(--work-transition-center-y) * 1px)
   );
+}
+
+html[data-work-transition-direction='exit'] [data-work-transition-source] [data-site-visual] {
   transform: scale(var(--work-transition-work-scale));
-  transform-origin: calc(var(--work-transition-focus-x) * 1%) 50%;
+  transform-origin: calc(var(--work-transition-focus-x) * 1%) calc(var(--work-transition-center-y) * 1px);
+  will-change: transform;
 }
 
 .work-theme-transition__target {
@@ -118,13 +119,14 @@ html[data-work-transition-direction='exit'] [data-work-transition-source] {
     calc(var(--work-transition-radius) * 1px)
     at calc(var(--work-transition-focus-x) * 1%) 50%
   );
-  transform: scale(var(--work-transition-work-scale));
-  transform-origin: calc(var(--work-transition-focus-x) * 1%) 50%;
 }
 
 html[data-work-transition-direction='exit'] .work-theme-transition__target {
   z-index: 50;
   clip-path: none;
+}
+
+html[data-work-transition-direction='exit'] .work-theme-transition__target > [data-site-page] {
   filter: blur(calc(var(--work-transition-source-blur) * 1px));
   transform: translate3d(calc(var(--work-transition-source-shift-x) * 1vw), 1.8vh, 0)
     scale(var(--work-transition-source-scale));
@@ -135,10 +137,14 @@ html[data-work-transition-direction='exit'] .work-theme-transition__target {
   position: absolute;
   inset: 0;
   width: 100%;
+  height: 100dvh;
   min-height: 100dvh;
   overflow: hidden;
   background: var(--color-paper);
   color: var(--color-ink);
+  transform: scale(var(--work-transition-work-scale));
+  transform-origin: calc(var(--work-transition-focus-x) * 1%) 50%;
+  will-change: transform, filter;
 }
 
 .work-theme-transition__target[data-target-theme='work'] {
@@ -174,17 +180,32 @@ html[data-work-transition-direction='exit'] .work-theme-transition__target {
   );
 }
 
-html[data-work-transition-direct] [data-work-transition-direct-target] {
-  position: relative;
-  z-index: 65;
-  min-height: 100dvh;
-  clip-path: circle(
-    calc(var(--work-transition-radius) * 1px)
-    at calc(var(--work-transition-focus-x) * 1%) 50%
-  );
-  transform: scale(var(--work-transition-work-scale));
-  transform-origin: calc(var(--work-transition-focus-x) * 1%) 50%;
-  will-change: transform, clip-path;
+/* The inert transition clone does not run the React/SVG drawing lifecycle.
+   Keep its hero legible, then hand back to the live particle hero on cleanup. */
+.work-theme-transition__target[data-target-theme='work'] .future-wordmark {
+  display: grid;
+  place-items: center;
+}
+
+.work-theme-transition__target[data-target-theme='work'] .future-wordmark::after {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  content: 'BUILD FUTURE';
+  font-family: var(--font-serif);
+  font-size: clamp(4rem, 13vw, 10.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.82;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px #ff9b76;
+}
+
+.work-theme-transition__target[data-target-theme='work'] .future-wordmark__stroke,
+.work-theme-transition__target[data-target-theme='work'] .future-wordmark__particle {
+  opacity: 0 !important;
 }
 
 .work-theme-transition__speed {
@@ -380,9 +401,13 @@ html[data-work-transition-direction='exit'] .work-theme-transition__ring {
   .work-theme-transition__node--zero span::after { content: '0'; }
   .work-theme-transition__node--shift span::after { content: 'SHIFT'; }
   .work-theme-transition__node--work span::after { content: '100'; }
+  .work-theme-transition__node--shift span { top: -2rem; }
   .work-theme-transition__badge { min-width: 4.75rem; }
   .work-theme-transition__badge strong { font-size: 1.25rem; }
   .work-theme-transition__speed { display: none; }
+  .work-theme-transition__target[data-target-theme='work'] .future-wordmark::after {
+    font-size: clamp(2rem, 11vw, 3.4rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -394,7 +419,7 @@ html[data-work-transition-direction='exit'] .work-theme-transition__ring {
   }
 
   [data-work-transition-source],
-  [data-work-transition-direct-target] {
+  .work-theme-transition__target {
     filter: none !important;
     clip-path: none !important;
     transform: none !important;

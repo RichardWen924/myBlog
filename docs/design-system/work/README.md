@@ -1,6 +1,6 @@
 # Obsidian Circuit — Work 视觉系统规范
 
-状态：已确认，待实现
+状态：视觉规范已确认；Point Focus Portal 转场已实现；完整 Work 主题组件待后续迭代
 
 版本：1.1
 
@@ -32,7 +32,7 @@ Work 使用独立于 Home、About 和 Blog 的视觉语言，主题名为 **Obsi
 ## 3. 非目标
 
 - 本规范不重排现有 Work 六个章节，也不改写内容数据。
-- 本阶段不创建运行时主题文件、组件代码或新页面。
+- 不要求在一次迭代中实现全部运行时主题文件或重建页面；主题边界转场按独立规范先行落地。
 - 不建设通用后台组件库、表单系统、模态框系统或数据可视化平台。
 - 不使用蓝紫渐变、玻璃拟态、霓虹赛博、圆角卡片墙或伪终端界面。
 - 不发明项目指标、运行状态、坐标、版本号或技术熟练度百分比。
@@ -174,9 +174,9 @@ Work 不使用衬线字体，以强化其相对其他模块的独立性。
 - 禁止装饰性 `ONLINE`、`SYNCING`、坐标和随机哈希；只有真实状态存在时才显示状态标签。
 - 项目摘要优先回答问题、角色、决策和结果，不罗列无上下文的技术栈。
 
-## 12. 未来实现目录
+## 12. 实现与未来目录
 
-本阶段不创建以下运行时文件。实施时采用三层分离：
+主题 token 与完整组件体系后续仍采用三层分离：
 
 ```text
 src/
@@ -206,6 +206,22 @@ docs/
 ```
 
 静态结构优先使用 Astro 组件；只有粒子、指针响应、复杂时间线或需要客户端状态的组件使用 React island。
+
+当前已落地的主题边界转场位于：
+
+```text
+src/
+├── components/entry/
+│   ├── WorkThemeTransition.astro
+│   └── workThemeTransitionClient.ts
+├── lib/
+│   ├── workThemeTransition.ts
+│   └── workThemeTransition.test.ts
+└── styles/
+    └── work-theme-transition.css
+```
+
+转场作为全站路由边界能力保留在 `entry` 与全局样式层；未来 Work 内部组件仍进入 `components/work` 与 `styles/themes/work`，两者不混放。
 
 ## 13. 可访问性与性能底线
 

@@ -22,6 +22,7 @@ const ROOT_STYLE_PROPERTIES = [
   '--work-transition-progress',
   '--work-transition-focus-x',
   '--work-transition-radius',
+  '--work-transition-center-y',
   '--work-transition-work-scale',
   '--work-transition-source-shift-x',
   '--work-transition-source-scale',
@@ -119,8 +120,8 @@ export const initWorkThemeTransition = () => {
     root.dataset.workTransitionDirection = direction;
     root.toggleAttribute('data-work-transition-direct', direct);
     hud.setAttribute('aria-hidden', 'false');
-    source.toggleAttribute('data-work-transition-direct-target', direct);
     source.toggleAttribute('data-work-transition-source', !direct);
+    setRootProperty('--work-transition-center-y', window.scrollY + window.innerHeight / 2);
     lockDocument(source);
     renderFrame(direction, getTransitionFrame(direction, 0, {
       width: window.innerWidth,
@@ -271,6 +272,7 @@ export const initWorkThemeTransition = () => {
     const source = prepareStaticState('enter', true);
     if (!source) return;
 
+    mountIncomingPage(source, 'enter');
     void play('enter').finally(() => cleanup());
   };
 

@@ -1,6 +1,6 @@
 # Work 点聚焦主题转场规范
 
-状态：视觉与运动逻辑已确认，待实现
+状态：已实现并完成桌面与 Compact 实机验收
 
 版本：1.0
 
@@ -188,11 +188,23 @@ HUD 不参与页面透视变形，但其轨道世界可以随摄像机轻微位�
 
 - `Base.astro`：启用 Astro `ClientRouter`，在所有页面挂载一个全局转场宿主。
 - `WorkThemeTransition.astro`：只负责 HUD、门户合成层和可访问状态。
-- `workThemeTransition.ts`：负责路由判断、状态机、GSAP 主进度和生命周期清理。
+- `workThemeTransition.ts`：负责路由判断和可测试的纯运动参数映射。
+- `workThemeTransitionClient.ts`：负责 GSAP 主进度、Astro 生命周期、页面合成与幂等清理。
 - `work-theme-transition.css`：负责 View Transition 命名层、圆形裁切、纵深和响应式参数。
 - Work 页面根节点与 Hero：提供稳定的 transition name，允许真实 Hero 进入门户。
 
 转场宿主必须存在于所有使用 `Base.astro` 的页面，不能只在 `/work` 条件渲染，否则离开 Work 时无法持续承载反向 HUD。
+
+当前真实文件映射：
+
+- `src/layouts/Base.astro`
+- `src/components/entry/WorkThemeTransition.astro`
+- `src/components/entry/workThemeTransitionClient.ts`
+- `src/lib/workThemeTransition.ts`
+- `src/lib/workThemeTransition.test.ts`
+- `src/styles/work-theme-transition.css`
+
+进入与直达场景均将服务器渲染的真实 Work 页面作为 inert 视口副本放入 Portal Target；动画结束后移除副本并揭示可交互页面。由于 inert 副本不执行 React/SVG 生命周期，过渡层为 `BUILD FUTURE` 提供同构的静态描边兜底，兜底只存在于临时合成层，不形成第二份业务 Hero。
 
 ### 9.2 Astro 生命周期
 
@@ -216,6 +228,8 @@ HUD 不参与页面透视变形，但其轨道世界可以随摄像机轻微位�
 ### 10.1 直接访问 `/work`
 
 直接访问没有上一页面快照。此时使用与全站暖纸主题一致的轻量预备层作为 Source Page，真实 Work 页面作为 Portal Target，完整播放 `0% → 100%`。预备层只包含背景、网格和轨道，不伪造另一个页面的正文。
+
+从 Work 进入首页等站内路由时，首页原有 Entry Progress 不得二次播放；它只保留给真正首次打开首页的会话入场。
 
 ### 10.2 View Transition 不可用
 

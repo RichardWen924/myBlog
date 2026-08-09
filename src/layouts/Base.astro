@@ -57,7 +57,7 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
       <!-- Ambient warm glow, always present, behind all content -->
       <div class="glow-layer" aria-hidden="true"></div>
 
-      <div class="relative z-10">
+      <div class="relative z-10" data-site-visual>
         {showEntryLoader && <EntryProgressLoader />}
         <div data-entry-content>
           <Header />
@@ -69,5 +69,16 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
       </div>
     </div>
     <WorkThemeTransition />
+    <script>
+      import { ENTRY_PROGRESS_SESSION_KEY } from '../lib/uiEvents';
+
+      document.addEventListener('astro:before-preparation', () => {
+        try {
+          window.sessionStorage.setItem(ENTRY_PROGRESS_SESSION_KEY, 'true');
+        } catch {
+          // Storage may be unavailable; navigation and both transitions still fail open.
+        }
+      });
+    </script>
   </body>
 </html>
