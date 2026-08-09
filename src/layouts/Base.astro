@@ -1,9 +1,10 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Header from '../components/global/Header.astro';
 import Footer from '../components/global/Footer.astro';
 import EntryProgressLoader from '../components/entry/EntryProgressLoader.astro';
-import WorkTransitionProgress from '../components/entry/WorkTransitionProgress.astro';
+import WorkThemeTransition from '../components/entry/WorkThemeTransition.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/constants';
 
 interface Props {
@@ -12,7 +13,6 @@ interface Props {
   lang?: string;
   fullBleed?: boolean;
   showEntryLoader?: boolean;
-  showWorkTransition?: boolean;
   scrollSnap?: boolean;
   htmlClass?: string;
 }
@@ -22,7 +22,6 @@ const {
   lang = 'en',
   fullBleed = false,
   showEntryLoader = false,
-  showWorkTransition = false,
   scrollSnap = false,
   htmlClass = '',
 } = Astro.props;
@@ -32,6 +31,7 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
 <!doctype html>
 <html lang={lang}
   class:list={[htmlClass, { 'home-scroll-snap': scrollSnap }]}
+  transition:animate="none"
 >
   <head>
     <meta charset="UTF-8" />
@@ -50,21 +50,24 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
       href={new URL('rss.xml', Astro.site)}
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <ClientRouter fallback="animate" />
   </head>
   <body class="relative min-h-screen bg-paper text-ink antialiased">
-    <!-- Ambient warm glow, always present, behind all content -->
-    <div class="glow-layer" aria-hidden="true"></div>
+    <div data-site-page>
+      <!-- Ambient warm glow, always present, behind all content -->
+      <div class="glow-layer" aria-hidden="true"></div>
 
-    <div class="relative z-10">
-      {showEntryLoader && <EntryProgressLoader />}
-      {showWorkTransition && <WorkTransitionProgress />}
-      <div data-entry-content>
-        <Header />
-        <main class={fullBleed ? 'w-full py-12' : 'mx-auto max-w-4xl px-4 py-12'}>
-          <slot />
-        </main>
-        <Footer />
+      <div class="relative z-10">
+        {showEntryLoader && <EntryProgressLoader />}
+        <div data-entry-content>
+          <Header />
+          <main class={fullBleed ? 'w-full py-12' : 'mx-auto max-w-4xl px-4 py-12'}>
+            <slot />
+          </main>
+          <Footer />
+        </div>
       </div>
     </div>
+    <WorkThemeTransition />
   </body>
 </html>
