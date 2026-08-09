@@ -179,6 +179,7 @@
 
 <script>
   import { gsap } from 'gsap';
+  import { ENTRY_PROGRESS_COMPLETE_EVENT } from '../../lib/uiEvents';
 
   const loader = document.querySelector('.entry-progress-loader');
   const fill = loader?.querySelector('.entry-progress__fill');
@@ -186,6 +187,7 @@
   const milestones = loader ? gsap.utils.toArray('.entry-progress__step', loader) : [];
   const pageContent = document.querySelector('[data-entry-content]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let completionAnnounced = false;
 
   const setProgress = (value: number) => {
     progressbar?.setAttribute('aria-valuenow', String(value));
@@ -207,14 +209,23 @@
     pageContent?.removeAttribute('inert');
   };
 
+  const announceCompletion = () => {
+    if (completionAnnounced) return;
+    completionAnnounced = true;
+    document.documentElement.dataset.entryReady = 'true';
+    document.dispatchEvent(new CustomEvent(ENTRY_PROGRESS_COMPLETE_EVENT));
+  };
+
   const removeLoader = () => {
     loader?.setAttribute('aria-hidden', 'true');
     gsap.set(loader, { autoAlpha: 0, pointerEvents: 'none' });
     unlockDocument();
     loader?.remove();
+    announceCompletion();
   };
 
   if (loader && fill && progressbar) {
+    delete document.documentElement.dataset.entryReady;
     loader.dataset.runtime = 'js';
     lockDocument();
 

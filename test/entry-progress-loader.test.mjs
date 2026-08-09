@@ -34,6 +34,22 @@ test('entry loader fails open without JavaScript and isolates page content while
   assert.match(source, /removeAttribute\(['"]inert['"]\)/);
 });
 
+test('entry loader announces completion only after it has released the page', () => {
+  const source = readFileSync(componentPath, 'utf8');
+
+  assert.match(source, /ENTRY_PROGRESS_COMPLETE_EVENT/);
+  assert.match(source, /dataset\.entryReady\s*=\s*['"]true['"]/);
+  assert.match(source, /dispatchEvent\(new CustomEvent\(ENTRY_PROGRESS_COMPLETE_EVENT\)\)/);
+
+  const removeLoader = source.match(/const removeLoader = \(\) => \{[\s\S]*?\n  \};/)?.[0] ?? '';
+  assert.ok(removeLoader, 'expected a removeLoader completion boundary');
+  assert.match(
+    removeLoader,
+    /loader\?\.remove\(\);\s*announceCompletion\(\);/,
+    'completion must be announced after the overlay is removed',
+  );
+});
+
 test('entry loader rail follows the viewport instead of a fixed max width', () => {
   const source = readFileSync(componentPath, 'utf8');
   assert.match(source, /width:\s*100vw/);
