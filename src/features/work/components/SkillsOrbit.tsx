@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import skills from '../../data/skills';
+import skills from '../../../data/skills';
 
 interface Point {
   x: number;

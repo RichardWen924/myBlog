@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react';
-import type { ArchivePost } from './blogArchive';
+import type { ArchivePost } from '../blogArchive';
 
 interface ArchivePostRowProps {
   post: ArchivePost;

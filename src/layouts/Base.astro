@@ -1,10 +1,9 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import Header from '../components/global/Header.astro';
-import Footer from '../components/global/Footer.astro';
-import EntryProgressLoader from '../components/entry/EntryProgressLoader.astro';
-import WorkThemeTransition from '../components/entry/WorkThemeTransition.astro';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import EntryProgressLoader from '../components/site/EntryProgressLoader.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/constants';
 
 interface Props {
@@ -68,7 +67,6 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
         </div>
       </div>
     </div>
-    <WorkThemeTransition />
     <script>
       import { ENTRY_PROGRESS_SESSION_KEY } from '../lib/uiEvents';
 

@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  getWorkHeroStartMode,
-  WORK_HERO_ARRIVAL_EVENT,
-  WORK_HERO_FALLBACK_MS,
-  WORK_HERO_SETTLE_MS,
-} from '../../lib/workThemeTransition';
-import ParticleText from './bits/ParticleText';
+import { getWorkHeroStartMode, WORK_HERO_SETTLE_MS } from '../workHero';
+import ParticleText from './ParticleText';
 
 /** Work hero: an outline resolves into a living particle wordmark. */
 export default function FutureHero() {
@@ -13,41 +8,17 @@ export default function FutureHero() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const root = document.documentElement;
-    const startMode = getWorkHeroStartMode(
-      reducedMotion,
-      root.dataset.workHeroArrival === 'pending',
-    );
+    const startMode = getWorkHeroStartMode(reducedMotion);
 
     if (startMode === 'particles') {
-      root.removeAttribute('data-work-hero-arrival');
       setParticleReady(true);
       return undefined;
     }
 
-    let started = false;
-    let settleTimer: number | undefined;
-    let fallbackTimer: number | undefined;
-
-    const startParticles = () => {
-      if (started) return;
-      started = true;
-      window.clearTimeout(fallbackTimer);
-      root.removeAttribute('data-work-hero-arrival');
-      settleTimer = window.setTimeout(() => setParticleReady(true), WORK_HERO_SETTLE_MS);
-    };
-
-    if (startMode === 'await-transition') {
-      window.addEventListener(WORK_HERO_ARRIVAL_EVENT, startParticles, { once: true });
-      fallbackTimer = window.setTimeout(startParticles, WORK_HERO_FALLBACK_MS);
-    } else {
-      startParticles();
-    }
+    const settleTimer = window.setTimeout(() => setParticleReady(true), WORK_HERO_SETTLE_MS);
 
     return () => {
-      window.removeEventListener(WORK_HERO_ARRIVAL_EVENT, startParticles);
       window.clearTimeout(settleTimer);
-      window.clearTimeout(fallbackTimer);
     };
   }, []);
 

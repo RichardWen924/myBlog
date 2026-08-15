@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import ArchivePostRow from './ArchivePostRow';
-import { getNextSelectionIndex, type ArchivePost } from './blogArchive';
+import { getNextSelectionIndex, type ArchivePost } from '../blogArchive';
 
 export interface AnimatedArchiveListProps {
   posts: ArchivePost[];

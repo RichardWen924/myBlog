@@ -7,7 +7,7 @@ import {
   getPagePosts,
   groupPostsByYear,
   type ArchivePost,
-} from './blogArchive';
+} from '../blogArchive';
 
 interface BlogArchiveExplorerProps {
   posts: ArchivePost[];

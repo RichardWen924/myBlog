@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import HomeLandingHero from '../components/home/HomeLandingHero.astro';
-import HomeChapterNavigation from '../components/home/HomeChapterNavigation.astro';
-import FadeSection from '../components/react/FadeSection';
-import ArchiveLink from '../components/global/ArchiveLink.astro';
-import SectionHeading from '../components/global/SectionHeading.astro';
+import HomeLandingHero from '../features/home/components/HomeLandingHero.astro';
+import HomeChapterNavigation from '../features/home/components/HomeChapterNavigation.astro';
+import FadeSection from '../components/motion/FadeSection';
+import ArchiveLink from '../components/ui/ArchiveLink.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
 import profile from '../data/profile';
 import { SITE_DESCRIPTION } from '../lib/constants';
 import { getPublishedPosts, getFeaturedPosts, getFeaturedProjects } from '../lib/content';

@@ -1,4 +1,4 @@
-import BlurText from './bits/BlurText';
+import BlurText from './BlurText';
 import DynamicIllustration from './DynamicIllustration';
 import PromptNav from './PromptNav';
 

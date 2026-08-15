@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import experience from '../../data/experience';
-import type { ExperienceItem } from '../../data/experience';
+import experience from '../../../data/experience';
+import type { ExperienceItem } from '../../../data/experience';
 
 function formatPeriod(start: string, end?: string) {
   return `${start} — ${end ?? 'Present'}`;
