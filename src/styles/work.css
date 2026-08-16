@@ -249,16 +249,43 @@ html.work-scroll-snap {
 
   .work-chapter-rail {
     top: auto;
-    right: 1rem;
+    right: auto;
+    left: 50%;
     bottom: 0.8rem;
     padding: 0.35rem 0.5rem;
     border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
     background: color-mix(in srgb, var(--color-paper) 96%, transparent);
-    transform: none;
+    transform: translateX(-50%);
+  }
+
+  .work-chapter-rail .work-line-sidebar {
+    min-width: 0;
   }
 
   .work-chapter-rail .line-sidebar--markers {
-    padding-left: 1.8rem;
+    padding-left: 0;
+  }
+
+  .work-chapter-rail .line-sidebar__list {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.2rem 0.15rem;
+  }
+
+  .work-chapter-rail .line-sidebar__item {
+    min-width: 1.35rem;
+    text-align: center;
+  }
+
+  .work-chapter-rail .line-sidebar__item::before,
+  .work-chapter-rail .line-sidebar__item::after,
+  .work-chapter-rail .line-sidebar__marker {
+    display: none;
+  }
+
+  .work-chapter-rail .line-sidebar__label {
+    transform: none;
   }
 
   .work-chapter-rail .line-sidebar__text {
