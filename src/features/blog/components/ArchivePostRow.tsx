@@ -1,5 +1,6 @@
 import type { MouseEvent } from 'react';
 import type { ArchivePost } from '../blogArchive';
+import { withBasePath } from '../../../lib/sitePath';
 
 interface ArchivePostRowProps {
   post: ArchivePost;
@@ -24,7 +25,7 @@ export default function ArchivePostRow({
       data-selected={selected ? 'true' : undefined}
     >
       <a
-        href={`/blog/${post.id}`}
+        href={withBasePath(`/blog/${post.id}`)}
         className="blog-archive-row__link"
         onClick={handleClick}
       >
@@ -44,7 +45,7 @@ export default function ArchivePostRow({
         {post.image && (
           <span className="blog-archive-row__media">
             <img
-              src={post.image}
+              src={withBasePath(post.image)}
               alt={post.title}
               loading="lazy"
               onError={(event) => {

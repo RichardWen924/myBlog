@@ -12,6 +12,10 @@ describe('withBasePath', () => {
     assert.equal(withBasePath('/myBlog/blog', '/myBlog/'), '/myBlog/blog');
   });
 
+  it('uses the root base outside a Vite runtime', () => {
+    assert.equal(withBasePath('/blog'), '/blog');
+  });
+
   it('preserves fragments and non-site URLs', () => {
     assert.equal(withBasePath('#intro', '/myBlog/'), '#intro');
     assert.equal(withBasePath('mailto:hello@example.com', '/myBlog/'), 'mailto:hello@example.com');

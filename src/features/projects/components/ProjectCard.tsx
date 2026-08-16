@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Project } from '../../../data/projects';
+import { withBasePath } from '../../../lib/sitePath';
 
 interface ProjectCardProps {
   project: Project;
@@ -21,7 +22,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       }}
     >
       <motion.a
-        href={`/projects/${project.id}`}
+        href={withBasePath(`/projects/${project.id}`)}
         className="group flex flex-wrap items-baseline gap-x-4 gap-y-2 py-5 no-underline"
         whileHover={{ y: -2 }}
         transition={{ duration: 0.2 }}

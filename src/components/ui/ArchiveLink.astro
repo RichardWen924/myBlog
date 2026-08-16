@@ -1,4 +1,6 @@
 ---
+import { withBasePath } from '../../lib/sitePath';
+
 interface Props {
   href: string;
   label: string;
@@ -10,7 +12,7 @@ const { href, label, external = false } = Astro.props;
 
 <a
   class="archive-link"
-  href={href}
+  href={withBasePath(href)}
   target={external ? '_blank' : undefined}
   rel={external ? 'noreferrer' : undefined}
 >

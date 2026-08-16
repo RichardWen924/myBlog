@@ -10,6 +10,7 @@ import SectionEyebrow from '../components/ui/SectionEyebrow.astro';
 import WorkChapterNavigation from '../features/work/components/WorkChapterNavigation';
 import { getProjects } from '../lib/content';
 import workTimelineMock from '../data/workTimelineMock';
+import { withBasePath } from '../lib/sitePath';
 
 const projects = getProjects();
 ---
@@ -93,8 +94,8 @@ const projects = getProjects();
         <section class="work-section work-section--ruled work-section--closing">
           <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
           <div class="mt-8 flex flex-wrap gap-5">
-            <a href="/projects" class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
-            <a href="/blog" class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
+            <a href={withBasePath('/projects')} class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
+            <a href={withBasePath('/blog')} class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
           </div>
         </section>
       </div>

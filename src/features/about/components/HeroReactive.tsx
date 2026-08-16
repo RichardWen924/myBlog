@@ -1,6 +1,7 @@
 import BlurText from './BlurText';
 import DynamicIllustration from './DynamicIllustration';
 import PromptNav from './PromptNav';
+import { withBasePath } from '../../../lib/sitePath';
 
 interface HeroReactiveProps {
   name: string;
@@ -23,7 +24,7 @@ export default function HeroReactive({ name, title, email, scrollTarget = '#intr
         aria-hidden="true"
       >
         <img
-          src="/hero-thinking-orbit.png"
+          src={withBasePath('/hero-thinking-orbit.png')}
           alt=""
           width="1536"
           height="1024"
@@ -72,9 +73,9 @@ export default function HeroReactive({ name, title, email, scrollTarget = '#intr
             </p>
             <PromptNav
               items={[
-                { label: 'Build', hint: 'projects and systems', href: '/projects', accent: 'sage' },
-                { label: 'Think', hint: 'about the way I work', href: '/about', accent: 'warm' },
-                { label: 'Note', hint: 'short essays and experiments', href: '/blog', accent: 'sage' },
+                { label: 'Build', hint: 'projects and systems', href: withBasePath('/projects'), accent: 'sage' },
+                { label: 'Think', hint: 'about the way I work', href: withBasePath('/about'), accent: 'warm' },
+                { label: 'Note', hint: 'short essays and experiments', href: withBasePath('/blog'), accent: 'sage' },
               ]}
             />
             {email && (

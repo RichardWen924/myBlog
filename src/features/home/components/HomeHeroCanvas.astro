@@ -1,13 +1,14 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../../../lib/utils';
+import { withBasePath } from '../../../lib/sitePath';
 
 interface Props {
   currentPost?: CollectionEntry<'blog'> | undefined;
 }
 
 const { currentPost } = Astro.props;
-const currentContentHref = currentPost ? `/blog/${currentPost.id}` : '/blog';
+const currentContentHref = withBasePath(currentPost ? `/blog/${currentPost.id}` : '/blog');
 const currentContentTitle = currentPost?.data.title ?? 'Read the notes';
 const currentContentDescription = currentPost?.data.description ?? 'A quiet archive of ideas still finding their shape.';
 ---
