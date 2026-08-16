@@ -10,8 +10,8 @@ export default function FutureHero() {
             text="BUILD FUTURE"
             particleSize={2.2}
             density={4}
-            color="#f3f0e8"
-            highlightColor="#8ee6c2"
+            color="#1d1d1a"
+            highlightColor="#64745d"
             scatter={160}
             gatherDuration={1500}
             stagger={300}
