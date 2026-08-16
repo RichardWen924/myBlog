@@ -79,9 +79,9 @@ export default function WorkChapterNavigation() {
     <div className="work-chapter-rail" data-work-chapter-rail>
       <LineSidebar
         items={chapters.map(({ label }) => label)}
-        accentColor="#8ee6c2"
-        textColor="#a4aaa5"
-        markerColor="#2b302f"
+        accentColor="var(--color-accent)"
+        textColor="var(--color-ink-soft)"
+        markerColor="var(--color-border)"
         proximityRadius={120}
         maxShift={22}
         markerLength={34}
