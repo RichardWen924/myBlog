@@ -23,4 +23,15 @@ describe('site navigation', () => {
       ['/blog'],
     );
   });
+
+  it('prefixes links and matches routes under the configured base', () => {
+    const items = getNavigationItems('/myBlog/projects/my-blog', '/myBlog/');
+    assert.deepEqual(items.map((item) => item.href), [
+      '/myBlog/',
+      '/myBlog/work',
+      '/myBlog/blog',
+      '/myBlog/about',
+    ]);
+    assert.equal(items.find((item) => item.label === 'Work')?.active, true);
+  });
 });
