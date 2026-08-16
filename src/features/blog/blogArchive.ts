@@ -4,7 +4,7 @@ export interface ArchivePost {
   description: string;
   date: string;
   tags: string[];
-  image?: string;
+  image?: string | undefined;
   year: number;
 }
 

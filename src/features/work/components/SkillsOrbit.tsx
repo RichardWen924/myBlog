@@ -107,7 +107,7 @@ export default function SkillsOrbit() {
 
         <motion.g
           className="skill-orbit__atmosphere"
-          animate={reducedMotion ? undefined : { rotate: [0, 1.5, 0, -1.5, 0] }}
+          animate={reducedMotion ? false : { rotate: [0, 1.5, 0, -1.5, 0] }}
           transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}
         >
@@ -159,7 +159,7 @@ export default function SkillsOrbit() {
               initial={reducedMotion ? false : { cx: CENTER.x, cy: CENTER.y }}
               animate={
                 reducedMotion
-                  ? undefined
+                  ? false
                   : {
                       cx: [CENTER.x, category.position.x, CENTER.x],
                       cy: [CENTER.y, category.position.y, CENTER.y],
@@ -178,7 +178,7 @@ export default function SkillsOrbit() {
 
         <motion.g
           className="skill-orbit__center"
-          animate={reducedMotion ? undefined : { y: [0, -3, 0, 2, 0] }}
+          animate={reducedMotion ? false : { y: [0, -3, 0, 2, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}
         >
@@ -187,11 +187,7 @@ export default function SkillsOrbit() {
             cy={CENTER.y}
             r="72"
             className="skill-orbit__center-glow"
-            animate={
-              reducedMotion
-                ? undefined
-                : { r: [72, 74, 72], opacity: [0.76, 1, 0.76] }
-            }
+            animate={reducedMotion ? false : { r: [72, 74, 72], opacity: [0.76, 1, 0.76] }}
             transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
           />
           <circle cx={CENTER.x} cy={CENTER.y} r="56" className="skill-orbit__center-node" />
@@ -219,11 +215,7 @@ export default function SkillsOrbit() {
                 onBlur={() => setActiveCategory(null)}
               >
                 <motion.g
-                  animate={
-                    reducedMotion
-                      ? undefined
-                      : { y: [0, -1.5, 0, 1, 0], opacity: [1, 0.96, 1, 0.98, 1] }
-                  }
+                  animate={reducedMotion ? false : { y: [0, -1.5, 0, 1, 0], opacity: [1, 0.96, 1, 0.98, 1] }}
                   transition={{
                     duration: 13 + categoryIndex * 1.8,
                     delay: 1.2 + categoryIndex * 1.1,

@@ -210,13 +210,13 @@ export default function ParticleText({
       let cursorX = padding;
       glyphs.forEach((glyph, index) => {
         offCtx.fillText(glyph, cursorX, padding + ascent);
-        cursorX += glyphWidths[index] + resolvedSpacing;
+        cursorX += (glyphWidths[index] ?? 0) + resolvedSpacing;
       });
       const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
       const targets: Array<{ x: number; y: number; alpha: number }> = [];
       const step = Math.max(2, Math.floor(density));
       for (let y = 0; y < offscreen.height; y += step) for (let x = 0; x < offscreen.width; x += step) {
-        const alpha = imageData.data[(y * offscreen.width + x) * 4 + 3];
+        const alpha = imageData.data[(y * offscreen.width + x) * 4 + 3] ?? 0;
         if (alpha > 40) targets.push({ x: width / 2 - offscreen.width / 2 + x, y: height / 2 - offscreen.height / 2 + y, alpha: alpha / 255 });
       }
       const maxParticles = Math.max(900, Math.min(5200, Math.floor((width * height) / 90)));

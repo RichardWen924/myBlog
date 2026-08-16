@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { formatDate } from '../../../lib/utils';
 
 interface Props {
-  currentPost?: CollectionEntry<'blog'>;
+  currentPost?: CollectionEntry<'blog'> | undefined;
 }
 
 const { currentPost } = Astro.props;

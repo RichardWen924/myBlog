@@ -10,12 +10,12 @@
 
   const setupHomeNavigation = () => {
     cleanupHomeNavigation();
-    const rail = document.querySelector('[data-home-chapter-rail]');
-    const chapters = [...document.querySelectorAll('[data-chapter]')];
-    const railLinks = [...document.querySelectorAll('[data-rail-link]')];
+    const rail = document.querySelector<HTMLElement>('[data-home-chapter-rail]');
+    const chapters = [...document.querySelectorAll<HTMLElement>('[data-chapter]')];
+    const railLinks = [...document.querySelectorAll<HTMLElement>('[data-rail-link]')];
     if (!rail || chapters.length === 0 || railLinks.length === 0) return;
 
-    const setActiveChapter = (id) => {
+    const setActiveChapter = (id: string) => {
       railLinks.forEach((link) => {
         const isActive = link.dataset.railLink === id;
         link.toggleAttribute('data-active', isActive);
@@ -32,7 +32,7 @@
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveChapter(visible.target.dataset.chapter);
+        if (visible) setActiveChapter((visible.target as HTMLElement).dataset.chapter ?? 'introduction');
       },
       { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
     );
@@ -40,10 +40,12 @@
     chapters.forEach((chapter) => observer.observe(chapter));
     setActiveChapter(chapters[0]?.dataset.chapter ?? 'introduction');
 
-    const homeHero = document.querySelector('.home-landing-hero');
-    const homeSections = [homeHero, ...chapters].filter(Boolean);
+    const homeHero = document.querySelector<HTMLElement>('.home-landing-hero');
+    const homeSections = [homeHero, ...chapters].filter(
+      (section): section is HTMLElement => Boolean(section),
+    );
 
-    const isTextControl = (target) => {
+    const isTextControl = (target: EventTarget | null) => {
       if (!(target instanceof HTMLElement)) return false;
       return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
     };
@@ -58,7 +60,7 @@
       return currentIndex === -1 ? 0 : currentIndex;
     };
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isTextControl(event.target)) return;
 
       const direction = event.key === 'ArrowDown' ? 1 : -1;

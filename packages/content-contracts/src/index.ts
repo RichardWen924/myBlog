@@ -42,7 +42,7 @@ export interface ExperienceItem {
   organization: string;
   location?: string;
   startDate: string;
-  endDate?: string;
+  endDate?: string | undefined;
   description: string[];
   technologies?: string[];
 }

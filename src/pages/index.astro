@@ -11,7 +11,7 @@ import { getPublishedPosts, getFeaturedPosts, getFeaturedProjects } from '../lib
 
 const posts = await getPublishedPosts();
 const featuredPosts = getFeaturedPosts(posts);
-const featuredProjects = await getFeaturedProjects();
+const featuredProjects = getFeaturedProjects();
 ---
 
 <!-- SectionEyebrow, Projects, and Recent Posts remain part of the public archive vocabulary; the rendered rows use shared reading primitives. -->

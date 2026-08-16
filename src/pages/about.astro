@@ -13,9 +13,9 @@ const verifiedExperience = experience.filter((item) => {
   const organization = item.organization.toLowerCase();
   return !/your company|your organization|placeholder|example/.test(organization);
 });
-const socialLinks = Object.entries(profile.socials).filter(
-  ([label, href]): href is string => label !== 'email' && typeof href === 'string',
-);
+const socialLinks = Object.entries(profile.socials).flatMap(([label, href]) => (
+  label !== 'email' && typeof href === 'string' ? [[label, href] as const] : []
+));
 
 const formatDate = (value: string) => {
   const [year, month] = value.split('-');

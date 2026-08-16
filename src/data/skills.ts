@@ -3,4 +3,6 @@ import type { SkillCategory } from '../../packages/content-contracts/src';
 
 export type { SkillCategory, SkillItem } from '../../packages/content-contracts/src';
 
-export default skillsJson.skills as SkillCategory[];
+const skills = skillsJson.skills satisfies SkillCategory[];
+
+export default skills;

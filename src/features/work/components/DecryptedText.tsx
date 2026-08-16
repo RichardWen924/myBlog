@@ -88,7 +88,9 @@ export default function DecryptedText({
           return current;
         }
         const next = new Set(current);
-        next.add(sequential ? order[pointer] : order[pointer]);
+        const nextIndex = order[pointer];
+        if (nextIndex === undefined) return current;
+        next.add(nextIndex);
         pointer += 1;
         setDisplayText(scramble(next));
         return next;

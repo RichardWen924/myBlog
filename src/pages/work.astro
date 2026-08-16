@@ -7,9 +7,8 @@ import Timeline from '../features/work/components/Timeline';
 import FutureHero from '../features/work/components/FutureHero';
 import WhoAmIIntro from '../features/work/components/WhoAmIIntro';
 import SectionEyebrow from '../components/ui/SectionEyebrow.astro';
-import WorkChapterNavigation from '../features/work/components/WorkChapterNavigation.astro';
+import WorkChapterNavigation from '../features/work/components/WorkChapterNavigation';
 import { getProjects } from '../lib/content';
-import profile from '../data/profile';
 import workTimelineMock from '../data/workTimelineMock';
 
 const projects = getProjects();
@@ -24,9 +23,9 @@ const projects = getProjects();
     <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
       <div class="work-whoami-layout mx-auto max-w-6xl px-6">
         <WhoAmIIntro client:visible />
-        <FadeSection client:visible className="work-whoami-timeline" delay={1.35}>
-          <Timeline client:visible items={workTimelineMock} />
-        </FadeSection>
+        <div class="work-whoami-timeline">
+          <Timeline client:visible items={workTimelineMock} startDelay={2.4} staggerDelay={1.2} />
+        </div>
       </div>
     </section>
 
@@ -80,7 +79,7 @@ const projects = getProjects();
 
     <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
       <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section border-t border-border pt-24">
+        <section class="work-section work-section--ruled">
           <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
           <div class="mt-8">
             <Timeline client:visible />
@@ -91,7 +90,7 @@ const projects = getProjects();
 
     <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
       <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section border-t border-border pb-24 pt-24">
+        <section class="work-section work-section--ruled work-section--closing">
           <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
           <div class="mt-8 flex flex-wrap gap-5">
             <a href="/projects" class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
@@ -102,25 +101,5 @@ const projects = getProjects();
     </section>
   </div>
 
-  <WorkChapterNavigation />
+  <WorkChapterNavigation client:load />
 </Base>
-
-<script>
-  import { setupChapterNavigation } from '../lib/chapterNavigation';
-
-  let cleanupWorkPage = () => {};
-
-  const setupWorkPage = () => {
-    cleanupWorkPage();
-    cleanupWorkPage = setupChapterNavigation({
-      chapterSelector: '[data-work-chapter]',
-      linkSelector: '[data-work-rail-link]',
-      chapterDataKey: 'workChapter',
-      linkDataKey: 'workRailLink',
-      interactiveSelector: 'input, textarea, select, button, a, summary, [role="button"], [contenteditable="true"]',
-    });
-  };
-
-  document.addEventListener('astro:page-load', setupWorkPage);
-  document.addEventListener('astro:before-swap', () => cleanupWorkPage());
-</script>

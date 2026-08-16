@@ -84,7 +84,7 @@ const recentPostLabel = recentPosts.length === 1 ? 'post' : 'posts';
   </div>
 </section>
 
-<script define:vars={{ posts: clientPosts }} data-blog-posts>
+<script is:inline define:vars={{ posts: clientPosts }} data-blog-posts>
   const searchForm = document.querySelector('[data-blog-search]');
   const input = document.querySelector('#blog-search-input');
   const clearButton = document.querySelector('[data-blog-clear]');

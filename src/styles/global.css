@@ -452,7 +452,7 @@ a:hover {
   overflow: hidden;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-paper) 94%, var(--color-warm));
+  background: var(--color-paper);
 }
 
 .about-skill-layout {

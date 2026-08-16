@@ -1,6 +1,8 @@
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import experience from '../../../data/experience';
 import type { ExperienceItem } from '../../../data/experience';
+import { timelineItemDelay } from '../../../lib/workMotion';
 
 function formatPeriod(start: string, end?: string) {
   return `${start} — ${end ?? 'Present'}`;
@@ -9,20 +11,31 @@ function formatPeriod(start: string, end?: string) {
 /** Work/education timeline: left hairline + dot, scroll-triggered reveal. */
 interface TimelineProps {
   items?: ExperienceItem[];
+  staggerDelay?: number;
+  startDelay?: number;
 }
 
-export default function Timeline({ items = experience }: TimelineProps) {
+export default function Timeline({
+  items = experience,
+  staggerDelay = 0.1,
+  startDelay = 0,
+}: TimelineProps) {
+  const timelineRef = useRef<HTMLOListElement>(null);
+  const isTimelineVisible = useInView(timelineRef, { once: true, margin: '-50px' });
+
   return (
-    <ol className="relative border-l border-border pl-6">
+    <ol
+      ref={timelineRef}
+      className="relative border-l border-border pl-6"
+    >
       {items.map((item, i) => (
         <motion.li
           key={i}
           className="relative mb-10 last:mb-0"
           initial={{ opacity: 0, x: -12 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
+          animate={isTimelineVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
           transition={{
-            delay: i * 0.1,
+            delay: timelineItemDelay(i, staggerDelay, startDelay),
             duration: 0.5,
             ease: [0.16, 1, 0.3, 1],
           }}

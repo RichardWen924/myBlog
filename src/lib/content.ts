@@ -23,8 +23,10 @@ export function getFeaturedPosts(
 
 // --- Projects (data-driven, insulated from page components) ---
 
+const projectsByYear = [...projectsData].sort((a, b) => b.year - a.year);
+
 export function getProjects(): Project[] {
-  return [...projectsData].sort((a, b) => b.year - a.year);
+  return [...projectsByYear];
 }
 
 export function getFeaturedProjects(): Project[] {

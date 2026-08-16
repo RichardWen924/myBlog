@@ -25,7 +25,7 @@ export default function BlurText({
     if (!node) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setInView(true);
           observer.disconnect();
         }

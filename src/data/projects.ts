@@ -3,4 +3,6 @@ import type { Project } from '../../packages/content-contracts/src';
 
 export type { Project } from '../../packages/content-contracts/src';
 
-export default projectsJson.projects as Project[];
+const projects = projectsJson.projects satisfies Project[];
+
+export default projects;
