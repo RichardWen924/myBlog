@@ -1,0 +1,67 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import HomeHeroCanvas from './HomeHeroCanvas.astro';
+
+interface Props {
+  currentPost?: CollectionEntry<'blog'> | undefined;
+}
+
+const { currentPost } = Astro.props;
+---
+
+<section class="home-landing-hero" data-home-landing-hero aria-labelledby="home-landing-title">
+  <div class="home-landing-hero__grain" aria-hidden="true"></div>
+
+  <div class="home-landing-hero__layout page-shell">
+    <div class="home-landing-hero__copy" data-home-hero-copy>
+      <div class="home-landing-hero__eyebrow" data-home-hero-eyebrow>
+        <span>Personal archive · Shanghai · 2026</span>
+      </div>
+
+      <p class="home-landing-hero__overline" data-home-hero-overline>把复杂的事，慢慢做清楚。</p>
+
+      <h1 id="home-landing-title" class="home-landing-hero__title">
+        <span class="home-landing-hero__title-mask">
+          <span data-home-hero-title-line>Richard's notes.</span>
+        </span>
+      </h1>
+
+      <p class="home-landing-hero__lede" data-home-hero-lede>
+        我是 Richard，一名正在成长的开发者。这里保存我做过的系统、走过的路径，以及还没有想完的事。
+      </p>
+
+      <a href="#introduction" class="home-landing-hero__cta" data-home-hero-cta>
+        <span>Enter the archive</span>
+        <i aria-hidden="true"></i>
+        <b aria-hidden="true">↘</b>
+      </a>
+    </div>
+
+    <HomeHeroCanvas currentPost={currentPost} />
+  </div>
+
+  <a class="home-landing-hero__scroll" href="#introduction" aria-label="Scroll to introduction" data-home-hero-scroll>
+    <span>Scroll to enter</span>
+    <i aria-hidden="true"></i>
+  </a>
+</section>
+
+<script>
+  import { initHomeHeroMotion } from '../homeHeroMotion';
+
+  let cleanupHomeHero = () => {};
+
+  const setupHomeHero = () => {
+    cleanupHomeHero();
+    const cleanups = Array.from(document.querySelectorAll<HTMLElement>('[data-home-landing-hero]'))
+      .map((hero) => initHomeHeroMotion(hero));
+
+    cleanupHomeHero = () => {
+      cleanups.forEach((cleanup) => cleanup());
+      cleanupHomeHero = () => {};
+    };
+  };
+
+  document.addEventListener('astro:page-load', setupHomeHero);
+  document.addEventListener('astro:before-swap', () => cleanupHomeHero());
+</script>

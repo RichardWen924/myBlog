@@ -4,11 +4,11 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
-import { SITE_URL } from './src/lib/constants.ts';
 
 // https://astro.build/config
 export default defineConfig({
-  site: SITE_URL,
+  site: 'https://richardwen924.github.io',
+  base: '/myBlog',
   output: 'static',
   integrations: [mdx(), sitemap(), react()],
   vite: {

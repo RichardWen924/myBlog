@@ -3,12 +3,16 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "overrides": {
+    "nanoid": "^3.3.18"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "test": "node --test src/lib/*.test.ts",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",
@@ -22,8 +26,10 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
   }
 }

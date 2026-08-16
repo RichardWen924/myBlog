@@ -1,0 +1,172 @@
+---
+import { formatDate } from '../../../lib/utils';
+import { withBasePath } from '../../../lib/sitePath';
+
+interface BlogPostSummary {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+}
+
+interface Props {
+  posts: BlogPostSummary[];
+  recentPosts: BlogPostSummary[];
+}
+
+const { posts, recentPosts } = Astro.props;
+const clientPosts = posts.map((post) => ({
+  ...post,
+  date: post.date.toISOString(),
+}));
+const recentPostLabel = recentPosts.length === 1 ? 'post' : 'posts';
+const blogBase = withBasePath('/blog/');
+---
+
+<section class="blog-hero" aria-labelledby="blog-hero-title">
+  <div class="page-shell blog-hero__inner">
+    <p class="micro-label blog-hero__eyebrow">WELCOME, BLOG</p>
+    <h1 id="blog-hero-title" class="blog-hero__title">Welcome, Blog</h1>
+
+    <form class="blog-search" role="search" data-blog-search>
+      <label class="sr-only" for="blog-search-input">Search articles</label>
+      <span class="blog-search__icon" aria-hidden="true">⌕</span>
+      <input
+        id="blog-search-input"
+        name="q"
+        type="search"
+        placeholder="Search the archive"
+        autocomplete="off"
+        aria-controls="blog-results"
+      />
+      <button
+        type="button"
+        class="blog-search__clear"
+        data-blog-clear
+        aria-label="Clear search"
+        hidden
+      >
+        ×
+      </button>
+    </form>
+
+    <div class="blog-results" id="blog-results">
+      <p class="blog-results__status" data-blog-status aria-live="polite">
+        {recentPosts.length === 0
+          ? 'No posts yet.'
+          : `Showing the ${recentPosts.length} latest ${recentPostLabel}`}
+      </p>
+      <ul class="blog-results__list" data-blog-list>
+        {
+          recentPosts.length > 0 ? (
+            recentPosts.slice(0, 3).map((post) => (
+              <li class="blog-results__item">
+                <a class="blog-results__link" href={withBasePath(`/blog/${post.id}`)}>
+                  <span class="blog-results__copy">
+                    <span class="blog-results__title">{post.title}</span>
+                  </span>
+                  <time class="blog-results__date" datetime={post.date.toISOString()}>
+                    {formatDate(post.date)}
+                  </time>
+                </a>
+              </li>
+            ))
+          ) : (
+            <li class="blog-results__empty">No posts yet.</li>
+          )
+        }
+      </ul>
+    </div>
+
+    <a class="blog-scroll-cue" href="#blog-archive">
+      <span>Scroll to archive</span>
+      <span aria-hidden="true">↓</span>
+    </a>
+  </div>
+</section>
+
+<script is:inline define:vars={{ posts: clientPosts, blogBase }} data-blog-posts>
+  const searchForm = document.querySelector('[data-blog-search]');
+  const input = document.querySelector('#blog-search-input');
+  const clearButton = document.querySelector('[data-blog-clear]');
+  const list = document.querySelector('[data-blog-list]');
+  const status = document.querySelector('[data-blog-status]');
+
+  if (searchForm && input && clearButton && list && status) {
+    const initialPosts = posts.slice(0, 3);
+
+    const createPostItem = (post) => {
+      const item = document.createElement('li');
+      item.className = 'blog-results__item';
+
+      const link = document.createElement('a');
+      link.className = 'blog-results__link';
+      link.href = `${blogBase}${post.id}`;
+
+      const copy = document.createElement('span');
+      copy.className = 'blog-results__copy';
+
+      const title = document.createElement('span');
+      title.className = 'blog-results__title';
+      title.textContent = post.title;
+
+      const date = document.createElement('time');
+      date.className = 'blog-results__date';
+      date.dateTime = post.date;
+      date.textContent = post.date.slice(0, 10);
+
+      copy.append(title);
+      link.append(copy, date);
+      item.append(link);
+      return item;
+    };
+
+    const render = (results, query) => {
+      if (results.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'blog-results__empty';
+        empty.textContent = query ? 'No matching posts.' : 'No posts yet.';
+        list.replaceChildren(empty);
+      } else {
+        list.replaceChildren(...results.map(createPostItem));
+      }
+
+      if (!query) {
+        status.textContent = initialPosts.length
+          ? `Showing the ${initialPosts.length} latest ${initialPosts.length === 1 ? 'post' : 'posts'}`
+          : 'No posts yet.';
+      } else if (results.length === 0) {
+        status.textContent = 'No matching posts';
+      } else {
+        status.textContent = `${results.length} matching ${results.length === 1 ? 'post' : 'posts'}`;
+      }
+    };
+
+    const updateResults = () => {
+      const query = input.value.trim().toLowerCase();
+      clearButton.hidden = query.length === 0;
+
+      if (!query) {
+        render(initialPosts, query);
+        return;
+      }
+
+      const matches = posts.filter((post) => {
+        const searchable = [post.title, post.description, ...post.tags]
+          .join(' ')
+          .toLowerCase();
+        return searchable.includes(query);
+      });
+      render(matches, query);
+    };
+
+    searchForm.addEventListener('submit', (event) => event.preventDefault());
+    input.addEventListener('input', updateResults);
+    clearButton.addEventListener('click', () => {
+      input.value = '';
+      updateResults();
+      input.focus();
+    });
+  }
+</script>

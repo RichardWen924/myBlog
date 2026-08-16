@@ -1,16 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
-import FadeSection from '../components/react/FadeSection';
-import ProjectCard from '../components/react/ProjectCard';
-import SkillsOrbit from '../components/react/SkillsOrbit';
-import Timeline from '../components/react/Timeline';
-import FutureHero from '../components/react/FutureHero';
-import WhoAmIIntro from '../components/react/WhoAmIIntro';
-import SectionEyebrow from '../components/home/SectionEyebrow.astro';
-import WorkChapterNavigation from '../components/work/WorkChapterNavigation.astro';
+import FadeSection from '../components/motion/FadeSection';
+import ProjectCard from '../features/projects/components/ProjectCard';
+import SkillsOrbit from '../features/work/components/SkillsOrbit';
+import Timeline from '../features/work/components/Timeline';
+import FutureHero from '../features/work/components/FutureHero';
+import WhoAmIIntro from '../features/work/components/WhoAmIIntro';
+import SectionEyebrow from '../components/ui/SectionEyebrow.astro';
+import WorkChapterNavigation from '../features/work/components/WorkChapterNavigation';
 import { getProjects } from '../lib/content';
-import profile from '../data/profile';
 import workTimelineMock from '../data/workTimelineMock';
+import { withBasePath } from '../lib/sitePath';
 
 const projects = getProjects();
 ---
@@ -24,9 +24,9 @@ const projects = getProjects();
     <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
       <div class="work-whoami-layout mx-auto max-w-6xl px-6">
         <WhoAmIIntro client:visible />
-        <FadeSection client:visible className="work-whoami-timeline" delay={1.35}>
-          <Timeline client:visible items={workTimelineMock} />
-        </FadeSection>
+        <div class="work-whoami-timeline">
+          <Timeline client:visible items={workTimelineMock} startDelay={2.4} staggerDelay={1.2} />
+        </div>
       </div>
     </section>
 
@@ -80,7 +80,7 @@ const projects = getProjects();
 
     <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
       <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section border-t border-border pt-24">
+        <section class="work-section work-section--ruled">
           <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
           <div class="mt-8">
             <Timeline client:visible />
@@ -91,98 +91,16 @@ const projects = getProjects();
 
     <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
       <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section border-t border-border pb-24 pt-24">
+        <section class="work-section work-section--ruled work-section--closing">
           <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
           <div class="mt-8 flex flex-wrap gap-5">
-            <a href="/projects" class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
-            <a href="/blog" class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
+            <a href={withBasePath('/projects')} class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
+            <a href={withBasePath('/blog')} class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
           </div>
         </section>
       </div>
     </section>
   </div>
 
-  <WorkChapterNavigation />
+  <WorkChapterNavigation client:load />
 </Base>
-
-<script>
-  let cleanupWorkPage = () => {};
-
-  const setupWorkPage = () => {
-    cleanupWorkPage();
-    const chapters = [...document.querySelectorAll('[data-work-chapter]')];
-    const railLinks = [...document.querySelectorAll('[data-work-rail-link]')];
-    if (chapters.length === 0 || railLinks.length === 0) return;
-
-    const setActiveChapter = (id) => {
-      railLinks.forEach((link) => {
-        const isActive = link.dataset.workRailLink === id;
-        link.toggleAttribute('data-active', isActive);
-        if (isActive) {
-          link.setAttribute('aria-current', 'step');
-        } else {
-          link.removeAttribute('aria-current');
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveChapter(visible.target.dataset.workChapter);
-      },
-      { rootMargin: '-25% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] },
-    );
-
-    chapters.forEach((chapter) => observer.observe(chapter));
-    setActiveChapter(chapters[0]?.dataset.workChapter ?? 'hero');
-
-    const isInteractiveControl = (target) => {
-      if (!(target instanceof HTMLElement)) return false;
-      return target.isContentEditable
-        || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A', 'SUMMARY'].includes(target.tagName)
-        || Boolean(target.closest('a, button, summary, [role="button"], [contenteditable="true"]'));
-    };
-
-    const getCurrentSectionIndex = () => {
-      const marker = window.scrollY + window.innerHeight * 0.35;
-      const currentIndex = chapters.findIndex((chapter) => {
-        const top = chapter.offsetTop;
-        return marker >= top && marker < top + chapter.offsetHeight;
-      });
-
-      return currentIndex === -1 ? 0 : currentIndex;
-    };
-
-    const handleKeyDown = (event) => {
-      if (event.defaultPrevented || !['ArrowDown', 'ArrowUp'].includes(event.key) || isInteractiveControl(event.target)) return;
-
-      const direction = event.key === 'ArrowDown' ? 1 : -1;
-      const currentIndex = getCurrentSectionIndex();
-      const nextIndex = Math.min(Math.max(currentIndex + direction, 0), chapters.length - 1);
-      const nextSection = chapters[nextIndex];
-
-      if (!nextSection || nextIndex === currentIndex) return;
-
-      event.preventDefault();
-      const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      if (nextIndex === 0) {
-        window.scrollTo({ top: 0, behavior: scrollBehavior });
-      } else {
-        nextSection.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    cleanupWorkPage = () => {
-      observer.disconnect();
-      window.removeEventListener('keydown', handleKeyDown);
-      cleanupWorkPage = () => {};
-    };
-  };
-
-  document.addEventListener('astro:page-load', setupWorkPage);
-  document.addEventListener('astro:before-swap', () => cleanupWorkPage());
-</script>

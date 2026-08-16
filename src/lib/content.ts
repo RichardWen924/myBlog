@@ -14,17 +14,6 @@ export async function getPublishedPosts(): Promise<CollectionEntry<'blog'>[]> {
   return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
-export async function getAllTags(): Promise<string[]> {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const tagSet = new Set<string>();
-  for (const post of posts) {
-    for (const tag of post.data.tags ?? []) {
-      tagSet.add(tag);
-    }
-  }
-  return [...tagSet].sort();
-}
-
 export function getFeaturedPosts(
   posts: CollectionEntry<'blog'>[],
   count = 3,
@@ -34,14 +23,12 @@ export function getFeaturedPosts(
 
 // --- Projects (data-driven, insulated from page components) ---
 
+const projectsByYear = [...projectsData].sort((a, b) => b.year - a.year);
+
 export function getProjects(): Project[] {
-  return [...projectsData].sort((a, b) => b.year - a.year);
+  return [...projectsByYear];
 }
 
 export function getFeaturedProjects(): Project[] {
   return getProjects().filter((p) => p.featured);
-}
-
-export function getProjectById(id: string): Project | undefined {
-  return projectsData.find((p) => p.id === id);
 }

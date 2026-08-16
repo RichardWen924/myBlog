@@ -1,17 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
-import HomeLandingHero from '../components/home/HomeLandingHero.astro';
-import HomeChapterNavigation from '../components/home/HomeChapterNavigation.astro';
-import FadeSection from '../components/react/FadeSection';
-import ArchiveLink from '../components/global/ArchiveLink.astro';
-import SectionHeading from '../components/global/SectionHeading.astro';
+import HomeLandingHero from '../features/home/components/HomeLandingHero.astro';
+import HomeChapterNavigation from '../features/home/components/HomeChapterNavigation.astro';
+import FadeSection from '../components/motion/FadeSection';
+import ArchiveLink from '../components/ui/ArchiveLink.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
 import profile from '../data/profile';
 import { SITE_DESCRIPTION } from '../lib/constants';
 import { getPublishedPosts, getFeaturedPosts, getFeaturedProjects } from '../lib/content';
+import { withBasePath } from '../lib/sitePath';
 
 const posts = await getPublishedPosts();
 const featuredPosts = getFeaturedPosts(posts);
-const featuredProjects = await getFeaturedProjects();
+const featuredProjects = getFeaturedProjects();
 ---
 
 <!-- SectionEyebrow, Projects, and Recent Posts remain part of the public archive vocabulary; the rendered rows use shared reading primitives. -->
@@ -29,7 +30,7 @@ const featuredProjects = await getFeaturedProjects();
     <section id="introduction" class="home-chapter home-chapter--introduction" data-chapter="introduction">
       <div class="chapter-art chapter-art--intro pointer-events-none absolute inset-0" aria-hidden="true">
         <img
-          src="/section-introduction-orbit.png"
+          src={withBasePath('/section-introduction-orbit.png')}
           alt=""
           width="1536"
           height="1024"
@@ -56,7 +57,7 @@ const featuredProjects = await getFeaturedProjects();
     <section id="projects" class="home-chapter home-chapter--projects" data-chapter="projects">
           <div class="chapter-art chapter-art--build pointer-events-none absolute inset-0" aria-hidden="true">
             <img
-              src="/section-build-route.png"
+              src={withBasePath('/section-build-route.png')}
               alt=""
               width="1536"
               height="1024"
@@ -85,7 +86,7 @@ const featuredProjects = await getFeaturedProjects();
     <section id="notes" class="home-chapter home-chapter--notes" data-chapter="notes">
           <div class="chapter-art chapter-art--notes pointer-events-none absolute inset-0" aria-hidden="true">
             <img
-              src="/section-notes-paper.png"
+              src={withBasePath('/section-notes-paper.png')}
               alt=""
               width="1536"
               height="1024"

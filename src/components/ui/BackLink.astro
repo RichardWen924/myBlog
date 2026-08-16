@@ -1,0 +1,17 @@
+---
+import { withBasePath } from '../../lib/sitePath';
+
+interface Props {
+  href?: string;
+  label?: string;
+}
+const { href = '/blog', label = 'Archive' } = Astro.props;
+---
+
+<a
+  href={withBasePath(href)}
+  class="inline-flex items-center gap-2 font-mono text-sm text-ink-soft no-underline"
+>
+  <span aria-hidden="true">&larr;</span>
+  <span>{label}</span>
+</a>

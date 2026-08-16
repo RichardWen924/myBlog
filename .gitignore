@@ -4,6 +4,9 @@ dist/
 .astro/
 .worktrees/
 
+# Markdown notes and planning documents
+*.md
+
 # dependencies
 node_modules/
 

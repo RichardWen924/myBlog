@@ -3,4 +3,6 @@ import type { Profile } from '../../packages/content-contracts/src';
 
 export type { Profile } from '../../packages/content-contracts/src';
 
-export default profile as Profile;
+const profileData = profile satisfies Profile;
+
+export default profileData;

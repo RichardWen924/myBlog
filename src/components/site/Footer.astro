@@ -1,0 +1,15 @@
+---
+import { PROFILE, SITE_AUTHOR } from '../../lib/constants';
+import { withBasePath } from '../../lib/sitePath';
+---
+
+<footer class="site-footer border-t border-border bg-paper">
+  <div class="page-shell flex flex-col gap-4 py-8 text-sm text-ink-soft md:flex-row md:items-center md:justify-between">
+    <span>© {new Date().getFullYear()} {SITE_AUTHOR}</span>
+    <nav class="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Footer links">
+      <a href={withBasePath('/rss.xml')} class="no-underline">RSS</a>
+      {PROFILE.socials.github && <a href={PROFILE.socials.github} class="no-underline">GitHub</a>}
+      {PROFILE.email && <a href={`mailto:${PROFILE.email}`} class="no-underline">Email</a>}
+    </nav>
+  </div>
+</footer>

@@ -1,11 +1,11 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import Header from '../components/global/Header.astro';
-import Footer from '../components/global/Footer.astro';
-import EntryProgressLoader from '../components/entry/EntryProgressLoader.astro';
-import WorkThemeTransition from '../components/entry/WorkThemeTransition.astro';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import EntryProgressLoader from '../components/site/EntryProgressLoader.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../lib/constants';
+import { withBasePath } from '../lib/sitePath';
 
 interface Props {
   title: string;
@@ -47,9 +47,9 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
       rel="alternate"
       type="application/rss+xml"
       title={SITE_TITLE}
-      href={new URL('rss.xml', Astro.site)}
+      href={new URL(withBasePath('/rss.xml'), Astro.site)}
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBasePath('/favicon.svg')} />
     <ClientRouter fallback="animate" />
   </head>
   <body class="relative min-h-screen bg-paper text-ink antialiased">
@@ -68,7 +68,6 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
         </div>
       </div>
     </div>
-    <WorkThemeTransition />
     <script>
       import { ENTRY_PROGRESS_SESSION_KEY } from '../lib/uiEvents';
 

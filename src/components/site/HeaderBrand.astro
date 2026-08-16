@@ -1,0 +1,11 @@
+---
+import { withBasePath } from '../../lib/sitePath';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<a href={withBasePath('/')} class="site-header__brand font-serif text-xl font-bold text-ink no-underline">{title}</a>
