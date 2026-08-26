@@ -13,8 +13,11 @@ interface Props {
   lang?: string;
   fullBleed?: boolean;
   showEntryLoader?: boolean;
+  showHeader?: boolean;
+  showFooter?: boolean;
   scrollSnap?: boolean;
   htmlClass?: string;
+  mainClass?: string;
 }
 const {
   title,
@@ -22,10 +25,14 @@ const {
   lang = 'en',
   fullBleed = false,
   showEntryLoader = false,
+  showHeader = true,
+  showFooter = true,
   scrollSnap = false,
   htmlClass = '',
+  mainClass,
 } = Astro.props;
 const pageTitle = `${title} | ${SITE_TITLE}`;
+const resolvedMainClass = mainClass ?? (fullBleed ? 'w-full py-12' : 'mx-auto max-w-4xl px-4 py-12');
 ---
 
 <!doctype html>
@@ -60,11 +67,11 @@ const pageTitle = `${title} | ${SITE_TITLE}`;
       <div class="relative z-10" data-site-visual>
         {showEntryLoader && <EntryProgressLoader />}
         <div data-entry-content>
-          <Header />
-          <main class={fullBleed ? 'w-full py-12' : 'mx-auto max-w-4xl px-4 py-12'}>
+          {showHeader && <Header />}
+          <main class={resolvedMainClass}>
             <slot />
           </main>
-          <Footer />
+          {showFooter && <Footer />}
         </div>
       </div>
     </div>

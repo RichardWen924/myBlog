@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T08:08:38Z",
+  "title": "Design System: Richard Personal Archive",
+  "extensions": {
+    "colorMeta": {
+      "quiet-sage": {
+        "role": "primary",
+        "displayName": "Quiet Sage",
+        "canonical": "#64745d",
+        "tonalRamp": ["#172017", "#2b382a", "#435240", "#64745d", "#85947e", "#a8b2a3", "#cdd3c9", "#f0f2ed"]
+      },
+      "clay-mark": {
+        "role": "secondary",
+        "displayName": "Clay Mark",
+        "canonical": "#c97858",
+        "tonalRamp": ["#35170f", "#5a2d20", "#824731", "#a96043", "#c97858", "#dc9b82", "#edc2b1", "#faebe4"]
+      },
+      "steel-note": {
+        "role": "tertiary",
+        "displayName": "Steel Note",
+        "canonical": "#6f7f86",
+        "tonalRamp": ["#182126", "#2d3a40", "#46555c", "#6f7f86", "#8f9da3", "#aeb9bd", "#d0d7da", "#f0f3f4"]
+      },
+      "archive-paper": {
+        "role": "neutral",
+        "displayName": "Archive Paper",
+        "canonical": "#f4f0e8",
+        "tonalRamp": ["#25231f", "#45413a", "#686158", "#8e867a", "#b5ada1", "#d4cdc2", "#e7e1d8", "#f4f0e8"]
+      },
+      "clean-sheet": {
+        "role": "neutral",
+        "displayName": "Clean Sheet",
+        "canonical": "#faf8f3",
+        "tonalRamp": ["#282723", "#4a4842", "#6d6a62", "#938f86", "#bab5ab", "#d9d5cd", "#ece9e2", "#faf8f3"]
+      },
+      "carbon-ink": {
+        "role": "neutral",
+        "displayName": "Carbon Ink",
+        "canonical": "#1d1d1a",
+        "tonalRamp": ["#1d1d1a", "#353530", "#50504a", "#707069", "#93938a", "#b8b8af", "#ddddD6", "#f6f6f2"]
+      },
+      "soft-graphite": {
+        "role": "neutral",
+        "displayName": "Soft Graphite",
+        "canonical": "#6e706a",
+        "tonalRamp": ["#1b1c19", "#32332f", "#4d4f4a", "#6e706a", "#90928c", "#b2b4ae", "#d5d6d1", "#f4f5f1"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d8d2c7",
+        "tonalRamp": ["#27241f", "#48433b", "#6b645a", "#91897d", "#b8b0a4", "#d8d2c7", "#e9e5dd", "#f7f5f1"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Archive Display",
+        "purpose": "Hero identity and large route labels only."
+      },
+      "body": {
+        "displayName": "Reading Body",
+        "purpose": "Short supporting copy with a maximum 70-character measure."
+      },
+      "label": {
+        "displayName": "Compact Navigation",
+        "purpose": "Navigation metadata only, never explanatory paragraphs."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper-float",
+        "value": "0 1.3rem 3.5rem rgba(29, 29, 26, 0.08)",
+        "purpose": "Depth for a real overlapping paper sheet only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "reveal-standard",
+        "value": "600ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default short reveal for structural elements."
+      },
+      {
+        "name": "hero-sequence",
+        "value": "GSAP timeline, power4.out, 900-1200ms",
+        "purpose": "Ordered entrance for frame, greeting, identity, and routes."
+      },
+      {
+        "name": "welcome-loop",
+        "value": "GSAP masked vertical crossfade, 700ms transition, 1800-2400ms hold",
+        "purpose": "Data-driven multilingual greeting slot; no visible language is a permanent hard-coded headline."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0-180ms crossfade",
+        "purpose": "No translation or parallax when reduced motion is requested."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "desktop", "value": "960px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Archive Navigation Link",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Compact route link with restrained focus and hover feedback.",
+      "html": "<a class=\"ds-nav-link\" href=\"#\">ABOUT</a>",
+      "css": ".ds-nav-link { color: var(--color-ink-soft, #6e706a); padding: 12px 8px; font: 400 12px/1.35 var(--font-mono, monospace); letter-spacing: .12em; text-decoration: none; transition: color 180ms ease; } .ds-nav-link:hover { color: var(--color-ink, #1d1d1a); } .ds-nav-link:focus-visible { color: var(--color-ink, #1d1d1a); outline: 2px solid var(--color-accent, #64745d); outline-offset: 4px; }"
+    },
+    {
+      "name": "Hero Route",
+      "kind": "custom",
+      "refersTo": "hero-route",
+      "description": "Full-width destination row that becomes the primary homepage interaction.",
+      "html": "<a class=\"ds-hero-route\" href=\"#\"><span>About</span><span aria-hidden=\"true\">↗</span></a>",
+      "css": ".ds-hero-route { display: flex; align-items: baseline; justify-content: space-between; min-height: 64px; padding: 16px 0; border-bottom: 1px solid var(--color-border, #d8d2c7); color: var(--color-ink, #1d1d1a); background: transparent; font: 600 48px/.95 var(--font-serif, serif); text-decoration: none; transition: color 220ms ease, padding 220ms cubic-bezier(.16,1,.3,1); } .ds-hero-route:hover { color: var(--color-accent, #64745d); padding-left: 8px; } .ds-hero-route:focus-visible { outline: 2px solid var(--color-accent, #64745d); outline-offset: 4px; }"
+    },
+    {
+      "name": "Paper Note",
+      "kind": "card",
+      "refersTo": "paper-note",
+      "description": "A square-edged sheet used only when content genuinely behaves like a document.",
+      "html": "<article class=\"ds-paper-note\"><small>LATEST NOTE</small><strong>Hello, Blog</strong></article>",
+      "css": ".ds-paper-note { display: grid; gap: 48px; padding: 24px; border: 1px solid var(--color-border, #d8d2c7); color: var(--color-ink, #1d1d1a); background: var(--color-surface, #faf8f3); box-shadow: 0 1.3rem 3.5rem rgba(29,29,26,.08); } .ds-paper-note small { color: var(--color-ink-soft, #6e706a); font: 400 12px/1.35 var(--font-mono, monospace); letter-spacing: .12em; } .ds-paper-note strong { font: 600 28px/1.05 var(--font-serif, serif); } .ds-paper-note:focus-within { outline: 2px solid var(--color-accent, #64745d); outline-offset: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Threshold",
+    "overview": "The interface feels like entering a carefully kept personal archive in soft daylight. The surface is warm and tactile, but the structure is exact. The homepage is a threshold into Richard's work and thinking, not a document about him.",
+    "keyCharacteristics": [
+      "One dominant idea per viewport.",
+      "Warm paper, dark ink, and low-saturation accents.",
+      "Serif scale for identity, sans for clarity, mono only for compact navigation metadata.",
+      "Flat structure with paper depth used only where it communicates layering.",
+      "Choreographed motion with reduced-motion parity."
+    ],
+    "rules": [
+      {
+        "name": "The Sparse Accent Rule",
+        "body": "Quiet Sage and Clay Mark together occupy less than ten percent of a viewport. Their rarity gives interaction meaning.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Sentence Rule",
+        "body": "The homepage may carry one stable identity line. Additional explanation belongs on About.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Rest Rule",
+        "body": "Interactive routes remain flat at rest; motion and color indicate state before shadow does.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve Archive Paper, Carbon Ink, Quiet Sage, and Clay Mark as the recognizable palette.",
+      "Do let alignment, spacing, and timing establish hierarchy before adding decoration.",
+      "Do use one GSAP timeline for the opening sequence and direct route-transition timelines for navigation.",
+      "Do keep every navigation target keyboard accessible with a visible focus state.",
+      "Do keep the first viewport complete at common laptop and mobile heights."
+    ],
+    "donts": [
+      "Don't use Codex 式大量注释性文字、解释性标签和界面内说明。",
+      "Don't turn the personal homepage into a long product document or feature inventory.",
+      "Don't use repeated full-screen introduction sections, metric cards, decorative numbered scaffolding, or identical card grids.",
+      "Don't use fast flashing, bounce, elastic easing, aggressive parallax, gradient text, or default glassmorphism.",
+      "Don't use mono typography as a costume for technical credibility.",
+      "Don't hide content by default when animation fails or reduced motion is enabled."
+    ]
+  }
+}

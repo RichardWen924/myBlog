@@ -1,10 +1,6 @@
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ENTRY_PROGRESS_COMPLETE_EVENT } from '../../lib/uiEvents';
-
-gsap.registerPlugin(ScrollTrigger);
-
-export const HERO_REVEAL_DURATION = 1.15;
+import { navigate } from 'astro:transitions/client';
+import { getGreetingRotation, getHomeMotionProfile } from './homeHero';
 
 const select = <T extends Element>(root: Element, selector: string) =>
   root.querySelector<T>(selector);
@@ -12,138 +8,293 @@ const select = <T extends Element>(root: Element, selector: string) =>
 const selectAll = <T extends Element>(root: Element, selector: string) =>
   Array.from(root.querySelectorAll<T>(selector));
 
+const canAnimateNavigation = (event: MouseEvent) =>
+  event.button === 0
+  && !event.metaKey
+  && !event.ctrlKey
+  && !event.shiftKey
+  && !event.altKey;
+
 export function initHomeHeroMotion(hero: HTMLElement) {
-  let handlePointerMove: ((event: PointerEvent) => void) | undefined;
-  let handlePointerLeave: (() => void) | undefined;
-  let handleEntryComplete: (() => void) | undefined;
+  const media = gsap.matchMedia();
 
-  const context = gsap.context(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finePointer = window.matchMedia('(pointer: fine)').matches;
-    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    const copy = select<HTMLElement>(hero, '[data-home-hero-copy]');
-    const workspace = select<HTMLElement>(hero, '[data-home-hero-workspace]');
-    const paperStack = select<HTMLElement>(hero, '[data-home-hero-paper-stack]');
-    const scrollCue = select<HTMLElement>(hero, '[data-home-hero-scroll]');
-    const eyebrow = select<HTMLElement>(hero, '[data-home-hero-eyebrow]');
-    const overline = select<HTMLElement>(hero, '[data-home-hero-overline]');
-    const lede = select<HTMLElement>(hero, '[data-home-hero-lede]');
-    const cta = select<HTMLElement>(hero, '[data-home-hero-cta]');
-    const titleLines = selectAll<HTMLElement>(hero, '[data-home-hero-title-line]');
-    const papers = selectAll<HTMLElement>(hero, '[data-home-hero-paper]');
-    const routes = selectAll<SVGPathElement>(hero, '[data-home-hero-route]');
+  media.add(
+    {
+      isDesktop: '(min-width: 768px)',
+      finePointer: '(pointer: fine)',
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+    },
+    (context) => {
+      const { isDesktop, finePointer, reduceMotion } = context.conditions as {
+        isDesktop: boolean;
+        finePointer: boolean;
+        reduceMotion: boolean;
+      };
+      const profile = getHomeMotionProfile(reduceMotion);
+      const topbar = select<HTMLElement>(hero, '[data-home-frame-top]');
+      const footer = select<HTMLElement>(hero, '[data-home-frame-footer]');
+      const welcome = select<HTMLElement>(hero, '[data-home-welcome]');
+      const orbit = select<HTMLElement>(hero, '[data-home-orbit]');
+      const markerTrack = select<HTMLElement>(hero, '[data-home-orbit-marker-track]');
+      const identity = select<HTMLElement>(hero, '[data-home-identity]');
+      const counter = select<HTMLElement>(hero, '[data-home-counter]');
+      const indexLabel = select<HTMLElement>(hero, '[data-home-greeting-index]');
+      const greetings = selectAll<HTMLElement>(hero, '[data-home-greeting-item]');
+      const routes = selectAll<HTMLAnchorElement>(hero, '[data-home-route]');
+      const routeLabels = selectAll<HTMLElement>(hero, '[data-home-route-label]');
+      const routeArrows = selectAll<HTMLElement>(hero, '[data-home-route-arrow]');
+      const routeLines = selectAll<HTMLElement>(hero, '[data-home-route-line]');
+      const firstGreeting = greetings[0];
 
-    const visibleElements = [eyebrow, overline, lede, cta, workspace, scrollCue, ...titleLines, ...papers]
-      .filter((element): element is HTMLElement => Boolean(element));
+      if (
+        !topbar
+        || !footer
+        || !welcome
+        || !orbit
+        || !markerTrack
+        || !identity
+        || !counter
+        || !indexLabel
+        || !firstGreeting
+        || routes.length === 0
+      ) {
+        return;
+      }
 
-    if (reducedMotion) {
-      gsap.set(visibleElements, { autoAlpha: 1, clearProps: 'transform' });
-      gsap.set(routes, { strokeDashoffset: 0 });
-      return;
-    }
+      let greetingLoop: gsap.core.Timeline | null = null;
+      let exitTimeline: gsap.core.Timeline | null = null;
+      let navigating = false;
 
-    gsap.set([eyebrow, overline], { autoAlpha: 0, y: 12 });
-    gsap.set([lede, cta], { autoAlpha: 0, y: 18 });
-    gsap.set(titleLines, { autoAlpha: 1, yPercent: 112, rotate: 1.5 });
-    gsap.set(workspace, { autoAlpha: 0, x: 28, y: 14, scale: 0.97 });
-    gsap.set(papers, { autoAlpha: 0, x: 20, y: 16, rotate: 2.5 });
-    gsap.set(routes, { strokeDasharray: 720, strokeDashoffset: 720 });
-    gsap.set(scrollCue, { autoAlpha: 0, y: 8 });
-
-    const intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
-    intro
-      .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.28 }, 0)
-      .to(overline, { autoAlpha: 1, y: 0, duration: 0.32 }, 0.04)
-      .to(titleLines, { yPercent: 0, rotate: 0, duration: 0.58, ease: 'power4.out' }, 0.1)
-      .to(workspace, { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.62 }, 0.18)
-      .to(papers, { autoAlpha: 1, x: 0, y: 0, rotate: 0, duration: 0.5, stagger: 0.06 }, 0.35)
-      .to(routes, { strokeDashoffset: 0, duration: 0.65, ease: 'power2.inOut' }, 0.25)
-      .to([lede, cta], { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.08 }, 0.48)
-      .to(scrollCue, { autoAlpha: 1, y: 0, duration: 0.3 }, 0.82);
-    intro.duration(HERO_REVEAL_DURATION);
-
-    const paperDrift = gsap.to(papers, {
-      y: (index) => (index - 1) * 2 - 2,
-      rotation: (index) => (index - 1) * 0.25,
-      duration: 5.2,
-      stagger: 0.25,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-      paused: true,
-    });
-
-    intro.eventCallback('onComplete', () => paperDrift.play());
-
-    let experienceStarted = false;
-    const startHero = () => {
-      if (experienceStarted) return;
-      experienceStarted = true;
-      intro.play(0);
-    };
-
-    const entryAlreadyComplete = document.documentElement.dataset.entryReady === 'true'
-      || !document.querySelector('.entry-progress-loader');
-
-    if (entryAlreadyComplete) {
-      startHero();
-    } else {
-      handleEntryComplete = () => startHero();
-      document.addEventListener(ENTRY_PROGRESS_COMPLETE_EVENT, handleEntryComplete, { once: true });
-    }
-
-    const scrollTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    scrollTimeline
-      .to(copy, { yPercent: -8, ease: 'none' }, 0)
-      .to(workspace, { yPercent: -12, scale: 1.025, ease: 'none' }, 0)
-      .to(titleLines, { xPercent: -1.5, ease: 'none' }, 0)
-      .to(scrollCue, { autoAlpha: 0, y: -12, ease: 'none' }, 0);
-
-    if (finePointer && !coarsePointer && workspace && paperStack) {
-      handlePointerMove = (event: PointerEvent) => {
-        const bounds = hero.getBoundingClientRect();
-        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-
-        gsap.to(workspace, {
-          x: x * 10,
-          y: y * 7,
-          duration: 0.75,
-          overwrite: 'auto',
-          ease: 'power2.out',
+      const setActiveGreeting = (activeIndex: number) => {
+        greetings.forEach((greeting, index) => {
+          greeting.toggleAttribute('data-greeting-active', index === activeIndex);
         });
-        gsap.to(paperStack, {
-          x: x * -5,
-          y: y * -3,
-          duration: 0.9,
-          overwrite: 'auto',
-          ease: 'power2.out',
-        });
+        indexLabel.textContent = String(activeIndex + 1).padStart(2, '0');
       };
 
-      handlePointerLeave = () => {
-        gsap.to(workspace, { x: 0, y: 0, duration: 1, overwrite: 'auto', ease: 'power3.out' });
-        gsap.to(paperStack, { x: 0, y: 0, duration: 1, overwrite: 'auto', ease: 'power3.out' });
+      const routeHandlers = routes.map((route) => {
+        const handleRouteClick = (event: MouseEvent) => {
+          if (event.defaultPrevented || !canAnimateNavigation(event) || navigating) return;
+
+          const href = route.href;
+          if (!href) return;
+
+          event.preventDefault();
+          navigating = true;
+          greetingLoop?.pause();
+
+          if (reduceMotion) {
+            void navigate(href, { sourceElement: route });
+            return;
+          }
+
+          const otherRoutes = routes.filter((candidate) => candidate !== route);
+          const selectedLabel = select<HTMLElement>(route, '[data-home-route-label]');
+          const selectedArrow = select<HTMLElement>(route, '[data-home-route-arrow]');
+          const selectedLine = select<HTMLElement>(route, '[data-home-route-line]');
+          exitTimeline = gsap.timeline({
+            defaults: { ease: 'power3.inOut' },
+            onComplete: () => void navigate(href, { sourceElement: route }),
+          });
+
+          exitTimeline
+            .to(otherRoutes, {
+              autoAlpha: 0,
+              x: -16,
+              duration: profile.transitionDuration * 0.62,
+              stagger: 0.025,
+            }, 0)
+            .to([welcome, topbar, footer], {
+              autoAlpha: 0,
+              x: -18,
+              duration: profile.transitionDuration * 0.74,
+            }, 0)
+            .to(route, {
+              x: 14,
+              duration: profile.transitionDuration * 0.72,
+            }, 0)
+            .to(selectedLabel, {
+              color: 'var(--color-accent)',
+              duration: profile.transitionDuration * 0.52,
+            }, 0)
+            .to(selectedArrow, {
+              color: 'var(--color-warm)',
+              x: 8,
+              y: -8,
+              duration: profile.transitionDuration * 0.62,
+            }, 0)
+            .to(selectedLine, {
+              backgroundColor: 'var(--color-warm)',
+              scaleX: 0.32,
+              duration: profile.transitionDuration * 0.72,
+            }, 0)
+            .to(route, {
+              autoAlpha: 0,
+              duration: profile.transitionDuration * 0.28,
+            }, profile.transitionDuration * 0.72);
+        };
+
+        route.addEventListener('click', handleRouteClick);
+        return { route, handleRouteClick };
+      });
+
+      gsap.set(greetings, { autoAlpha: 0, yPercent: 72, filter: 'blur(4px)' });
+      gsap.set(firstGreeting, { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)' });
+      gsap.set(markerTrack, { rotation: 45 });
+      setActiveGreeting(0);
+
+      if (reduceMotion) {
+        gsap.set([topbar, footer, welcome, orbit, identity, counter, ...routes], {
+          autoAlpha: 1,
+          clearProps: 'transform,filter',
+        });
+        gsap.set(routeLines, { scaleX: 1, transformOrigin: 'left center' });
+        gsap.set(greetings.slice(1), { autoAlpha: 0 });
+
+        return () => {
+          exitTimeline?.kill();
+          gsap.killTweensOf(welcome);
+          routeHandlers.forEach(({ route, handleRouteClick }) => {
+            route.removeEventListener('click', handleRouteClick);
+          });
+        };
+      }
+
+      gsap.set(topbar, { autoAlpha: 0, y: -10 });
+      gsap.set(orbit, { autoAlpha: 0, scale: 0.94 });
+      gsap.set(firstGreeting, { autoAlpha: 0, yPercent: 72, filter: 'blur(5px)' });
+      gsap.set(identity, { autoAlpha: 0, y: 18 });
+      gsap.set(counter, { autoAlpha: 0, x: -10 });
+      gsap.set(routeLabels, { autoAlpha: 0, yPercent: 72 });
+      gsap.set(routeArrows, { autoAlpha: 0, x: -6, y: 6 });
+      gsap.set(routeLines, { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set(footer, { autoAlpha: 0, y: 8 });
+
+      let markerStep = 1;
+      const buildGreetingLoop = (): gsap.core.Timeline => {
+        const loop = gsap.timeline({ paused: true });
+
+        greetings.forEach((currentGreeting, index) => {
+          const nextIndex = (index + 1) % greetings.length;
+          const nextGreeting = greetings[nextIndex];
+          const markerRotation = getGreetingRotation(markerStep, greetings.length);
+          markerStep += 1;
+          if (!nextGreeting) return;
+
+          loop
+            .to({}, { duration: profile.greetingHold })
+            .to(currentGreeting, {
+              autoAlpha: 0,
+              yPercent: -72,
+              filter: 'blur(4px)',
+              duration: 0.48,
+              ease: 'power3.in',
+            })
+            .fromTo(nextGreeting, {
+              autoAlpha: 0,
+              yPercent: 72,
+              filter: 'blur(4px)',
+            }, {
+              autoAlpha: 1,
+              yPercent: 0,
+              filter: 'blur(0px)',
+              duration: 0.6,
+              ease: 'power4.out',
+              immediateRender: false,
+            }, '<0.08')
+            .to(markerTrack, {
+              rotation: markerRotation,
+              duration: 0.72,
+              ease: 'power3.inOut',
+            }, '<')
+            .add(() => setActiveGreeting(nextIndex), '>-0.12');
+        });
+
+        loop.eventCallback('onComplete', () => {
+          if (greetingLoop !== loop) return;
+          greetingLoop = buildGreetingLoop();
+          greetingLoop.play(0);
+        });
+
+        return loop;
       };
 
-      hero.addEventListener('pointermove', handlePointerMove, { passive: true });
-      hero.addEventListener('pointerleave', handlePointerLeave, { passive: true });
-    }
-  }, hero);
+      greetingLoop = buildGreetingLoop();
 
-  return () => {
-    if (handlePointerMove) hero.removeEventListener('pointermove', handlePointerMove);
-    if (handlePointerLeave) hero.removeEventListener('pointerleave', handlePointerLeave);
-    if (handleEntryComplete) document.removeEventListener(ENTRY_PROGRESS_COMPLETE_EVENT, handleEntryComplete);
-    context.revert();
-  };
+      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      intro
+        .addLabel('frame', 0)
+        .to(topbar, { autoAlpha: 1, y: 0, duration: 0.42 }, 'frame')
+        .fromTo(markerTrack, { rotation: 18 }, { rotation: 45, duration: 0.78 }, 'frame+=0.04')
+        .to(orbit, { autoAlpha: 1, scale: 1, duration: 0.68 }, 'frame+=0.08')
+        .to(firstGreeting, {
+          autoAlpha: 1,
+          yPercent: 0,
+          filter: 'blur(0px)',
+          duration: 0.62,
+        }, 'frame+=0.2')
+        .to(identity, { autoAlpha: 1, y: 0, duration: 0.52 }, 'frame+=0.34')
+        .to(routeLines, { scaleX: 1, duration: 0.64, stagger: 0.08 }, 'frame+=0.28')
+        .to(routeLabels, { autoAlpha: 1, yPercent: 0, duration: 0.58, stagger: 0.08 }, 'frame+=0.38')
+        .to(routeArrows, { autoAlpha: 1, x: 0, y: 0, duration: 0.42, stagger: 0.08 }, 'frame+=0.48')
+        .to(counter, { autoAlpha: 1, x: 0, duration: 0.4 }, 'frame+=0.56')
+        .to(footer, { autoAlpha: 1, y: 0, duration: 0.38 }, 'frame+=0.7');
+      intro.duration(profile.entranceDuration);
+      intro.eventCallback('onComplete', () => greetingLoop?.play(0));
+
+      let handlePointerMove: ((event: PointerEvent) => void) | undefined;
+      let handlePointerLeave: (() => void) | undefined;
+      let handlePointerEnter: (() => void) | undefined;
+      let handleResize: (() => void) | undefined;
+      if (isDesktop && finePointer) {
+        let bounds = hero.getBoundingClientRect();
+        const moveWelcomeX = gsap.quickTo(welcome, 'x', {
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+        const moveWelcomeY = gsap.quickTo(welcome, 'y', {
+          duration: 0.8,
+          ease: 'power3.out',
+        });
+
+        const refreshBounds = () => {
+          bounds = hero.getBoundingClientRect();
+        };
+        handlePointerEnter = refreshBounds;
+        handleResize = refreshBounds;
+        handlePointerMove = (event: PointerEvent) => {
+          const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+          const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+          moveWelcomeX(x * profile.pointerShift);
+          moveWelcomeY(y * profile.pointerShift * 0.7);
+        };
+        handlePointerLeave = () => {
+          moveWelcomeX(0);
+          moveWelcomeY(0);
+        };
+        hero.addEventListener('pointerenter', handlePointerEnter, { passive: true });
+        hero.addEventListener('pointermove', handlePointerMove, { passive: true });
+        hero.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+        window.addEventListener('resize', handleResize, { passive: true });
+      }
+
+      return () => {
+        greetingLoop?.kill();
+        exitTimeline?.kill();
+        intro.kill();
+        gsap.killTweensOf(welcome);
+        routeHandlers.forEach(({ route, handleRouteClick }) => {
+          route.removeEventListener('click', handleRouteClick);
+        });
+        if (handlePointerEnter) hero.removeEventListener('pointerenter', handlePointerEnter);
+        if (handlePointerMove) hero.removeEventListener('pointermove', handlePointerMove);
+        if (handlePointerLeave) hero.removeEventListener('pointerleave', handlePointerLeave);
+        if (handleResize) window.removeEventListener('resize', handleResize);
+      };
+    },
+    hero,
+  );
+
+  return () => media.revert();
 }

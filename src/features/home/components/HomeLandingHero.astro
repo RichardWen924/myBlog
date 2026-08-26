@@ -1,49 +1,75 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import HomeHeroCanvas from './HomeHeroCanvas.astro';
+import profile from '../../../data/profile';
+import { withBasePath } from '../../../lib/sitePath';
+import { WELCOME_WORDS } from '../homeHero';
 
-interface Props {
-  currentPost?: CollectionEntry<'blog'> | undefined;
-}
+const routes = [
+  { label: 'About', href: withBasePath('/about') },
+  { label: 'Work', href: withBasePath('/work') },
+  { label: 'Blog', href: withBasePath('/blog') },
+] as const;
 
-const { currentPost } = Astro.props;
+const contactHref = profile.email ? `mailto:${profile.email}` : withBasePath('/about');
 ---
 
-<section class="home-landing-hero" data-home-landing-hero aria-labelledby="home-landing-title">
-  <div class="home-landing-hero__grain" aria-hidden="true"></div>
+<section class="quiet-hero" data-home-landing-hero aria-labelledby="quiet-hero-title">
+  <h1 id="quiet-hero-title" class="sr-only">Welcome to Richard's personal archive</h1>
 
-  <div class="home-landing-hero__layout page-shell">
-    <div class="home-landing-hero__copy" data-home-hero-copy>
-      <div class="home-landing-hero__eyebrow" data-home-hero-eyebrow>
-        <span>Personal archive · Shanghai · 2026</span>
+  <div class="quiet-hero__frame">
+    <header class="quiet-hero__topbar" data-home-frame-top>
+      <a class="quiet-hero__brand" href={withBasePath('/')} aria-label="Richard, home">Richard</a>
+      <a class="quiet-hero__contact" href={contactHref}>
+        <span>Contact</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <div class="quiet-hero__main">
+      <div class="quiet-hero__welcome" data-home-welcome>
+        <div class="quiet-hero__orbit" data-home-orbit aria-hidden="true">
+          <span class="quiet-hero__orbit-track" data-home-orbit-marker-track>
+            <i class="quiet-hero__orbit-marker"></i>
+          </span>
+        </div>
+
+        <div class="quiet-hero__greeting-window" aria-hidden="true" data-home-greeting-window>
+          {WELCOME_WORDS.map((word, index) => (
+            <span
+              class="quiet-hero__greeting"
+              lang={word.lang}
+              data-home-greeting-item
+              data-greeting-active={index === 0 ? '' : undefined}
+            >
+              {word.label}
+            </span>
+          ))}
+        </div>
+
+        <p class="quiet-hero__identity" data-home-identity>Richard.</p>
+
+        <div class="quiet-hero__counter" data-home-counter>
+          <span data-home-greeting-index>01</span>
+          <span aria-hidden="true">/</span>
+          <span>{String(WELCOME_WORDS.length).padStart(2, '0')}</span>
+          <i aria-hidden="true"></i>
+        </div>
       </div>
 
-      <p class="home-landing-hero__overline" data-home-hero-overline>把复杂的事，慢慢做清楚。</p>
-
-      <h1 id="home-landing-title" class="home-landing-hero__title">
-        <span class="home-landing-hero__title-mask">
-          <span data-home-hero-title-line>Richard's notes.</span>
-        </span>
-      </h1>
-
-      <p class="home-landing-hero__lede" data-home-hero-lede>
-        我是 Richard，一名正在成长的开发者。这里保存我做过的系统、走过的路径，以及还没有想完的事。
-      </p>
-
-      <a href="#introduction" class="home-landing-hero__cta" data-home-hero-cta>
-        <span>Enter the archive</span>
-        <i aria-hidden="true"></i>
-        <b aria-hidden="true">↘</b>
-      </a>
+      <nav class="quiet-hero__routes" aria-label="Explore Richard's archive" data-home-routes>
+        {routes.map((route) => (
+          <a class="quiet-hero__route" href={route.href} data-home-route>
+            <span class="quiet-hero__route-label" data-home-route-label>{route.label}</span>
+            <span class="quiet-hero__route-arrow" data-home-route-arrow aria-hidden="true">↗</span>
+            <i class="quiet-hero__route-line" data-home-route-line aria-hidden="true"></i>
+          </a>
+        ))}
+      </nav>
     </div>
 
-    <HomeHeroCanvas currentPost={currentPost} />
+    <footer class="quiet-hero__footer" data-home-frame-footer>
+      <span>Shanghai · 2026</span>
+    </footer>
   </div>
-
-  <a class="home-landing-hero__scroll" href="#introduction" aria-label="Scroll to introduction" data-home-hero-scroll>
-    <span>Scroll to enter</span>
-    <i aria-hidden="true"></i>
-  </a>
 </section>
 
 <script>
