@@ -14,6 +14,27 @@ html.work-page .hero-thinking-orbit img {
   opacity: 0.18;
 }
 
+.work-scroll-progress {
+  position: fixed;
+  top: calc(var(--site-header-height) - 1px);
+  right: 0;
+  left: 0;
+  z-index: 50;
+  height: 1px;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-border) 65%, transparent);
+}
+
+.work-scroll-progress__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--color-accent);
+  opacity: 0.7;
+}
+
 html.work-scroll-snap {
   scroll-snap-type: y mandatory;
 }
@@ -297,6 +318,10 @@ html.work-scroll-snap {
 @media (prefers-reduced-motion: reduce) {
   html.work-scroll-snap {
     scroll-snap-type: none;
+  }
+
+  .work-scroll-progress__fill {
+    transform: scaleX(1);
   }
 
   .work-whoami-lines [style],

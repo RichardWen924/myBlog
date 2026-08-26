@@ -1,3 +1,4 @@
+import { gsap } from 'gsap';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import skills from '../../../data/skills';
@@ -41,6 +42,7 @@ function fallbackCategoryPosition(index: number): Point {
 export default function SkillsOrbit() {
   const reducedMotion = useReducedMotion();
   const hostRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<SVGSVGElement>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const categoryNodes = useMemo(
@@ -63,28 +65,41 @@ export default function SkillsOrbit() {
 
   useEffect(() => {
     const host = hostRef.current;
-    if (!host || reducedMotion || window.matchMedia('(pointer: coarse)').matches) return;
+    const canvas = canvasRef.current;
+    if (!host || !canvas || reducedMotion || window.matchMedia('(pointer: coarse)').matches) return;
 
-    const handlePointerMove = (event: PointerEvent) => {
-      const rect = host.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const x = clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1);
-      const y = clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1);
-      host.style.setProperty('--orbit-x', x.toFixed(3));
-      host.style.setProperty('--orbit-y', y.toFixed(3));
-    };
+    const context = gsap.context(() => {
+      const xTo = gsap.quickTo(canvas, 'x', { duration: 0.8, ease: 'power3.out' });
+      const yTo = gsap.quickTo(canvas, 'y', { duration: 0.8, ease: 'power3.out' });
+      const rotationTo = gsap.quickTo(canvas, 'rotation', { duration: 1, ease: 'power3.out' });
 
-    const resetPointer = () => {
-      host.style.setProperty('--orbit-x', '0');
-      host.style.setProperty('--orbit-y', '0');
-    };
+      const handlePointerMove = (event: PointerEvent) => {
+        const rect = host.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const x = clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1);
+        const y = clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1);
+        xTo(x * 8);
+        yTo(y * 6);
+        rotationTo(x * 0.35);
+      };
 
-    window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    window.addEventListener('blur', resetPointer);
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('blur', resetPointer);
-    };
+      const resetPointer = () => {
+        xTo(0);
+        yTo(0);
+        rotationTo(0);
+      };
+
+      window.addEventListener('pointermove', handlePointerMove, { passive: true });
+      window.addEventListener('blur', resetPointer);
+      host.addEventListener('pointerleave', resetPointer, { passive: true });
+      return () => {
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('blur', resetPointer);
+        host.removeEventListener('pointerleave', resetPointer);
+      };
+    }, host);
+
+    return () => context.revert();
   }, [reducedMotion]);
 
   return (
@@ -95,6 +110,7 @@ export default function SkillsOrbit() {
       aria-label="Interactive map of Richard's skills"
     >
       <svg
+        ref={canvasRef}
         className="skill-orbit__canvas"
         viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
         role="img"

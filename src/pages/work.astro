@@ -16,91 +16,120 @@ const projects = getProjects();
 ---
 
 <Base title="Work" fullBleed htmlClass="work-scroll-snap work-page">
-  <div class="work-sequence">
-    <section id="work-hero" class="work-chapter work-chapter--hero work-reactive-hero -mt-12" data-work-chapter="hero" data-work-hero-page>
-      <FutureHero client:load />
-    </section>
+  <div data-work-page>
+    <div class="work-scroll-progress" data-work-scroll-progress aria-hidden="true">
+      <span class="work-scroll-progress__fill" data-work-scroll-progress-fill></span>
+    </div>
 
-    <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
-      <div class="work-whoami-layout mx-auto max-w-6xl px-6">
-        <WhoAmIIntro client:visible />
-        <div class="work-whoami-timeline">
-          <Timeline client:visible items={workTimelineMock} startDelay={2.4} staggerDelay={1.2} />
-        </div>
-      </div>
-    </section>
+    <div class="work-sequence">
+      <section id="work-hero" class="work-chapter work-chapter--hero work-reactive-hero -mt-12" data-work-chapter="hero" data-work-hero-page>
+        <FutureHero client:load />
+      </section>
 
-    <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero" data-work-chapter="systems">
-      <div class="work-skill-layout mx-auto max-w-6xl px-6">
-        <div class="work-skill-copy">
-          <SectionEyebrow index="02" label="Technical practice" status="WORK / SYSTEMS" />
-          <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
-            Systems I build, and the thinking behind them.
-          </h1>
-          <p class="mt-6 max-w-md text-base leading-relaxed text-ink-soft">
-            Backend systems, interfaces and tools shaped by a preference for clarity, resilience and thoughtful details.
-          </p>
-          <div class="work-skill-signals mt-12">
-            <div class="work-skill-signal">
-              <span class="font-mono text-xs text-accent">01</span>
-              <div><h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Make complexity easier to understand and maintain.</p></div>
-            </div>
-            <div class="work-skill-signal">
-              <span class="font-mono text-xs text-accent">02</span>
-              <div><h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Design the boundaries where tools, data and people meet.</p></div>
-            </div>
-            <div class="work-skill-signal">
-              <span class="font-mono text-xs text-accent">03</span>
-              <div><h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Follow the question until the useful pattern appears.</p></div>
-            </div>
+      <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
+        <div class="work-whoami-layout mx-auto max-w-6xl px-6">
+          <WhoAmIIntro client:visible />
+          <div class="work-whoami-timeline">
+            <Timeline client:visible items={workTimelineMock} startDelay={2.4} staggerDelay={1.2} />
           </div>
         </div>
-        <div class="work-skill-visual">
-          <SkillsOrbit client:load />
+      </section>
+
+      <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero" data-work-chapter="systems">
+        <div class="work-skill-layout mx-auto max-w-6xl px-6">
+          <div class="work-skill-copy">
+            <div data-work-motion-reveal="eyebrow">
+              <SectionEyebrow index="02" label="Technical practice" status="WORK / SYSTEMS" />
+            </div>
+            <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl" data-work-motion-reveal="heading">
+              Systems I build, and the thinking behind them.
+            </h1>
+            <p class="mt-6 max-w-md text-base leading-relaxed text-ink-soft" data-work-motion-reveal="body">
+              Backend systems, interfaces and tools shaped by a preference for clarity, resilience and thoughtful details.
+            </p>
+            <div class="work-skill-signals mt-12">
+              <div class="work-skill-signal" data-work-motion-reveal="signal">
+                <span class="font-mono text-xs text-accent">01</span>
+                <div><h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Make complexity easier to understand and maintain.</p></div>
+              </div>
+              <div class="work-skill-signal" data-work-motion-reveal="signal">
+                <span class="font-mono text-xs text-accent">02</span>
+                <div><h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Design the boundaries where tools, data and people meet.</p></div>
+              </div>
+              <div class="work-skill-signal" data-work-motion-reveal="signal">
+                <span class="font-mono text-xs text-accent">03</span>
+                <div><h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Follow the question until the useful pattern appears.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="work-skill-visual">
+            <SkillsOrbit client:load />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="work-projects" class="work-chapter work-chapter--content" data-work-chapter="projects">
-      <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section">
-          <SectionEyebrow index="03" label="Selected work" status="PROJECTS" />
-          <FadeSection client:visible className="mt-8">
-            {projects.length > 0 ? (
-              <ul>
-                {projects.map((project, i) => <ProjectCard client:visible project={project} index={i} />)}
-              </ul>
-            ) : (
-              <p class="py-12 text-center font-serif text-lg text-ink-soft">No projects yet.</p>
-            )}
-          </FadeSection>
-        </section>
-      </div>
-    </section>
+      <section id="work-projects" class="work-chapter work-chapter--content" data-work-chapter="projects">
+        <div class="work-content mx-auto max-w-4xl px-4">
+          <section class="work-section">
+            <div data-work-motion-reveal="eyebrow">
+              <SectionEyebrow index="03" label="Selected work" status="PROJECTS" />
+            </div>
+            <FadeSection client:visible className="mt-8">
+              {projects.length > 0 ? (
+                <ul>
+                  {projects.map((project, i) => <ProjectCard client:visible project={project} index={i} />)}
+                </ul>
+              ) : (
+                <p class="py-12 text-center font-serif text-lg text-ink-soft">No projects yet.</p>
+              )}
+            </FadeSection>
+          </section>
+        </div>
+      </section>
 
-    <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
-      <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section work-section--ruled">
-          <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
-          <div class="mt-8">
-            <Timeline client:visible />
-          </div>
-        </section>
-      </div>
-    </section>
+      <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
+        <div class="work-content mx-auto max-w-4xl px-4">
+          <section class="work-section work-section--ruled">
+            <div data-work-motion-reveal="eyebrow">
+              <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
+            </div>
+            <div class="mt-8">
+              <Timeline client:visible />
+            </div>
+          </section>
+        </div>
+      </section>
 
-    <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
-      <div class="work-content mx-auto max-w-4xl px-4">
-        <section class="work-section work-section--ruled work-section--closing">
-          <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
-          <div class="mt-8 flex flex-wrap gap-5">
-            <a href={withBasePath('/projects')} class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
-            <a href={withBasePath('/blog')} class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
-          </div>
-        </section>
-      </div>
-    </section>
+      <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
+        <div class="work-content mx-auto max-w-4xl px-4">
+          <section class="work-section work-section--ruled work-section--closing">
+            <div data-work-motion-reveal="eyebrow">
+              <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
+            </div>
+            <div class="mt-8 flex flex-wrap gap-5">
+              <a href={withBasePath('/projects')} class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
+              <a href={withBasePath('/blog')} class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <WorkChapterNavigation client:load />
   </div>
-
-  <WorkChapterNavigation client:load />
 </Base>
+
+<script>
+  import { initWorkPageMotion } from '../features/work/workPageMotion';
+
+  let cleanupWorkPage = () => {};
+
+  const setupWorkPage = () => {
+    cleanupWorkPage();
+    const page = document.querySelector<HTMLElement>('[data-work-page]');
+    cleanupWorkPage = page ? initWorkPageMotion(page) : () => {};
+  };
+
+  document.addEventListener('astro:page-load', setupWorkPage);
+  document.addEventListener('astro:before-swap', () => cleanupWorkPage());
+</script>
