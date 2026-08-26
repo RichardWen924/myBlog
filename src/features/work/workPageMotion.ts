@@ -1,134 +1,176 @@
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getWorkMotionProfile } from '../../lib/workMotion';
 
-gsap.registerPlugin(ScrollTrigger);
+const select = <T extends Element>(root: Element, selector: string) =>
+  root.querySelector<T>(selector);
 
 const selectAll = <T extends Element>(root: Element, selector: string) =>
   Array.from(root.querySelectorAll<T>(selector));
 
-/**
- * Work page motion: a quiet reading rhythm for the archive chapters.
- * Every animation is scoped to the page root so Astro view transitions can cleanly revert it.
- */
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
 export function initWorkPageMotion(root: HTMLElement) {
-  let revertMatchMedia = () => {};
+  const media = gsap.matchMedia();
 
-  const context = gsap.context(() => {
-    const matchMedia = gsap.matchMedia();
-    revertMatchMedia = () => matchMedia.revert();
+  media.add(
+    {
+      reducedMotion: '(prefers-reduced-motion: reduce)',
+      finePointer: '(pointer: fine)',
+    },
+    (context) => {
+      const { reducedMotion, finePointer } = context.conditions as {
+        reducedMotion: boolean;
+        finePointer: boolean;
+      };
+      const profile = getWorkMotionProfile({ reducedMotion, finePointer });
+      const revealTargets = selectAll<HTMLElement>(root, '[data-work-reveal]');
+      const timelineTargets = selectAll<HTMLElement>(root, '[data-work-timeline-item]');
+      const loopTargets = selectAll<HTMLElement>(root, '[data-work-loop]');
+      const allRevealTargets = Array.from(new Set([...revealTargets, ...timelineTargets, ...loopTargets]));
+      const heroTargets = allRevealTargets.filter(
+        (element) => element.closest('[data-work-section="hero"]'),
+      );
+      const sectionTargets = allRevealTargets.filter(
+        (element) => !element.closest('[data-work-section="hero"]'),
+      );
+      const progressFill = select<HTMLElement>(root, '[data-work-progress-fill]');
+      const heroMark = select<HTMLElement>(root, '[data-work-hero-mark]');
+      const heroRing = heroMark?.querySelector<HTMLElement>('.work-redesign__hero-mark-ring');
+      const timelines: gsap.core.Timeline[] = [];
+      let observer: IntersectionObserver | undefined;
 
-    matchMedia.add(
-      {
-        reduce: '(prefers-reduced-motion: reduce)',
-        fine: '(pointer: fine)',
-      },
-      (conditions) => {
-        const reducedMotion = Boolean(conditions?.reduce);
-        const finePointer = Boolean(conditions?.fine);
-        const profile = getWorkMotionProfile({ reducedMotion, finePointer });
-        const revealTargets = selectAll<HTMLElement>(root, '[data-work-motion-reveal]');
-        const signalTargets = revealTargets.filter(
-          (element) => element.dataset.workMotionReveal === 'signal',
-        );
-        const eyebrowTargets = revealTargets.filter(
-          (element) => element.dataset.workMotionReveal === 'eyebrow',
-        );
-        const progressFill = root.querySelector<HTMLElement>('[data-work-scroll-progress-fill]');
-        const heroChapter = root.querySelector<HTMLElement>('[data-work-chapter="hero"]');
+      if (reducedMotion) {
+        gsap.set(allRevealTargets, { autoAlpha: 1, clearProps: 'transform,filter' });
+        gsap.set(progressFill, { scaleX: 1, transformOrigin: 'left center' });
+        return;
+      }
 
-        if (reducedMotion) {
-          gsap.set(revealTargets, { autoAlpha: 1, clearProps: 'transform' });
-          gsap.set(selectAll<HTMLElement>(root, '.section-eyebrow__line'), {
-            scaleX: 1,
-            transformOrigin: 'left center',
-          });
-          gsap.set(progressFill, { scaleX: 1, transformOrigin: 'left center' });
-          return;
-        }
+      gsap.set(heroTargets, { autoAlpha: 0, y: profile.revealOffset });
+      gsap.set(sectionTargets, { y: profile.revealOffset });
+      gsap.set(progressFill, { scaleX: 0, transformOrigin: 'left center' });
 
-        gsap.set(revealTargets, { autoAlpha: 0, y: profile.revealOffset });
-        gsap.set(selectAll<HTMLElement>(root, '.section-eyebrow__line'), {
-          scaleX: 0,
-          transformOrigin: 'left center',
+      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      timelines.push(intro);
+      intro
+        .addLabel('hero')
+        .to(heroTargets.filter((element) => element.dataset.workReveal === 'eyebrow'), {
+          autoAlpha: 1,
+          y: 0,
+          duration: profile.revealDuration * 0.8,
+        }, 'hero')
+        .to(heroTargets.filter((element) => element.dataset.workReveal === 'heading'), {
+          autoAlpha: 1,
+          y: 0,
+          duration: profile.revealDuration * 1.25,
+        }, 'hero+=0.08')
+        .to(heroTargets.filter((element) => element.dataset.workReveal === 'lede'), {
+          autoAlpha: 1,
+          y: 0,
+          duration: profile.revealDuration,
+        }, 'hero+=0.26')
+        .to(heroTargets.filter((element) => element.dataset.workReveal === 'scroll'), {
+          autoAlpha: 1,
+          y: 0,
+          duration: profile.revealDuration * 0.8,
+        }, 'hero+=0.48');
+
+      const sectionMap = new Map<Element, HTMLElement[]>();
+      sectionTargets.forEach((target) => {
+        const section = target.closest<HTMLElement>('[data-work-section]');
+        if (!section) return;
+        const targets = sectionMap.get(section) ?? [];
+        targets.push(target);
+        sectionMap.set(section, targets);
+      });
+
+      const revealSection = (section: Element, targets: HTMLElement[]) => {
+        const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        timelines.push(timeline);
+        timeline.to(targets, {
+          autoAlpha: 1,
+          y: 0,
+          duration: profile.revealDuration,
+          stagger: profile.revealStagger,
         });
-        gsap.set(progressFill, { scaleX: 0, transformOrigin: 'left center' });
+        sectionMap.delete(section);
+      };
 
-        const reveal = (element: HTMLElement, delay = 0) => {
-          gsap.to(element, {
-            autoAlpha: 1,
-            y: 0,
-            delay,
-            duration: profile.revealDuration,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: element,
-              start: profile.revealStart,
-              once: true,
-            },
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const targets = sectionMap.get(entry.target);
+            if (targets) revealSection(entry.target, targets);
+            observer?.unobserve(entry.target);
           });
+        },
+        { rootMargin: '0px 0px -12% 0px', threshold: 0.12 },
+      );
+      sectionMap.forEach((_targets, section) => observer?.observe(section));
+
+      if (progressFill) {
+        const progressTo = gsap.quickTo(progressFill, 'scaleX', {
+          duration: 0.28,
+          ease: 'power2.out',
+        });
+        const updateProgress = () => {
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          progressTo(maxScroll > 0 ? clamp(window.scrollY / maxScroll, 0, 1) : 1);
         };
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
 
-        revealTargets
-          .filter((element) => element.dataset.workMotionReveal !== 'signal')
-          .forEach((element) => reveal(element));
-        signalTargets.forEach((element, index) => reveal(element, index * profile.revealStagger));
-
-        eyebrowTargets.forEach((element) => {
-          const line = element.querySelector<HTMLElement>('.section-eyebrow__line');
-          if (!line) return;
-          gsap.to(line, {
-            scaleX: 1,
-            duration: profile.revealDuration,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: element,
-              start: profile.revealStart,
-              once: true,
-            },
-          });
-        });
-
-        if (heroChapter) {
-          gsap.fromTo(
-            heroChapter,
-            { autoAlpha: 0.76, y: profile.revealOffset * 0.6 },
-            { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out' },
-          );
-          gsap.to(heroChapter, {
-            yPercent: profile.heroParallaxPercent,
+        if (heroRing) {
+          gsap.to(heroRing, {
+            rotation: 360,
+            duration: 34,
+            repeat: -1,
             ease: 'none',
-            scrollTrigger: {
-              trigger: heroChapter,
-              start: 'top top',
-              end: 'bottom top',
-              scrub: profile.heroScrub,
-              invalidateOnRefresh: true,
-            },
           });
         }
 
-        if (progressFill) {
-          gsap.to(progressFill, {
-            scaleX: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: root,
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: profile.progressScrub,
-              invalidateOnRefresh: true,
-            },
-          });
+        let handlePointerMove: ((event: PointerEvent) => void) | undefined;
+        let handlePointerLeave: (() => void) | undefined;
+        let handleResize: (() => void) | undefined;
+        if (finePointer && heroMark) {
+          let bounds = root.getBoundingClientRect();
+          const moveX = gsap.quickTo(heroMark, 'x', { duration: 0.9, ease: 'power3.out' });
+          const moveY = gsap.quickTo(heroMark, 'y', { duration: 0.9, ease: 'power3.out' });
+          const refreshBounds = () => { bounds = root.getBoundingClientRect(); };
+          handleResize = refreshBounds;
+          handlePointerMove = (event) => {
+            const x = clamp((event.clientX - bounds.left) / bounds.width - 0.5, -0.5, 0.5);
+            const y = clamp((event.clientY - bounds.top) / bounds.height - 0.5, -0.5, 0.5);
+            moveX(x * profile.skillParallax.x);
+            moveY(y * profile.skillParallax.y);
+          };
+          handlePointerLeave = () => {
+            moveX(0);
+            moveY(0);
+          };
+          root.addEventListener('pointermove', handlePointerMove, { passive: true });
+          root.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+          window.addEventListener('resize', handleResize, { passive: true });
         }
 
-      },
-      root,
-    );
-  }, root);
+        return () => {
+          observer?.disconnect();
+          timelines.forEach((timeline) => timeline.kill());
+          gsap.killTweensOf([progressFill, heroMark, heroRing]);
+          if (handlePointerMove) root.removeEventListener('pointermove', handlePointerMove);
+          if (handlePointerLeave) root.removeEventListener('pointerleave', handlePointerLeave);
+          if (handleResize) window.removeEventListener('resize', handleResize);
+          window.removeEventListener('scroll', updateProgress);
+        };
+      }
 
-  return () => {
-    revertMatchMedia();
-    context.revert();
-  };
+      return () => {
+        observer?.disconnect();
+        timelines.forEach((timeline) => timeline.kill());
+        gsap.killTweensOf([progressFill, heroMark, heroRing]);
+      };
+    },
+  );
+
+  return () => media.revert();
 }

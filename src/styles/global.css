@@ -100,6 +100,13 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .glow-layer {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* ===== Link treatment ===== */
 a {
   color: var(--color-ink);

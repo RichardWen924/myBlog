@@ -1,13 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import FadeSection from '../components/motion/FadeSection';
-import ProjectCard from '../features/projects/components/ProjectCard';
-import SkillsOrbit from '../features/work/components/SkillsOrbit';
 import Timeline from '../features/work/components/Timeline';
-import FutureHero from '../features/work/components/FutureHero';
-import WhoAmIIntro from '../features/work/components/WhoAmIIntro';
-import SectionEyebrow from '../components/ui/SectionEyebrow.astro';
-import WorkChapterNavigation from '../features/work/components/WorkChapterNavigation';
+import TechnologyLoops from '../features/work/components/TechnologyLoops';
 import { getProjects } from '../lib/content';
 import workTimelineMock from '../data/workTimelineMock';
 import { withBasePath } from '../lib/sitePath';
@@ -15,107 +9,92 @@ import { withBasePath } from '../lib/sitePath';
 const projects = getProjects();
 ---
 
-<Base title="Work" fullBleed htmlClass="work-scroll-snap work-page">
-  <div data-work-page>
-    <div class="work-scroll-progress" data-work-scroll-progress aria-hidden="true">
-      <span class="work-scroll-progress__fill" data-work-scroll-progress-fill></span>
+<Base title="Work" fullBleed htmlClass="work-page">
+  <div class="work-redesign" data-work-page>
+    <div class="work-redesign__progress" data-work-progress aria-hidden="true">
+      <span data-work-progress-fill></span>
     </div>
 
-    <div class="work-sequence">
-      <section id="work-hero" class="work-chapter work-chapter--hero work-reactive-hero -mt-12" data-work-chapter="hero" data-work-hero-page>
-        <FutureHero client:load />
-      </section>
-
-      <section id="work-whoami" class="work-chapter work-chapter--whoami" data-work-chapter="whoami">
-        <div class="work-whoami-layout mx-auto max-w-6xl px-6">
-          <WhoAmIIntro client:visible />
-          <div class="work-whoami-timeline">
-            <Timeline client:visible items={workTimelineMock} startDelay={2.4} staggerDelay={1.2} />
-          </div>
-        </div>
-      </section>
-
-      <section id="work-systems" class="work-chapter work-chapter--systems work-skill-hero" data-work-chapter="systems">
-        <div class="work-skill-layout mx-auto max-w-6xl px-6">
-          <div class="work-skill-copy">
-            <div data-work-motion-reveal="eyebrow">
-              <SectionEyebrow index="02" label="Technical practice" status="WORK / SYSTEMS" />
-            </div>
-            <h1 class="mt-10 font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl" data-work-motion-reveal="heading">
-              Systems I build, and the thinking behind them.
+    <div class="work-redesign__main">
+      <section id="work-hero" class="work-redesign__hero" data-work-section="hero" aria-labelledby="work-title">
+        <div class="work-redesign__hero-grid">
+          <div class="work-redesign__hero-copy">
+            <p class="work-redesign__eyebrow" data-work-reveal="eyebrow">WORK / 2026</p>
+            <h1 id="work-title" class="work-redesign__title" data-work-reveal="heading">
+              Systems with a human scale.
             </h1>
-            <p class="mt-6 max-w-md text-base leading-relaxed text-ink-soft" data-work-motion-reveal="body">
-              Backend systems, interfaces and tools shaped by a preference for clarity, resilience and thoughtful details.
+            <p class="work-redesign__lede" data-work-reveal="lede">
+              Selected work across interfaces, backend systems, and agent tools.
             </p>
-            <div class="work-skill-signals mt-12">
-              <div class="work-skill-signal" data-work-motion-reveal="signal">
-                <span class="font-mono text-xs text-accent">01</span>
-                <div><h2 class="font-serif text-xl font-semibold text-ink">Build with clarity</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Make complexity easier to understand and maintain.</p></div>
-              </div>
-              <div class="work-skill-signal" data-work-motion-reveal="signal">
-                <span class="font-mono text-xs text-accent">02</span>
-                <div><h2 class="font-serif text-xl font-semibold text-ink">Connect the pieces</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Design the boundaries where tools, data and people meet.</p></div>
-              </div>
-              <div class="work-skill-signal" data-work-motion-reveal="signal">
-                <span class="font-mono text-xs text-accent">03</span>
-                <div><h2 class="font-serif text-xl font-semibold text-ink">Keep exploring</h2><p class="mt-1 text-sm leading-relaxed text-ink-soft">Follow the question until the useful pattern appears.</p></div>
-              </div>
-            </div>
           </div>
-          <div class="work-skill-visual">
-            <SkillsOrbit client:load />
+
+          <div class="work-redesign__hero-mark" data-work-hero-mark aria-hidden="true">
+            <span class="work-redesign__hero-mark-ring"></span>
+            <span class="work-redesign__hero-mark-dot"></span>
+            <span class="work-redesign__hero-mark-label">R / 26</span>
           </div>
         </div>
+
+        <a class="work-redesign__scroll-link" href="#work-profile" data-work-reveal="scroll">
+          <span>Scroll to explore</span>
+          <span aria-hidden="true">↓</span>
+        </a>
       </section>
 
-      <section id="work-projects" class="work-chapter work-chapter--content" data-work-chapter="projects">
-        <div class="work-content mx-auto max-w-4xl px-4">
-          <section class="work-section">
-            <div data-work-motion-reveal="eyebrow">
-              <SectionEyebrow index="03" label="Selected work" status="PROJECTS" />
-            </div>
-            <FadeSection client:visible className="mt-8">
-              {projects.length > 0 ? (
-                <ul>
-                  {projects.map((project, i) => <ProjectCard client:visible project={project} index={i} />)}
-                </ul>
-              ) : (
-                <p class="py-12 text-center font-serif text-lg text-ink-soft">No projects yet.</p>
-              )}
-            </FadeSection>
-          </section>
+      <section id="work-profile" class="work-redesign__section work-redesign__section--profile" data-work-section="profile" aria-labelledby="work-profile-title">
+        <div class="work-redesign__section-head" data-work-reveal="section-heading">
+          <span class="work-redesign__section-index">01</span>
+          <h2 id="work-profile-title">Path so far</h2>
+        </div>
+        <div class="work-redesign__profile-grid">
+          <Timeline items={workTimelineMock} />
         </div>
       </section>
 
-      <section id="work-experience" class="work-chapter work-chapter--content" data-work-chapter="experience">
-        <div class="work-content mx-auto max-w-4xl px-4">
-          <section class="work-section work-section--ruled">
-            <div data-work-motion-reveal="eyebrow">
-              <SectionEyebrow index="04" label="Experience" status="TIMELINE" />
-            </div>
-            <div class="mt-8">
-              <Timeline client:visible />
-            </div>
-          </section>
+      <section id="work-systems" class="work-redesign__section work-redesign__section--systems" data-work-section="systems" aria-labelledby="work-systems-title">
+        <div class="work-redesign__section-head" data-work-reveal="section-heading">
+          <span class="work-redesign__section-index">02</span>
+          <h2 id="work-systems-title">Tools I use</h2>
         </div>
+        <TechnologyLoops client:load />
       </section>
 
-      <section id="work-more" class="work-chapter work-chapter--closing" data-work-chapter="more">
-        <div class="work-content mx-auto max-w-4xl px-4">
-          <section class="work-section work-section--ruled work-section--closing">
-            <div data-work-motion-reveal="eyebrow">
-              <SectionEyebrow index="05" label="Continue exploring" status="DETAILS" />
-            </div>
-            <div class="mt-8 flex flex-wrap gap-5">
-              <a href={withBasePath('/projects')} class="chapter-link font-mono text-sm text-accent no-underline">Open project index <span aria-hidden="true">&rarr;</span></a>
-              <a href={withBasePath('/blog')} class="chapter-link font-mono text-sm text-accent no-underline">Read the notes <span aria-hidden="true">&rarr;</span></a>
-            </div>
-          </section>
+      <section id="work-projects" class="work-redesign__section" data-work-section="projects" aria-labelledby="work-projects-title">
+        <div class="work-redesign__section-head" data-work-reveal="section-heading">
+          <span class="work-redesign__section-index">03</span>
+          <h2 id="work-projects-title">Selected work</h2>
+        </div>
+        <ul class="work-redesign__projects">
+          {projects.length > 0 ? projects.map((project, index) => (
+            <li class="work-redesign__project" data-work-project-row>
+              <a href={withBasePath(`/projects/${project.id}`)}>
+                <span class="work-redesign__project-index">{String(index + 1).padStart(2, '0')}</span>
+                <span class="work-redesign__project-title">{project.title}</span>
+                <span class="work-redesign__project-description">{project.description}</span>
+                <span class="work-redesign__project-year">{project.year}</span>
+                <span class="work-redesign__project-arrow" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          )) : (
+            <li class="work-redesign__empty">No projects yet.</li>
+          )}
+        </ul>
+      </section>
+
+      <section id="work-experience" class="work-redesign__section work-redesign__section--now" data-work-section="experience" aria-labelledby="work-now-title">
+        <div class="work-redesign__section-head" data-work-reveal="section-heading">
+          <span class="work-redesign__section-index">04</span>
+          <h2 id="work-now-title">Now</h2>
+        </div>
+        <div class="work-redesign__now-grid">
+          <p class="work-redesign__now-title" data-work-reveal="now-title">Building useful things around agents.</p>
+          <div class="work-redesign__now-links" data-work-reveal="now-links">
+            <a href={withBasePath('/projects')}>Open project index <span aria-hidden="true">↗</span></a>
+            <a href={withBasePath('/blog')}>Read the notes <span aria-hidden="true">↗</span></a>
+          </div>
         </div>
       </section>
     </div>
-
-    <WorkChapterNavigation client:load />
   </div>
 </Base>
 
